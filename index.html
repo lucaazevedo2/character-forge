@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Character Forge — D&amp;D 5e (2014)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0D1811;
+  --panel:#16251B;
+  --panel2:#1C2F22;
+  --stone:#2C4032;
+  --stone-hi:#3B5442;
+  --parchment:#EFE2C0;
+  --faded:#B4A984;
+  --dim:#8C8465;
+  --gold:#D8A939;
+  --gold-dim:#9C7B27;
+  --venom:#8CB369;
+  --blood:#D05438;
+  --shadow:0 4px 18px rgba(0,0,0,.45);
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{
+  background:var(--night);
+  background-image:
+    radial-gradient(1200px 500px at 50% -200px, #17301F 0%, transparent 70%),
+    radial-gradient(900px 400px at 100% 100%, #10241733 0%, transparent 60%);
+  color:var(--parchment);
+  font-family:'Alegreya', Georgia, 'Times New Roman', serif;
+  line-height:1.55;
+  min-height:100vh;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+h1,h2,h3,.display{font-family:'Cinzel', 'Palatino Linotype', Georgia, serif;letter-spacing:.04em}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:1rem}
+.app{max-width:760px;margin:0 auto;padding:0 16px 120px}
+.screen{display:none}
+.screen.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── Header ─────────────────────────────── */
+header.masthead{text-align:center;padding:34px 8px 10px}
+.masthead .glyphs{color:var(--gold-dim);font-size:.8rem;letter-spacing:.6em;margin-bottom:10px;user-select:none}
+.masthead h1{font-size:clamp(1.5rem,6vw,2.4rem);font-weight:900;color:var(--gold);text-shadow:0 2px 12px rgba(216,169,57,.25);line-height:1.2}
+.masthead .sub{color:var(--faded);font-style:italic;margin-top:6px;font-size:1.02rem}
+.rule{display:flex;align-items:center;gap:10px;margin:18px auto 6px;max-width:420px;color:var(--gold-dim)}
+.rule::before,.rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.rule::after{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+
+/* ── Ziggurat progress (signature) ──────── */
+.ziggurat{display:flex;align-items:flex-end;justify-content:center;gap:5px;margin:20px auto 4px;height:52px}
+.zig-step{width:44px;background:var(--stone);border:1px solid var(--stone-hi);border-bottom:none;border-radius:3px 3px 0 0;position:relative;transition:background .3s,box-shadow .3s;cursor:pointer}
+.zig-step span{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.62rem;letter-spacing:.08em;color:var(--dim);text-transform:uppercase;white-space:nowrap;font-family:'Cinzel',serif}
+.zig-step:nth-child(1){height:14px}.zig-step:nth-child(2){height:20px}.zig-step:nth-child(3){height:26px}
+.zig-step:nth-child(4){height:32px}.zig-step:nth-child(5){height:38px}.zig-step:nth-child(6){height:44px}
+.zig-step.done{background:var(--gold-dim)}
+.zig-step.current{background:var(--gold);box-shadow:0 0 14px rgba(216,169,57,.5)}
+.zig-step.current span{color:var(--gold)}
+.zig-caption{text-align:center;color:var(--faded);font-size:.85rem;font-style:italic;margin-bottom:16px}
+
+/* ── Cards / tablets ────────────────────── */
+.tablet{background:var(--panel);border:1px solid var(--stone);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:560px){.grid.two{grid-template-columns:1fr 1fr}}
+.pick{background:var(--panel);border:1px solid var(--stone);border-radius:var(--radius);padding:14px 14px 12px;text-align:left;width:100%;transition:border-color .15s, background .15s;position:relative}
+.pick:active{background:var(--panel2)}
+.pick .pk-name{font-family:'Cinzel',serif;font-weight:700;font-size:1.05rem;color:var(--parchment)}
+.pick .pk-tag{font-size:.78rem;color:var(--gold);letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.pick .pk-desc{font-size:.9rem;color:var(--faded);margin-top:4px}
+.pick.selected{border-color:var(--gold);background:linear-gradient(180deg,#20301F,var(--panel));box-shadow:0 0 0 1px var(--gold), inset 0 0 24px rgba(216,169,57,.07)}
+.pick.selected::after{content:"✦";position:absolute;top:10px;right:12px;color:var(--gold)}
+.detail{margin-top:14px}
+.detail h3{color:var(--gold);font-size:1rem;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em}
+.feat{margin-bottom:8px;font-size:.95rem}
+.feat b{color:var(--parchment)}
+.feat span{color:var(--faded)}
+.chiplist{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{border:1px solid var(--stone-hi);border-radius:999px;padding:5px 12px;font-size:.85rem;color:var(--faded);transition:.15s}
+.chip.on{border-color:var(--gold);color:var(--gold);background:rgba(216,169,57,.1)}
+.chip.locked{border-style:dashed;opacity:.75}
+.chip:disabled{opacity:.35;cursor:not-allowed}
+.hint{font-size:.85rem;color:var(--dim);font-style:italic;margin-top:6px}
+.warn{color:var(--blood)}
+.ok{color:var(--venom)}
+
+/* ── Step header ────────────────────────── */
+.step-head{margin:6px 0 14px}
+.step-head h2{color:var(--parchment);font-size:1.35rem}
+.step-head p{color:var(--faded);font-size:.95rem;font-style:italic}
+
+/* ── Ability scores ─────────────────────── */
+.method-tabs{display:flex;gap:8px;margin-bottom:14px}
+.method-tabs button{flex:1;padding:10px 4px;border:1px solid var(--stone);border-radius:8px;color:var(--faded);font-size:.85rem;font-family:'Cinzel',serif}
+.method-tabs button.on{border-color:var(--gold);color:var(--gold);background:rgba(216,169,57,.08)}
+.abl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(min-width:560px){.abl-grid{grid-template-columns:repeat(6,1fr)}}
+.abl{background:var(--panel);border:1px solid var(--stone);border-radius:10px;padding:10px 6px;text-align:center}
+.abl .nm{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.1em;color:var(--gold)}
+.abl .val{font-size:1.7rem;font-weight:700;font-family:'Cinzel',serif;margin:2px 0}
+.abl .mod{font-size:.85rem;color:var(--faded)}
+.abl .bonus{font-size:.72rem;color:var(--venom)}
+.abl select{width:100%;margin-top:6px;background:var(--night);color:var(--parchment);border:1px solid var(--stone-hi);border-radius:6px;padding:6px 2px;text-align:center}
+.abl .pb-ctrl{display:flex;justify-content:center;gap:6px;margin-top:6px}
+.abl .pb-ctrl button{width:32px;height:32px;border:1px solid var(--stone-hi);border-radius:8px;font-size:1.1rem;color:var(--parchment)}
+.pb-bank{text-align:center;margin:12px 0 4px;font-size:.95rem;color:var(--faded)}
+.pb-bank b{color:var(--gold);font-size:1.2rem}
+.roll-bar{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.roll-bar button{border:1px solid var(--gold-dim);color:var(--gold);border-radius:8px;padding:10px 18px;font-family:'Cinzel',serif;font-size:.9rem}
+.roll-pool{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.die-chip{width:46px;height:46px;border:1px solid var(--stone-hi);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.15rem;background:var(--panel2);color:var(--parchment)}
+.die-chip.used{opacity:.3}
+
+/* ── Form fields ────────────────────────── */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;font-family:'Cinzel',serif}
+.field input,.field select,.field textarea{width:100%;background:var(--night);border:1px solid var(--stone-hi);border-radius:8px;color:var(--parchment);padding:11px 12px}
+.field textarea{min-height:70px;resize:vertical}
+
+/* ── Bottom nav ─────────────────────────── */
+.navbar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(13,24,17,0),rgba(13,24,17,.92) 30%,var(--night));padding:22px 16px calc(14px + env(safe-area-inset-bottom));display:none}
+.navbar.show{display:block}
+.navbar .inner{max-width:760px;margin:0 auto;display:flex;gap:10px}
+.btn{flex:1;padding:14px;border-radius:10px;font-family:'Cinzel',serif;font-size:1rem;letter-spacing:.05em;text-align:center}
+.btn.primary{background:var(--gold);color:#20180A;font-weight:700;box-shadow:0 3px 14px rgba(216,169,57,.3)}
+.btn.primary:disabled{background:var(--stone);color:var(--dim);box-shadow:none}
+.btn.ghost{border:1px solid var(--stone-hi);color:var(--faded)}
+.btn.danger{border:1px solid var(--blood);color:var(--blood)}
+
+/* ── Home ───────────────────────────────── */
+.char-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--panel);border:1px solid var(--stone);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.char-card .cc-ini{width:46px;height:46px;border-radius:50%;border:1px solid var(--gold-dim);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.2rem;flex-shrink:0}
+.char-card .cc-nm{font-family:'Cinzel',serif;font-weight:700;color:var(--parchment)}
+.char-card .cc-sub{font-size:.85rem;color:var(--faded)}
+.empty{color:var(--dim);text-align:center;font-style:italic;padding:24px 10px}
+
+/* ── Sheet ──────────────────────────────── */
+.sheet-head{text-align:center;padding:20px 0 6px}
+.sheet-head h2{color:var(--gold);font-size:1.6rem}
+.sheet-head .sh-sub{color:var(--faded);font-style:italic}
+.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.stat-big{background:var(--panel);border:1px solid var(--stone);border-radius:10px;text-align:center;padding:10px 4px}
+.stat-big .lb{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-family:'Cinzel',serif}
+.stat-big .vl{font-size:1.6rem;font-family:'Cinzel',serif;font-weight:700}
+.stat-big.tap{cursor:pointer}
+.hp-panel{background:var(--panel);border:1px solid var(--stone);border-radius:var(--radius);padding:14px;margin:10px 0}
+.hp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.hp-top .lb{font-family:'Cinzel',serif;letter-spacing:.1em;font-size:.8rem;color:var(--gold);text-transform:uppercase}
+.hp-num{font-family:'Cinzel',serif;font-size:1.9rem;font-weight:700}
+.hp-num small{font-size:1rem;color:var(--faded)}
+.hp-bar{height:10px;background:var(--night);border-radius:99px;overflow:hidden;border:1px solid var(--stone-hi)}
+.hp-fill{height:100%;background:linear-gradient(90deg,var(--blood),var(--venom));transition:width .25s}
+.hp-ctrl{display:flex;gap:8px;margin-top:12px}
+.hp-ctrl button{flex:1;padding:12px 0;border-radius:8px;border:1px solid var(--stone-hi);font-family:'Cinzel',serif;font-size:1rem}
+.hp-ctrl .dmg{border-color:var(--blood);color:var(--blood)}
+.hp-ctrl .heal{border-color:var(--venom);color:var(--venom)}
+.hp-ctrl .temp{color:var(--faded)}
+.death{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:.85rem;color:var(--faded)}
+.pips{display:flex;gap:6px}
+.pip{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--stone-hi)}
+.pip.s.on{background:var(--venom);border-color:var(--venom)}
+.pip.f.on{background:var(--blood);border-color:var(--blood)}
+.skill-row{display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--stone);width:100%;text-align:left}
+.skill-row:last-child{border-bottom:none}
+.skill-row .sk-nm{font-size:.95rem}
+.skill-row .sk-nm small{color:var(--dim);font-size:.75rem;margin-left:4px}
+.skill-row .sk-md{font-family:'Cinzel',serif;color:var(--parchment)}
+.skill-row.prof .sk-nm{color:var(--gold)}
+.skill-row.prof .sk-nm::before{content:"◆ ";font-size:.7rem}
+.skill-row:not(.prof) .sk-nm::before{content:"◇ ";font-size:.7rem;color:var(--dim)}
+.sheet-sec{margin:16px 0}
+.sheet-sec h3{color:var(--gold);font-size:.95rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.sheet-sec h3::after{content:"";flex:1;height:1px;background:var(--stone)}
+.slots{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.slot{width:26px;height:26px;border-radius:6px;border:1.5px solid var(--gold-dim);cursor:pointer}
+.slot.spent{background:var(--gold-dim);opacity:.45}
+.inv-list{list-style:none}
+.inv-list li{display:flex;justify-content:space-between;align-items:center;padding:8px 2px;border-bottom:1px solid var(--stone);font-size:.95rem}
+.inv-list li button{color:var(--blood);font-size:1rem;padding:2px 8px}
+.inv-add{display:flex;gap:8px;margin-top:8px}
+.inv-add input{flex:1;background:var(--night);border:1px solid var(--stone-hi);border-radius:8px;color:var(--parchment);padding:10px}
+.inv-add button{border:1px solid var(--gold-dim);color:var(--gold);border-radius:8px;padding:0 16px;font-family:'Cinzel',serif}
+.notes-box{width:100%;background:var(--night);border:1px solid var(--stone-hi);border-radius:8px;color:var(--parchment);padding:10px;min-height:90px}
+
+/* ── Dice toast ─────────────────────────── */
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);background:var(--panel2);border:1px solid var(--gold);border-radius:12px;padding:14px 22px;box-shadow:0 8px 30px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:.25s;z-index:50;text-align:center;min-width:210px}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .t-lb{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-family:'Cinzel',serif}
+.toast .t-vl{font-size:2rem;font-family:'Cinzel',serif;font-weight:900}
+.toast .t-dt{font-size:.82rem;color:var(--faded)}
+.toast.crit .t-vl{color:var(--venom)}
+.toast.fumble .t-vl{color:var(--blood)}
+.savebar{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--venom);color:var(--venom);border-radius:99px;padding:6px 16px;font-size:.82rem;opacity:0;transition:.3s;z-index:60;pointer-events:none}
+.savebar.show{opacity:1}
+.linkish{color:var(--gold);text-decoration:underline;font-size:.9rem}
+footer{color:var(--dim);font-size:.78rem;text-align:center;margin-top:34px;padding:0 12px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="masthead">
+    <div class="glyphs">▲ ◆ ▲ ◆ ▲</div>
+    <h1>Character Forge</h1>
+    <div class="sub">A D&amp;D 5e character builder — 2014 rules edition</div>
+    <div class="rule">✦</div>
+  </header>
+
+  <div class="ziggurat" id="ziggurat"></div>
+  <div class="zig-caption" id="zigCaption"></div>
+
+  <main>
+    <section class="screen" id="scr-home"></section>
+    <section class="screen" id="scr-step"></section>
+    <section class="screen" id="scr-sheet"></section>
+  </main>
+
+  <footer id="foot">
+    Game content from the <b>Systems Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. No 2024-ruleset content included. Fan-made tool for personal campaign use.
+  </footer>
+</div>
+
+<div class="navbar" id="navbar"><div class="inner" id="navInner"></div></div>
+<div class="toast" id="toast"><div class="t-lb" id="toastLb"></div><div class="t-vl" id="toastVl"></div><div class="t-dt" id="toastDt"></div></div>
+<div class="savebar" id="savebar">Saved to ledger ✦</div>
+
+<script>
+"use strict";
+/* ════════════════ SRD 5.1 DATA (2014 rules) ════════════════ */
+/* ─────────────────────────────────────────────────────────────
+   HOMEBREW / OWNED-BOOK CONTENT
+   To add your own races, classes, subclasses, or backgrounds,
+   edit the RACES, CLASSES, and BACKGROUNDS arrays below — each
+   entry is a plain object and the existing ones show the shape.
+   Custom backgrounds can also be added in-app, no code needed.
+   ───────────────────────────────────────────────────────────── */
+const ABILITIES = ["str","dex","con","int","wis","cha"];
+const ABL_NAMES = {str:"Strength",dex:"Dexterity",con:"Constitution",int:"Intelligence",wis:"Wisdom",cha:"Charisma"};
+
+const SKILLS = [
+  {id:"acrobatics",name:"Acrobatics",abl:"dex"},
+  {id:"animal",name:"Animal Handling",abl:"wis"},
+  {id:"arcana",name:"Arcana",abl:"int"},
+  {id:"athletics",name:"Athletics",abl:"str"},
+  {id:"deception",name:"Deception",abl:"cha"},
+  {id:"history",name:"History",abl:"int"},
+  {id:"insight",name:"Insight",abl:"wis"},
+  {id:"intimidation",name:"Intimidation",abl:"cha"},
+  {id:"investigation",name:"Investigation",abl:"int"},
+  {id:"medicine",name:"Medicine",abl:"wis"},
+  {id:"nature",name:"Nature",abl:"int"},
+  {id:"perception",name:"Perception",abl:"wis"},
+  {id:"performance",name:"Performance",abl:"cha"},
+  {id:"persuasion",name:"Persuasion",abl:"cha"},
+  {id:"religion",name:"Religion",abl:"int"},
+  {id:"sleight",name:"Sleight of Hand",abl:"dex"},
+  {id:"stealth",name:"Stealth",abl:"dex"},
+  {id:"survival",name:"Survival",abl:"wis"}
+];
+const ALL_SKILL_IDS = SKILLS.map(s=>s.id);
+
+/* ── Races (SRD 5.1) ── */
+const RACES = [
+  {id:"dwarf", name:"Hill Dwarf", tag:"Sturdy · Slow to trust, hard to kill",
+   bonuses:{con:2,wis:1}, speed:25, darkvision:true, hpPerLevel:1,
+   desc:"Stout mountain folk with keen senses and remarkable resilience. Wherever the campaign goes, dwarven hardiness is worth its weight in gold.",
+   traits:[
+     ["Darkvision","See in dim light within 60 feet as if it were bright light."],
+     ["Dwarven Resilience","Advantage on saving throws against poison, and resistance against poison damage."],
+     ["Dwarven Combat Training","Proficiency with battleaxe, handaxe, light hammer, and warhammer."],
+     ["Stonecunning","Double proficiency bonus on History checks about stonework — handy in ancient ruins."],
+     ["Dwarven Toughness","Hit point maximum increases by 1 per level."]
+   ], langs:"Common, Dwarvish"},
+  {id:"highelf", name:"High Elf", tag:"Graceful · Keen mind, keener senses",
+   bonuses:{dex:2,int:1}, speed:30, darkvision:true,
+   desc:"Elves of magical heritage with a cantrip at their fingertips and senses no ambush escapes.",
+   traits:[
+     ["Darkvision","See in dim light within 60 feet as if it were bright light."],
+     ["Keen Senses","Proficiency in the Perception skill."],
+     ["Fey Ancestry","Advantage on saves against being charmed; magic can't put you to sleep."],
+     ["Trance","Meditate 4 hours instead of sleeping 8."],
+     ["Cantrip","Know one wizard cantrip of your choice (Intelligence is your spellcasting ability for it)."],
+     ["Extra Language","Speak, read, and write one extra language."]
+   ], langs:"Common, Elvish, +1 of your choice"},
+  {id:"halfling", name:"Lightfoot Halfling", tag:"Lucky · Small target, big nerve",
+   bonuses:{dex:2,cha:1}, speed:25, darkvision:false,
+   desc:"Small, nimble, and improbably lucky — halflings slip through danger where larger folk crash and stumble.",
+   traits:[
+     ["Lucky","Reroll any 1 on a d20 for an attack, check, or save (use the new roll)."],
+     ["Brave","Advantage on saving throws against being frightened."],
+     ["Halfling Nimbleness","Move through the space of any creature larger than you."],
+     ["Naturally Stealthy","Attempt to hide even when obscured only by a creature one size larger."]
+   ], langs:"Common, Halfling"},
+  {id:"human", name:"Human", tag:"Versatile · A little better at everything",
+   bonuses:{str:1,dex:1,con:1,int:1,wis:1,cha:1}, speed:30, darkvision:false,
+   desc:"Ambitious and adaptable. Every ability score improves — a solid pick for any class in the expedition.",
+   traits:[
+     ["Ability Score Increase","+1 to every ability score."],
+     ["Extra Language","Speak, read, and write one extra language."]
+   ], langs:"Common, +1 of your choice"},
+  {id:"dragonborn", name:"Dragonborn", tag:"Draconic · Breath of the ancestors",
+   bonuses:{str:2,cha:1}, speed:30, darkvision:false, choice:"draconic",
+   desc:"Proud dragon-blooded warriors whose breath weapon can clear a corridor of undead.",
+   traits:[
+     ["Draconic Ancestry","Choose a dragon type; it sets your breath weapon and damage resistance."],
+     ["Breath Weapon","Action to exhale destructive energy (2d6, DC 8 + Con mod + proficiency; save for half). Once per short or long rest."],
+     ["Damage Resistance","Resistance to the damage type of your ancestry."]
+   ], langs:"Common, Draconic"},
+  {id:"gnome", name:"Rock Gnome", tag:"Inventive · Clever hands, clever mind",
+   bonuses:{int:2,con:1}, speed:25, darkvision:true,
+   desc:"Curious tinkerers with a knack for surviving magic that would fell larger explorers.",
+   traits:[
+     ["Darkvision","See in dim light within 60 feet as if it were bright light."],
+     ["Gnome Cunning","Advantage on Intelligence, Wisdom, and Charisma saves against magic."],
+     ["Artificer's Lore","Double proficiency bonus on History checks about magic items, alchemical objects, or technological devices."],
+     ["Tinker","Craft tiny clockwork devices (clockwork toy, fire starter, music box)."]
+   ], langs:"Common, Gnomish"},
+  {id:"halfelf", name:"Half-Elf", tag:"Charismatic · Two worlds, one wanderer",
+   bonuses:{cha:2}, speed:30, darkvision:true, choice:"halfelf",
+   desc:"Diplomats and wanderers who combine elven grace with human drive. Choose two other abilities to raise and two bonus skills.",
+   traits:[
+     ["Ability Score Increase","+2 Charisma, and +1 to two other abilities of your choice."],
+     ["Darkvision","See in dim light within 60 feet as if it were bright light."],
+     ["Fey Ancestry","Advantage on saves against being charmed; magic can't put you to sleep."],
+     ["Skill Versatility","Proficiency in two skills of your choice."]
+   ], langs:"Common, Elvish, +1 of your choice"},
+  {id:"halforc", name:"Half-Orc", tag:"Relentless · Refuses to fall",
+   bonuses:{str:2,con:1}, speed:30, darkvision:true,
+   desc:"Fierce survivors who shrug off blows that would drop anyone else.",
+   traits:[
+     ["Darkvision","See in dim light within 60 feet as if it were bright light."],
+     ["Menacing","Proficiency in the Intimidation skill."],
+     ["Relentless Endurance","When reduced to 0 HP but not killed outright, drop to 1 HP instead. Once per long rest."],
+     ["Savage Attacks","On a melee weapon critical hit, roll one extra weapon damage die."]
+   ], langs:"Common, Orc"},
+  {id:"tiefling", name:"Tiefling", tag:"Infernal · Fire in the blood",
+   bonuses:{cha:2,int:1}, speed:30, darkvision:true,
+   desc:"Bearers of an infernal bloodline, resistant to fire and touched by innate magic.",
+   traits:[
+     ["Darkvision","See in dim light within 60 feet as if it were bright light."],
+     ["Hellish Resistance","Resistance to fire damage."],
+     ["Infernal Legacy","Know the thaumaturgy cantrip (Charisma is your spellcasting ability). Higher levels grant more spells."]
+   ], langs:"Common, Infernal"}
+];
+
+const DRAGON_TYPES = [
+  ["Black","Acid"],["Blue","Lightning"],["Brass","Fire"],["Bronze","Lightning"],["Copper","Acid"],
+  ["Gold","Fire"],["Green","Poison"],["Red","Fire"],["Silver","Cold"],["White","Cold"]
+];
+
+/* ── Classes (SRD 5.1, level 1) ── */
+const CLASSES = [
+  {id:"barbarian", name:"Barbarian", hitDie:12, tag:"d12 · Front-line fury",
+   desc:"A primal warrior who channels rage into devastating attacks and shrugs off wounds. Thrives anywhere the wilderness bites back.",
+   saves:["str","con"], skillCount:2,
+   skillList:["animal","athletics","intimidation","nature","perception","survival"],
+   armor:"Light armor, medium armor, shields", weapons:"Simple and martial weapons",
+   features:[
+     ["Rage","Bonus action to rage (2/long rest): advantage on Strength checks and saves, +2 rage damage on Strength melee attacks, resistance to bludgeoning, piercing, and slashing damage."],
+     ["Unarmored Defense","Without armor, your AC equals 10 + Dex modifier + Con modifier."]
+   ],
+   ac:c=>10+mod(c,"dex")+mod(c,"con"), acNote:"Unarmored Defense (10 + Dex + Con)",
+   equipment:["Greataxe","Two handaxes","Explorer's pack","Four javelins"],
+   subclass:{name:"Path of the Berserker", level:3, desc:"Pure violence unchained. At 3rd level, Frenzy lets you make a bonus-action melee attack every turn of your rage (at the cost of exhaustion when it ends)."}},
+  {id:"bard", name:"Bard", hitDie:8, tag:"d8 · Jack of all trades",
+   desc:"A magical entertainer whose words inspire allies and unravel enemies. A silver tongue opens more doors than a crowbar.",
+   saves:["dex","cha"], skillCount:3, skillList:ALL_SKILL_IDS,
+   armor:"Light armor", weapons:"Simple weapons, hand crossbows, longswords, rapiers, shortswords",
+   features:[
+     ["Spellcasting","Charisma caster. Know 2 cantrips and 4 first-level bard spells. Two 1st-level slots."],
+     ["Bardic Inspiration (d6)","Bonus action: give a creature a d6 to add to one attack, check, or save within 10 minutes. Uses equal to your Charisma modifier per long rest."]
+   ],
+   spellcaster:{abl:"cha",cantrips:2,slots:2,prep:"4 spells known"},
+   ac:c=>11+mod(c,"dex"), acNote:"Leather armor (11 + Dex)",
+   equipment:["Rapier","Diplomat's pack","Lute","Leather armor","Dagger"],
+   subclass:{name:"College of Lore", level:3, desc:"Collector of secrets. At 3rd level: three bonus skill proficiencies and Cutting Words to sabotage enemy rolls with your reaction."}},
+  {id:"cleric", name:"Cleric", hitDie:8, tag:"d8 · Divine conduit",
+   desc:"A priest wielding divine magic. Whatever the campaign throws at you, a cleric's healing is the party's lifeline.",
+   saves:["wis","cha"], skillCount:2,
+   skillList:["history","insight","medicine","persuasion","religion"],
+   armor:"Light armor, medium armor, shields (Life Domain adds heavy armor)", weapons:"Simple weapons",
+   features:[
+     ["Spellcasting","Wisdom caster. Know 3 cantrips; prepare Wis mod + level spells from the full cleric list. Two 1st-level slots."],
+     ["Divine Domain: Life","Chosen at 1st level. Bonus proficiency with heavy armor, and bless and cure wounds always prepared."],
+     ["Disciple of Life","Your healing spells restore extra HP equal to 2 + the spell's level."]
+   ],
+   spellcaster:{abl:"wis",cantrips:3,slots:2,prep:"Prepared: Wis mod + level"},
+   ac:c=>16, acNote:"Chain mail + shield (16 + 2 = 18 if shield equipped; edit as needed)",
+   equipment:["Mace","Chain mail","Light crossbow and 20 bolts","Priest's pack","Shield","Holy symbol"],
+   subclass:{name:"Life Domain", level:1, desc:"Active from level 1 — the premier healer. Heavy armor proficiency and Disciple of Life make every cure wounds count."}},
+  {id:"druid", name:"Druid", hitDie:8, tag:"d8 · Voice of the wild",
+   desc:"A guardian of nature who speaks the wild's language — literally. Nobody navigates the wilderness like a druid.",
+   saves:["int","wis"], skillCount:2,
+   skillList:["arcana","animal","insight","medicine","nature","perception","religion","survival"],
+   armor:"Light armor, medium armor, shields (no metal)", weapons:"Clubs, daggers, darts, javelins, maces, quarterstaffs, scimitars, sickles, slings, spears",
+   features:[
+     ["Druidic","You know the secret language of druids."],
+     ["Spellcasting","Wisdom caster. Know 2 cantrips; prepare Wis mod + level spells. Two 1st-level slots."]
+   ],
+   spellcaster:{abl:"wis",cantrips:2,slots:2,prep:"Prepared: Wis mod + level"},
+   ac:c=>11+mod(c,"dex"), acNote:"Leather armor (11 + Dex); +2 with wooden shield",
+   equipment:["Wooden shield","Scimitar","Leather armor","Explorer's pack","Druidic focus"],
+   subclass:{name:"Circle of the Land", level:2, desc:"At 2nd level: a bonus cantrip, Natural Recovery to regain spell slots on a short rest, and circle spells keyed to your home terrain."}},
+  {id:"fighter", name:"Fighter", hitDie:10, tag:"d10 · Master of arms",
+   desc:"A consummate warrior, equally at home with sword, bow, or shield wall. Simple, durable, deadly.",
+   saves:["str","con"], skillCount:2,
+   skillList:["acrobatics","animal","athletics","history","insight","intimidation","perception","survival"],
+   armor:"All armor, shields", weapons:"Simple and martial weapons",
+   features:[
+     ["Fighting Style","Choose one: Archery (+2 ranged attacks), Defense (+1 AC in armor), Dueling (+2 damage with a one-handed weapon), Great Weapon Fighting, Protection, or Two-Weapon Fighting."],
+     ["Second Wind","Bonus action to regain 1d10 + fighter level HP. Once per short or long rest."]
+   ],
+   ac:c=>16, acNote:"Chain mail (16); or leather + Dex if you prefer ranged",
+   equipment:["Chain mail","Longsword","Shield","Light crossbow and 20 bolts","Dungeoneer's pack"],
+   subclass:{name:"Champion", level:3, desc:"At 3rd level, Improved Critical: your weapon attacks score a critical hit on a 19 or 20."}},
+  {id:"monk", name:"Monk", hitDie:8, tag:"d8 · Living weapon",
+   desc:"A martial artist whose body is the weapon. Fast, mobile, and never disarmed.",
+   saves:["str","dex"], skillCount:2,
+   skillList:["acrobatics","athletics","history","insight","religion","stealth"],
+   armor:"None", weapons:"Simple weapons, shortswords",
+   features:[
+     ["Unarmored Defense","Without armor or shield, AC equals 10 + Dex modifier + Wis modifier."],
+     ["Martial Arts","Use Dex for unarmed strikes and monk weapons; unarmed strikes deal 1d4; bonus-action unarmed strike after attacking with a monk weapon."]
+   ],
+   ac:c=>10+mod(c,"dex")+mod(c,"wis"), acNote:"Unarmored Defense (10 + Dex + Wis)",
+   equipment:["Shortsword","Dungeoneer's pack","10 darts"],
+   subclass:{name:"Way of the Open Hand", level:3, desc:"At 3rd level, Open Hand Technique: your Flurry of Blows can knock enemies prone, push them 15 feet, or deny their reactions."}},
+  {id:"paladin", name:"Paladin", hitDie:10, tag:"d10 · Holy warrior",
+   desc:"A knight sworn to a sacred oath, blending martial might with divine power. Undead, fiends, and broken oaths are exactly the evils paladins exist to end.",
+   saves:["wis","cha"], skillCount:2,
+   skillList:["athletics","insight","intimidation","medicine","persuasion","religion"],
+   armor:"All armor, shields", weapons:"Simple and martial weapons",
+   features:[
+     ["Divine Sense","Detect celestials, fiends, and undead within 60 feet. 1 + Cha mod uses per long rest."],
+     ["Lay on Hands","A healing pool of 5 HP per paladin level; touch to restore HP or cure disease/poison."]
+   ],
+   ac:c=>16, acNote:"Chain mail (16); +2 with shield",
+   equipment:["Chain mail","Longsword","Shield","Five javelins","Priest's pack","Holy symbol"],
+   subclass:{name:"Oath of Devotion", level:3, desc:"At 3rd level: Sacred Weapon (add Cha to attack rolls) and Turn the Unholy — brutal against undead and fiends."}},
+  {id:"ranger", name:"Ranger", hitDie:10, tag:"d10 · Wilderness hunter",
+   desc:"A skirmisher and tracker built for hostile wilderness. In any travel-heavy campaign, Natural Explorer is gold.",
+   saves:["str","dex"], skillCount:3,
+   skillList:["animal","athletics","insight","investigation","nature","perception","stealth","survival"],
+   armor:"Light armor, medium armor, shields", weapons:"Simple and martial weapons",
+   features:[
+     ["Favored Enemy","Choose a creature type suited to your campaign: advantage on Survival checks to track them and Intelligence checks to recall information about them."],
+     ["Natural Explorer","Choose a favored terrain to match your campaign: your group can't get lost, you forage double food, and difficult terrain doesn't slow your travel."]
+   ],
+   ac:c=>14+Math.min(2,mod(c,"dex")), acNote:"Scale mail (14 + Dex, max 2) or leather (11 + Dex)",
+   equipment:["Scale mail","Two shortswords","Longbow and quiver of 20 arrows","Explorer's pack"],
+   subclass:{name:"Hunter", level:3, desc:"At 3rd level, pick a Hunter's Prey option such as Colossus Slayer (+1d8 damage per turn against wounded foes)."}},
+  {id:"rogue", name:"Rogue", hitDie:8, tag:"d8 · Precision and guile",
+   desc:"A specialist in stealth, traps, and devastating precision. Ancient tombs full of deadly mechanisms? That's rogue country.",
+   saves:["dex","int"], skillCount:4,
+   skillList:["acrobatics","athletics","deception","insight","intimidation","investigation","perception","performance","persuasion","sleight","stealth"],
+   armor:"Light armor", weapons:"Simple weapons, hand crossbows, longswords, rapiers, shortswords",
+   features:[
+     ["Expertise","Double proficiency bonus on two of your skill proficiencies (or one skill and thieves' tools)."],
+     ["Sneak Attack (1d6)","Once per turn, +1d6 damage on a hit with advantage (or when an ally is within 5 feet of the target) using a finesse or ranged weapon."],
+     ["Thieves' Cant","Secret code language of the criminal underworld."]
+   ],
+   ac:c=>11+mod(c,"dex"), acNote:"Leather armor (11 + Dex)",
+   equipment:["Rapier","Shortbow and quiver of 20 arrows","Burglar's pack","Leather armor","Two daggers","Thieves' tools"],
+   subclass:{name:"Thief", level:3, desc:"At 3rd level: Fast Hands (bonus-action Sleight of Hand, thieves' tools, or object use) and Second-Story Work for climbing and jumping."}},
+  {id:"sorcerer", name:"Sorcerer", hitDie:6, tag:"d6 · Raw magic",
+   desc:"Magic born in the blood, not learned from books. Fewer spells than a wizard, but soon you'll bend them with metamagic.",
+   saves:["con","cha"], skillCount:2,
+   skillList:["arcana","deception","insight","intimidation","persuasion","religion"],
+   armor:"None", weapons:"Daggers, darts, slings, quarterstaffs, light crossbows",
+   features:[
+     ["Spellcasting","Charisma caster. Know 4 cantrips and 2 first-level spells. Two 1st-level slots."],
+     ["Sorcerous Origin: Draconic Bloodline","Chosen at 1st level. Speak Draconic, +1 HP per level, and without armor your AC is 13 + Dex modifier."]
+   ],
+   spellcaster:{abl:"cha",cantrips:4,slots:2,prep:"2 spells known"},
+   hpPerLevel:1,
+   ac:c=>13+mod(c,"dex"), acNote:"Draconic Resilience (13 + Dex)",
+   equipment:["Light crossbow and 20 bolts","Arcane focus","Dungeoneer's pack","Two daggers"],
+   subclass:{name:"Draconic Bloodline", level:1, desc:"Active from level 1 — tougher than other mages, with dragon-scale skin and a chosen draconic ancestor."}},
+  {id:"warlock", name:"Warlock", hitDie:8, tag:"d8 · Pact-bound",
+   desc:"Power borrowed from an otherworldly patron. Few slots, but they return on a short rest — and eldritch blast never runs out.",
+   saves:["wis","cha"], skillCount:2,
+   skillList:["arcana","deception","history","intimidation","investigation","nature","religion"],
+   armor:"Light armor", weapons:"Simple weapons",
+   features:[
+     ["Pact Magic","Charisma caster. Know 2 cantrips and 2 first-level spells. One 1st-level slot that refreshes on a short rest."],
+     ["Otherworldly Patron: The Fiend","Chosen at 1st level. Dark One's Blessing: when you reduce a hostile creature to 0 HP, gain temporary HP equal to Cha modifier + warlock level."]
+   ],
+   spellcaster:{abl:"cha",cantrips:2,slots:1,prep:"2 spells known · slot returns on short rest"},
+   ac:c=>11+mod(c,"dex"), acNote:"Leather armor (11 + Dex)",
+   equipment:["Light crossbow and 20 bolts","Arcane focus","Scholar's pack","Leather armor","Any simple weapon","Two daggers"],
+   subclass:{name:"The Fiend", level:1, desc:"Active from level 1 — infernal power with a self-sustaining engine of temporary hit points."}},
+  {id:"wizard", name:"Wizard", hitDie:6, tag:"d6 · Arcane scholar",
+   desc:"A scholar of the arcane with the broadest spell list in the game. Fragile at first, unstoppable later.",
+   saves:["int","wis"], skillCount:2,
+   skillList:["arcana","history","insight","investigation","medicine","religion"],
+   armor:"None", weapons:"Daggers, darts, slings, quarterstaffs, light crossbows",
+   features:[
+     ["Spellcasting","Intelligence caster. Know 3 cantrips; your spellbook holds 6 first-level spells, and you prepare Int mod + level of them. Two 1st-level slots."],
+     ["Arcane Recovery","Once per day after a short rest, recover spell slots totaling half your wizard level (rounded up)."]
+   ],
+   spellcaster:{abl:"int",cantrips:3,slots:2,prep:"Prepared: Int mod + level (from spellbook)"},
+   ac:c=>10+mod(c,"dex"), acNote:"Unarmored (10 + Dex) — mage armor makes it 13 + Dex",
+   equipment:["Quarterstaff","Component pouch","Scholar's pack","Spellbook"],
+   subclass:{name:"School of Evocation", level:2, desc:"At 2nd level, Sculpt Spells: your fireballs and other evocations spare your allies caught in the blast."}}
+];
+
+/* ── Backgrounds (mechanics; ToA extras flagged) ── */
+const BACKGROUNDS = [
+  {id:"anthropologist", name:"Anthropologist", skills:["insight","religion"], toa:true,
+   feature:"Adept Linguist: communicate basic ideas with humanoids whose language you can't speak, given a day of observation.",
+   extra:"Two languages of your choice. From an adventure supplement."},
+  {id:"archaeologist", name:"Archaeologist", skills:["history","survival"], toa:true,
+   feature:"Historical Knowledge: identify a ruin's builders and purpose, and infer its dangers, by inspecting it.",
+   extra:"One language, plus cartographer's or navigator's tools. From an adventure supplement."},
+  {id:"acolyte", name:"Acolyte", skills:["insight","religion"],
+   feature:"Shelter of the Faithful: you and your companions can expect free healing and care at temples of your faith.",
+   extra:"Two languages of your choice."},
+  {id:"criminal", name:"Criminal", skills:["deception","stealth"],
+   feature:"Criminal Contact: a reliable and trustworthy contact in the criminal underworld.",
+   extra:"Thieves' tools and one type of gaming set."},
+  {id:"entertainer", name:"Entertainer", skills:["acrobatics","performance"],
+   feature:"By Popular Demand: perform for free lodging and food in inns and taverns.",
+   extra:"Disguise kit and one musical instrument."},
+  {id:"folkhero", name:"Folk Hero", skills:["animal","survival"],
+   feature:"Rustic Hospitality: common folk will shelter and hide you (short of risking their lives).",
+   extra:"One type of artisan's tools and vehicles (land)."},
+  {id:"guildartisan", name:"Guild Artisan", skills:["insight","persuasion"],
+   feature:"Guild Membership: lodging, legal support, and political access through your guild.",
+   extra:"One type of artisan's tools and one language."},
+  {id:"hermit", name:"Hermit", skills:["medicine","religion"],
+   feature:"Discovery: your seclusion revealed a unique and powerful secret (work it out with your DM).",
+   extra:"Herbalism kit and one language."},
+  {id:"noble", name:"Noble", skills:["history","persuasion"],
+   feature:"Position of Privilege: high society treats you as one of their own; common folk accommodate you.",
+   extra:"One type of gaming set and one language."},
+  {id:"outlander", name:"Outlander", skills:["athletics","survival"],
+   feature:"Wanderer: excellent memory for geography; you can find food and water for up to six people daily.",
+   extra:"One type of musical instrument and one language."},
+  {id:"sage", name:"Sage", skills:["arcana","history"],
+   feature:"Researcher: when you don't know a piece of lore, you usually know where to find it.",
+   extra:"Two languages of your choice."},
+  {id:"sailor", name:"Sailor", skills:["athletics","perception"],
+   feature:"Ship's Passage: secure free sea passage for you and your companions.",
+   extra:"Navigator's tools and vehicles (water)."},
+  {id:"soldier", name:"Soldier", skills:["athletics","intimidation"],
+   feature:"Military Rank: soldiers of your former organization recognize your authority.",
+   extra:"One type of gaming set and vehicles (land)."},
+  {id:"urchin", name:"Urchin", skills:["sleight","stealth"],
+   feature:"City Secrets: move through a city twice as fast as normal using back alleys and secret passages.",
+   extra:"Disguise kit and thieves' tools."}
+];
+
+const ALIGNMENTS = ["Lawful Good","Neutral Good","Chaotic Good","Lawful Neutral","True Neutral","Chaotic Neutral","Lawful Evil","Neutral Evil","Chaotic Evil"];
+const STANDARD_ARRAY = [15,14,13,12,10,8];
+const PB_COST = {8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9};
+
+/* ════════════════ HELPERS ════════════════ */
+function mod(c,a){ return Math.floor((finalScore(c,a)-10)/2); }
+function fmt(n){ return (n>=0?"+":"")+n; }
+function esc(s){ return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+function d(n){ return 1+Math.floor(Math.random()*n); }
+function byId(id){ return document.getElementById(id); }
+function raceOf(c){ return RACES.find(r=>r.id===c.race); }
+function classOf(c){ return CLASSES.find(k=>k.id===c.klass); }
+function bgOf(c){
+  if(c.background==="custom"){
+    const cb=c.customBg||{};
+    return {id:"custom", name:cb.name||"Custom Background", skills:cb.skills||[],
+      feature:cb.feature||"As written in your source book.",
+      extra:cb.extra||"Languages and tools as written in your source book."};
+  }
+  return BACKGROUNDS.find(b=>b.id===c.background);
+}
+function subsFor(classId){
+  const k=CLASSES.find(x=>x.id===classId); if(!k) return [];
+  return [{id:"srd",...k.subclass}, ...CUSTOM.subs.filter(s=>s.classId===classId)];
+}
+function subclassOf(c){
+  const list=subsFor(c.klass);
+  return list.find(s=>s.id===c.subId) || list[0] || {name:"—",level:3,desc:""};
+}
+let CUSTOM={races:[],subs:[],bgs:[]};
+function applyCustom(){
+  for(let i=RACES.length-1;i>=0;i--) if(RACES[i].custom) RACES.splice(i,1);
+  for(let i=BACKGROUNDS.length-1;i>=0;i--) if(BACKGROUNDS[i].custom) BACKGROUNDS.splice(i,1);
+  CUSTOM.races.forEach(r=>RACES.push(r));
+  CUSTOM.bgs.forEach(b=>BACKGROUNDS.push(b));
+}
+async function saveCustom(){ await storeSet("forge-custom",CUSTOM); applyCustom(); }
+
+function racialBonus(c,a){
+  const r=raceOf(c); if(!r) return 0;
+  let b=(r.bonuses[a]||0);
+  if(r.id==="halfelf" && (c.halfElfBonus||[]).includes(a)) b+=1;
+  return b;
+}
+function finalScore(c,a){ return (c.base?.[a]||10) + racialBonus(c,a); }
+
+function autoSkills(c){
+  const out=new Set();
+  const r=raceOf(c);
+  if(r?.id==="highelf") out.add("perception");
+  if(r?.id==="halforc") out.add("intimidation");
+  (c.halfElfSkills||[]).forEach(s=>out.add(s));
+  return out;
+}
+function allProfSkills(c){
+  const out=autoSkills(c);
+  (c.skills||[]).forEach(s=>out.add(s));
+  (bgOf(c)?.skills||[]).forEach(s=>out.add(s));
+  return out;
+}
+function maxHP(c){
+  const k=classOf(c); if(!k) return 0;
+  let hp=k.hitDie+mod(c,"con");
+  if(raceOf(c)?.hpPerLevel) hp+=raceOf(c).hpPerLevel;
+  if(k.hpPerLevel) hp+=k.hpPerLevel;
+  return Math.max(1,hp);
+}
+
+/* ════════════════ STORAGE ════════════════ */
+const mem={};
+async function storeGet(key){
+  try{ if(window.storage){ const r=await window.storage.get(key); return r?JSON.parse(r.value):null; } }
+  catch(e){ /* key missing or unavailable */ }
+  return mem[key]?JSON.parse(mem[key]):null;
+}
+async function storeSet(key,val){
+  const s=JSON.stringify(val); mem[key]=s;
+  try{ if(window.storage) await window.storage.set(key,s); }catch(e){}
+}
+
+/* ════════════════ STATE ════════════════ */
+let view="home", step=0, draft=null, chars=[], activeId=null, saveTimer=null;
+const STEPS=["Race","Class","Scores","Origin","Hero","Sheet"];
+
+function newDraft(){
+  return { id:"c"+Date.now(), race:null, dragonType:"Red", halfElfBonus:[], halfElfSkills:[],
+    klass:null, subId:"srd", skills:[], ablMethod:"array",
+    base:{str:10,dex:10,con:10,int:10,wis:10,cha:10},
+    arrayAssign:{str:null,dex:null,con:null,int:null,wis:null,cha:null},
+    pb:{str:8,dex:8,con:8,int:8,wis:8,cha:8},
+    rolled:[], rollAssign:{str:null,dex:null,con:null,int:null,wis:null,cha:null},
+    background:null, customBg:{name:"",skills:[],feature:"",extra:""}, name:"", player:"", alignment:"True Neutral",
+    hp:null, tempHp:0, deathS:0, deathF:0, slotsSpent:0, ac:null, inventory:null, notes:"" };
+}
+
+/* ════════════════ RENDER SHELL ════════════════ */
+function render(){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  const zig=byId("ziggurat"), cap=byId("zigCaption");
+  if(view==="home"){ zig.style.display="none"; cap.style.display="none"; byId("scr-home").classList.add("active"); renderHome(); }
+  else if(view==="wizard"){ zig.style.display="flex"; cap.style.display="block"; byId("scr-step").classList.add("active"); renderZig(step); renderStep(); }
+  else if(view==="custom"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderCustom(byId("scr-step")); }
+  else if(view==="legal"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderLegal(byId("scr-step")); }
+  else { zig.style.display="flex"; cap.style.display="block"; byId("scr-sheet").classList.add("active"); renderZig(5); renderSheet(); }
+  renderNav();
+  window.scrollTo({top:view==="home"?0:0,behavior:"instant"});
+}
+function renderZig(cur){
+  byId("ziggurat").innerHTML = STEPS.map((s,i)=>
+    `<div class="zig-step ${i<cur?"done":i===cur?"current":""}" data-i="${i}"><span>${i===cur?s:""}</span></div>`).join("");
+  byId("zigCaption").textContent = cur<5 ? `Step ${cur+1} of 5 — ${STEPS[cur]}` : "Expedition ready";
+  byId("ziggurat").querySelectorAll(".zig-step").forEach(el=>{
+    el.onclick=()=>{ const i=+el.dataset.i; if(view==="wizard" && i<step){ step=i; render(); } };
+  });
+}
+
+/* ════════════════ HOME ════════════════ */
+function renderHome(){
+  const el=byId("scr-home");
+  let list = chars.length ? chars.map(c=>{
+    const r=raceOf(c),k=classOf(c);
+    return `<button class="char-card" data-id="${c.id}">
+      <div class="cc-ini">${esc((c.name||"?").trim().charAt(0).toUpperCase()||"?")}</div>
+      <div><div class="cc-nm">${esc(c.name||"Unnamed adventurer")}</div>
+      <div class="cc-sub">${esc(r?.name||"")} ${esc(k?.name||"")} · Level 1 · ${c.hp}/${maxHP(c)} HP</div></div>
+    </button>`;}).join("")
+    : `<div class="empty">No adventurers yet. Every great campaign starts with one brave fool— er, hero.</div>`;
+  el.innerHTML = `
+    <div class="tablet">
+      <h2 style="color:var(--gold);font-size:1.15rem;margin-bottom:6px">The Expedition Ledger</h2>
+      <p style="color:var(--faded);font-size:.93rem">Build a level-1 character for any D&amp;D 5e campaign using the 2014 rules (SRD 5.1). Your finished sheet is interactive — track HP, roll checks, and manage gear right from your phone.</p>
+    </div>
+    <div style="margin:16px 0">${list}</div>
+    <button class="btn primary" style="width:100%" id="btnNew">✦ &nbsp;Forge a New Character</button>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button class="btn ghost" id="btnCustom">◈ Custom Content</button>
+      <button class="btn ghost" id="btnLegal">Legal &amp; Licensing</button>
+    </div>
+    <p class="hint" style="text-align:center;margin-top:12px">Tip: a balanced party covers healing, muscle, skills, and arcane firepower — but the best character is the one you want to play.</p>`;
+  byId("btnNew").onclick=()=>{ draft=newDraft(); step=0; view="wizard"; render(); };
+  byId("btnCustom").onclick=()=>{ view="custom"; render(); };
+  byId("btnLegal").onclick=()=>{ view="legal"; render(); };
+  el.querySelectorAll(".char-card").forEach(b=>b.onclick=()=>{ activeId=b.dataset.id; draft=chars.find(c=>c.id===activeId); view="sheet"; render(); });
+}
+
+/* ════════════════ NAV ════════════════ */
+function stepValid(){
+  const c=draft;
+  if(step===0){ if(!c.race) return "Choose a race";
+    const r=raceOf(c);
+    if(r.id==="halfelf"){ if((c.halfElfBonus||[]).length!==2) return "Pick two abilities for +1"; if((c.halfElfSkills||[]).length!==2) return "Pick two bonus skills"; }
+    return true; }
+  if(step===1){ if(!c.klass) return "Choose a class";
+    const k=classOf(c); if((c.skills||[]).length!==k.skillCount) return `Pick ${k.skillCount} skills (${(c.skills||[]).length}/${k.skillCount})`;
+    return true; }
+  if(step===2){
+    if(c.ablMethod==="array"){ const v=Object.values(c.arrayAssign); if(v.includes(null)) return "Assign every score"; if(new Set(v).size!==6) return "Each value must be used once"; }
+    if(c.ablMethod==="pb"){ if(pbSpent(c)>27) return "Over budget — remove points"; }
+    if(c.ablMethod==="roll"){ if(c.rolled.length!==6) return "Roll your scores first"; const v=Object.values(c.rollAssign); if(v.includes(null)) return "Assign every rolled score"; }
+    return true; }
+  if(step===3){ if(!c.background) return "Choose a background";
+    if(c.background==="custom"){
+      if(!(c.customBg?.name||"").trim()) return "Name your custom background";
+      if((c.customBg?.skills||[]).length!==2) return "Pick two skills for it";
+    }
+    return true; }
+  if(step===4){ return (c.name||"").trim() ? true : "Every hero needs a name"; }
+  return true;
+}
+function renderNav(){
+  const bar=byId("navbar"), inner=byId("navInner");
+  if(view==="home"){ bar.classList.remove("show"); return; }
+  bar.classList.add("show");
+  if(view==="custom"||view==="legal"){
+    inner.innerHTML=`<button class="btn ghost" id="nvHome">Back to Ledger</button>`;
+    byId("nvHome").onclick=()=>{ view="home"; render(); };
+    bar.querySelectorAll(".hint").forEach(x=>x.remove());
+    return;
+  }
+  if(view==="sheet"){
+    inner.innerHTML=`<button class="btn ghost" id="nvHome">Ledger</button><button class="btn danger" id="nvDel">Bury</button>`;
+    byId("nvHome").onclick=()=>{ view="home"; render(); };
+    byId("nvDel").onclick=async()=>{
+      if(confirm("Bury this character? This removes them from the ledger.")){
+        chars=chars.filter(c=>c.id!==draft.id); await storeSet("forge-chars",chars); view="home"; render(); }
+    };
+    return;
+  }
+  const v=stepValid();
+  inner.innerHTML=`<button class="btn ghost" id="nvBack">${step===0?"Ledger":"Back"}</button>
+    <button class="btn primary" id="nvNext" ${v===true?"":"disabled"}>${step===4?"Begin the Expedition":"Continue"}</button>`;
+  byId("nvBack").onclick=()=>{ if(step===0){ view="home"; } else step--; render(); };
+  byId("nvNext").onclick=async()=>{
+    if(stepValid()!==true) return;
+    if(step<4){ if(step===2) commitScores(); step++; render(); }
+    else { await finalizeCharacter(); }
+  };
+  bar.querySelectorAll(".hint").forEach(x=>x.remove());
+  if(v!==true){ const h=document.createElement("div"); h.className="hint warn"; h.style.textAlign="center"; h.style.marginTop="6px"; h.style.maxWidth="760px"; h.style.margin="6px auto 0"; h.textContent=v; bar.appendChild(h); }
+}
+
+/* ════════════════ STEP RENDERING ════════════════ */
+function renderStep(){
+  const el=byId("scr-step");
+  if(step===0) renderRace(el);
+  else if(step===1) renderClass(el);
+  else if(step===2) renderScores(el);
+  else if(step===3) renderBackground(el);
+  else renderDetails(el);
+}
+
+/* ── Step 0: Race ── */
+function renderRace(el){
+  const c=draft;
+  let html=`<div class="step-head"><h2>Choose Your Race</h2><p>Nine peoples of the Forgotten Realms — 2014 rules only, no 2024 species.</p></div><div class="grid two">`;
+  html+=RACES.map(r=>{
+    const bon=Object.entries(r.bonuses).map(([a,v])=>`+${v} ${ABL_NAMES[a].slice(0,3)}`).join(", ");
+    return `<button class="pick ${c.race===r.id?"selected":""}" data-r="${r.id}">
+      <div class="pk-tag">${bon}${r.id==="halfelf"?" +1/+1":""}${r.custom?" · ◈ custom":""}</div>
+      <div class="pk-name">${r.name}</div>
+      <div class="pk-desc">${r.tag}</div></button>`;
+  }).join("")+`</div>`;
+  const r=raceOf(c);
+  if(r){
+    html+=`<div class="tablet detail"><div class="pk-name" style="font-size:1.2rem">${esc(r.name)}</div>
+      <p style="color:var(--faded);margin-top:4px">${esc(r.desc)}</p>
+      <h3>Traits</h3>${r.traits.map(t=>`<div class="feat"><b>${esc(t[0])}.</b> <span>${esc(t[1])}</span></div>`).join("")}
+      <div class="feat"><b>Speed.</b> <span>${r.speed} ft.</span></div>
+      <div class="feat"><b>Languages.</b> <span>${r.langs}</span></div>`;
+    if(r.id==="dragonborn"){
+      html+=`<h3>Draconic Ancestry</h3><div class="chiplist">${DRAGON_TYPES.map(([nm,dm])=>
+        `<button class="chip ${c.dragonType===nm?"on":""}" data-dt="${nm}">${nm} · ${dm}</button>`).join("")}</div>`;
+    }
+    if(r.id==="halfelf"){
+      html+=`<h3>+1 to Two Abilities</h3><div class="chiplist">${ABILITIES.filter(a=>a!=="cha").map(a=>
+        `<button class="chip ${(c.halfElfBonus||[]).includes(a)?"on":""}" data-hb="${a}">${ABL_NAMES[a]}</button>`).join("")}</div>
+        <h3>Two Bonus Skills</h3><div class="chiplist">${SKILLS.map(s=>
+        `<button class="chip ${(c.halfElfSkills||[]).includes(s.id)?"on":""}" data-hs="${s.id}">${s.name}</button>`).join("")}</div>`;
+    }
+    html+=`</div>`;
+  }
+  el.innerHTML=html;
+  el.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{ c.race=b.dataset.r; c.halfElfBonus=[]; c.halfElfSkills=[]; render(); });
+  el.querySelectorAll("[data-dt]").forEach(b=>b.onclick=()=>{ c.dragonType=b.dataset.dt; render(); });
+  el.querySelectorAll("[data-hb]").forEach(b=>b.onclick=()=>{ toggle(c.halfElfBonus,b.dataset.hb,2); render(); });
+  el.querySelectorAll("[data-hs]").forEach(b=>b.onclick=()=>{ toggle(c.halfElfSkills,b.dataset.hs,2); render(); });
+}
+function toggle(arr,v,max){ const i=arr.indexOf(v); if(i>=0) arr.splice(i,1); else if(arr.length<max) arr.push(v); }
+
+/* ── Step 1: Class ── */
+function renderClass(el){
+  const c=draft;
+  let html=`<div class="step-head"><h2>Choose Your Class</h2><p>All twelve classes, each with its SRD archetype. Subclasses marked ✦ are active from level 1.</p></div><div class="grid two">`;
+  html+=CLASSES.map(k=>{
+    const n=subsFor(k.id).length;
+    return `<button class="pick ${c.klass===k.id?"selected":""}" data-k="${k.id}">
+    <div class="pk-tag">${k.tag}</div><div class="pk-name">${k.name}</div>
+    <div class="pk-desc">${n>1?n+" archetypes available":k.subclass.name+(k.subclass.level===1?" ✦":"")}</div></button>`;}).join("")+`</div>`;
+  const k=classOf(c);
+  if(k){
+    const auto=autoSkills(c);
+    html+=`<div class="tablet detail"><div class="pk-name" style="font-size:1.2rem">${k.name}</div>
+      <p style="color:var(--faded);margin-top:4px">${k.desc}</p>
+      <h3>Level 1 Features</h3>${k.features.map(f=>`<div class="feat"><b>${f[0]}.</b> <span>${f[1]}</span></div>`).join("")}
+      <div class="feat"><b>Hit Die.</b> <span>d${k.hitDie}</span></div>
+      <div class="feat"><b>Saving Throws.</b> <span>${k.saves.map(a=>ABL_NAMES[a]).join(", ")}</span></div>
+      <div class="feat"><b>Armor.</b> <span>${k.armor}</span></div>
+      <div class="feat"><b>Weapons.</b> <span>${k.weapons}</span></div>
+      ${subsFor(k.id).length>1?`<h3>Choose an Archetype</h3><div class="chiplist">${subsFor(k.id).map(s=>
+        `<button class="chip ${((c.subId||"srd")===s.id)?"on":""}" data-sub="${s.id}">${esc(s.name)}${s.id!=="srd"?" ◈":""}</button>`).join("")}</div>`
+      :`<h3>Archetype — ${esc(subclassOf(c).name)}</h3>`}
+      <div class="feat"><b>${esc(subclassOf(c).name)} ${subclassOf(c).level===1?"(level 1)":"(unlocks at level "+subclassOf(c).level+")"}.</b> <span>${esc(subclassOf(c).desc)}</span></div>
+      <h3>Choose ${k.skillCount} Skills <span style="color:var(--faded);text-transform:none;letter-spacing:0">(${(c.skills||[]).length}/${k.skillCount})</span></h3>
+      <div class="chiplist">${k.skillList.map(id=>{
+        const s=SKILLS.find(x=>x.id===id); const locked=auto.has(id);
+        return `<button class="chip ${locked?"locked on":""} ${(c.skills||[]).includes(id)?"on":""}" data-sk="${id}" ${locked?"disabled":""}>${s.name}${locked?" ·":""}</button>`;
+      }).join("")}</div>
+      <p class="hint">Dashed chips are already granted by your race and can't be picked again.</p></div>`;
+  }
+  el.innerHTML=html;
+  el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ if(c.klass!==b.dataset.k){ c.klass=b.dataset.k; c.skills=[]; c.subId="srd"; } render(); });
+  el.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>{ c.subId=b.dataset.sub; render(); });
+  el.querySelectorAll("[data-sk]").forEach(b=>b.onclick=()=>{ toggle(c.skills,b.dataset.sk,classOf(c).skillCount); render(); });
+}
+
+/* ── Step 2: Ability scores ── */
+function pbSpent(c){ return ABILITIES.reduce((t,a)=>t+PB_COST[c.pb[a]],0); }
+function currentBase(c,a){
+  if(c.ablMethod==="array") return c.arrayAssign[a]??10;
+  if(c.ablMethod==="pb") return c.pb[a];
+  return c.rollAssign[a]??10;
+}
+function commitScores(){
+  const c=draft; const b={};
+  ABILITIES.forEach(a=>b[a]=currentBase(c,a));
+  c.base=b;
+}
+function renderScores(el){
+  const c=draft;
+  const tabs=[["array","Standard Array"],["pb","Point Buy"],["roll","Roll 4d6"]];
+  let html=`<div class="step-head"><h2>Ability Scores</h2><p>Racial bonuses are shown in green and added automatically.</p></div>
+    <div class="method-tabs">${tabs.map(t=>`<button class="${c.ablMethod===t[0]?"on":""}" data-m="${t[0]}">${t[1]}</button>`).join("")}</div>`;
+
+  if(c.ablMethod==="pb"){
+    html+=`<div class="pb-bank">Points remaining: <b>${27-pbSpent(c)}</b> / 27</div>`;
+  }
+  if(c.ablMethod==="roll"){
+    html+=`<div class="roll-bar"><button id="btnRoll">${c.rolled.length?"Reroll All (4d6 drop lowest)":"Roll 4d6 drop lowest × 6"}</button></div>`;
+    if(c.rolled.length){
+      const used=Object.values(c.rollAssign).filter(v=>v!==null);
+      const pool=[...c.rolled]; const usedCopy=[...used];
+      html+=`<div class="roll-pool">${pool.map(v=>{
+        const i=usedCopy.indexOf(v); const isUsed=i>=0; if(isUsed) usedCopy.splice(i,1);
+        return `<div class="die-chip ${isUsed?"used":""}">${v}</div>`; }).join("")}</div>`;
+    }
+  }
+
+  html+=`<div class="abl-grid">`+ABILITIES.map(a=>{
+    const base=currentBase(c,a), bonus=racialBonus(c,a), tot=base+bonus, m=Math.floor((tot-10)/2);
+    let ctrl="";
+    if(c.ablMethod==="array"){
+      ctrl=`<select data-arr="${a}"><option value="">—</option>${STANDARD_ARRAY.map(v=>
+        `<option value="${v}" ${c.arrayAssign[a]===v?"selected":""}>${v}</option>`).join("")}</select>`;
+    } else if(c.ablMethod==="pb"){
+      ctrl=`<div class="pb-ctrl"><button data-pb="${a}" data-d="-1">−</button><button data-pb="${a}" data-d="1">+</button></div>`;
+    } else {
+      const opts=[...new Set(c.rolled)].sort((x,y)=>y-x);
+      ctrl=`<select data-roll="${a}" ${c.rolled.length?"":"disabled"}><option value="">—</option>${opts.map(v=>
+        `<option value="${v}" ${c.rollAssign[a]===v?"selected":""}>${v}</option>`).join("")}</select>`;
+    }
+    return `<div class="abl"><div class="nm">${ABL_NAMES[a].slice(0,3).toUpperCase()}</div>
+      <div class="val">${tot}</div><div class="mod">${fmt(m)}</div>
+      <div class="bonus">${bonus?`+${bonus} racial`:"&nbsp;"}</div>${ctrl}</div>`;
+  }).join("")+`</div>`;
+
+  const k=classOf(c);
+  if(k) html+=`<p class="hint" style="text-align:center;margin-top:12px">Tip for a ${k.name}: prioritize <b style="color:var(--gold)">${k.saves.map(a=>ABL_NAMES[a]).join(" and ")}</b>, and Constitution keeps everyone alive.</p>`;
+
+  el.innerHTML=html;
+  el.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{ c.ablMethod=b.dataset.m; render(); });
+  el.querySelectorAll("[data-arr]").forEach(s=>s.onchange=()=>{
+    const a=s.dataset.arr, v=s.value===""?null:+s.value;
+    if(v!==null){ for(const o of ABILITIES){ if(o!==a && c.arrayAssign[o]===v) c.arrayAssign[o]=null; } }
+    c.arrayAssign[a]=v; render();
+  });
+  el.querySelectorAll("[data-pb]").forEach(b=>b.onclick=()=>{
+    const a=b.dataset.pb, dlt=+b.dataset.d, nv=c.pb[a]+dlt;
+    if(nv<8||nv>15) return;
+    if(dlt>0 && pbSpent(c)-PB_COST[c.pb[a]]+PB_COST[nv]>27) return;
+    c.pb[a]=nv; render();
+  });
+  el.querySelectorAll("[data-roll]").forEach(s=>s.onchange=()=>{
+    const a=s.dataset.roll, v=s.value===""?null:+s.value;
+    if(v!==null){
+      const counts={}; c.rolled.forEach(x=>counts[x]=(counts[x]||0)+1);
+      ABILITIES.forEach(o=>{ if(o!==a && c.rollAssign[o]!==null) counts[c.rollAssign[o]]--; });
+      if(!counts[v]||counts[v]<=0){ // stealing from someone
+        for(const o of ABILITIES){ if(o!==a && c.rollAssign[o]===v){ c.rollAssign[o]=null; break; } }
+      }
+    }
+    c.rollAssign[a]=v; render();
+  });
+  const btn=byId("btnRoll");
+  if(btn) btn.onclick=()=>{
+    c.rolled=Array.from({length:6},()=>{ const r=[d(6),d(6),d(6),d(6)].sort((x,y)=>x-y); return r[1]+r[2]+r[3]; }).sort((x,y)=>y-x);
+    c.rollAssign={str:null,dex:null,con:null,int:null,wis:null,cha:null};
+    render();
+  };
+}
+
+/* ── Step 3: Background ── */
+function renderBackground(el){
+  const c=draft;
+  let html=`<div class="step-head"><h2>Choose Your Origin</h2><p>Backgrounds grant two skills and a story feature. Pick one, or build your own from any book you own.</p></div><div class="grid two">`;
+  html+=BACKGROUNDS.map(b=>`<button class="pick ${c.background===b.id?"selected":""}" data-b="${b.id}">
+    ${b.toa?'<div class="pk-tag">Adventure supplement</div>':b.custom?'<div class="pk-tag">◈ Custom</div>':""}
+    <div class="pk-name">${b.name}</div>
+    <div class="pk-desc">${b.skills.map(id=>SKILLS.find(s=>s.id===id).name).join(" · ")}</div></button>`).join("");
+  html+=`<button class="pick ${c.background==="custom"?"selected":""}" data-b="custom">
+    <div class="pk-tag">Homebrew</div>
+    <div class="pk-name">Custom Background</div>
+    <div class="pk-desc">Enter one from any book you own</div></button></div>`;
+  if(c.background==="custom"){
+    const cb=c.customBg;
+    html+=`<div class="tablet detail">
+      <div class="pk-name" style="font-size:1.2rem">Build Your Background</div>
+      <p class="hint" style="margin:4px 0 10px">Copy the mechanics from your own sourcebook — name, two skill proficiencies, and its feature.</p>
+      <div class="field"><label>Background name</label><input id="cbName" value="${esc(cb.name)}" placeholder="e.g. Far Traveler" autocomplete="off"></div>
+      <h3>Two Skills <span style="color:var(--faded);text-transform:none;letter-spacing:0">(${cb.skills.length}/2)</span></h3>
+      <div class="chiplist">${SKILLS.map(s=>`<button class="chip ${cb.skills.includes(s.id)?"on":""}" data-cbs="${s.id}">${s.name}</button>`).join("")}</div>
+      <div class="field" style="margin-top:12px"><label>Feature (optional)</label><textarea id="cbFeat" placeholder="What the feature does…">${esc(cb.feature)}</textarea></div>
+      <div class="field"><label>Languages &amp; tools (optional)</label><input id="cbExtra" value="${esc(cb.extra)}" placeholder="e.g. One language, one gaming set" autocomplete="off"></div>
+    </div>`;
+  }
+  const b=bgOf(c);
+  if(b && c.background!=="custom"){
+    const have=new Set([...autoSkills(c),...(c.skills||[])]);
+    const dup=b.skills.filter(s=>have.has(s));
+    html+=`<div class="tablet detail"><div class="pk-name" style="font-size:1.2rem">${b.name}</div>
+      <div class="feat" style="margin-top:8px"><b>Skills.</b> <span>${b.skills.map(id=>SKILLS.find(s=>s.id===id).name).join(", ")}</span></div>
+      <div class="feat"><b>Feature.</b> <span>${b.feature}</span></div>
+      <div class="feat"><b>Also grants.</b> <span>${b.extra}</span></div>
+      ${dup.length?`<p class="hint warn">You already have ${dup.map(id=>SKILLS.find(s=>s.id===id).name).join(" and ")} — by the 2014 rules you may pick a replacement skill of your choice at the table.</p>`:""}
+    </div>`;
+  }
+  el.innerHTML=html;
+  el.querySelectorAll("[data-b]").forEach(btn=>btn.onclick=()=>{ c.background=btn.dataset.b; render(); });
+  el.querySelectorAll("[data-cbs]").forEach(btn=>btn.onclick=()=>{ toggle(c.customBg.skills,btn.dataset.cbs,2); render(); });
+  const cbn=byId("cbName"), cbf=byId("cbFeat"), cbe=byId("cbExtra");
+  if(cbn) cbn.oninput=e=>{ c.customBg.name=e.target.value; renderNav(); };
+  if(cbf) cbf.oninput=e=>{ c.customBg.feature=e.target.value; };
+  if(cbe) cbe.oninput=e=>{ c.customBg.extra=e.target.value; };
+}
+
+/* ── Step 4: Details ── */
+function renderDetails(el){
+  const c=draft, r=raceOf(c), k=classOf(c);
+  el.innerHTML=`<div class="step-head"><h2>Name Your Hero</h2><p>${r.name} ${k.name} · ${bgOf(c).name}</p></div>
+    <div class="tablet">
+      <div class="field"><label>Character name</label><input id="fName" value="${esc(c.name)}" placeholder="e.g. Zanthi Brightblade" autocomplete="off"></div>
+      <div class="field"><label>Player name (optional)</label><input id="fPlayer" value="${esc(c.player)}" autocomplete="off"></div>
+      <div class="field"><label>Alignment</label><select id="fAlign">${ALIGNMENTS.map(a=>`<option ${c.alignment===a?"selected":""}>${a}</option>`).join("")}</select></div>
+    </div>
+    <div class="tablet" style="margin-top:12px">
+      <h3 style="color:var(--gold);font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Summary</h3>
+      <div class="feat"><b>Hit Points.</b> <span>${maxHP(c)} (d${k.hitDie} + Con)</span></div>
+      <div class="feat"><b>Armor Class.</b> <span>${k.ac(c)} — ${k.acNote}</span></div>
+      <div class="feat"><b>Proficient skills.</b> <span>${[...allProfSkills(c)].map(id=>SKILLS.find(s=>s.id===id).name).join(", ")||"—"}</span></div>
+    </div>`;
+  byId("fName").oninput=e=>{ c.name=e.target.value; renderNav(); };
+  byId("fPlayer").oninput=e=>{ c.player=e.target.value; };
+  byId("fAlign").onchange=e=>{ c.alignment=e.target.value; };
+}
+
+async function finalizeCharacter(){
+  const c=draft, k=classOf(c);
+  c.hp=maxHP(c); c.tempHp=0; c.deathS=0; c.deathF=0; c.slotsSpent=0;
+  c.ac=k.ac(c); c.inventory=[...k.equipment]; c.notes=c.notes||"";
+  const i=chars.findIndex(x=>x.id===c.id);
+  if(i>=0) chars[i]=c; else chars.push(c);
+  await storeSet("forge-chars",chars);
+  activeId=c.id; view="sheet"; render(); flashSave();
+}
+
+/* ════════════════ SHEET ════════════════ */
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    const i=chars.findIndex(x=>x.id===draft.id);
+    if(i>=0){ chars[i]=draft; await storeSet("forge-chars",chars); flashSave(); }
+  },500);
+}
+function flashSave(){ const s=byId("savebar"); s.classList.add("show"); setTimeout(()=>s.classList.remove("show"),1300); }
+
+function renderSheet(){
+  const c=draft, r=raceOf(c), k=classOf(c), b=bgOf(c);
+  const prof=allProfSkills(c), pb=2;
+  const sc=k.spellcaster;
+  const el=byId("scr-sheet");
+
+  el.innerHTML=`
+  <div class="sheet-head">
+    <h2>${esc(c.name)}</h2>
+    <div class="sh-sub">Level 1 ${esc(r.name)} ${k.name} (${esc(subclassOf(c).name)}) · ${esc(b.name)} · ${esc(c.alignment)}${c.player?` · played by ${esc(c.player)}`:""}</div>
+  </div>
+
+  <div class="statrow">
+    <div class="stat-big tap" id="editAC"><div class="lb">Armor Class</div><div class="vl">${c.ac}</div><div class="lb" style="color:var(--dim)">tap to edit</div></div>
+    <button class="stat-big tap" id="rollInit"><div class="lb">Initiative</div><div class="vl">${fmt(mod(c,"dex"))}</div><div class="lb" style="color:var(--dim)">tap to roll</div></button>
+    <div class="stat-big"><div class="lb">Speed</div><div class="vl">${r.speed}</div><div class="lb" style="color:var(--dim)">feet</div></div>
+  </div>
+
+  <div class="hp-panel">
+    <div class="hp-top"><span class="lb">Hit Points</span>
+      <span class="hp-num">${c.hp}<small> / ${maxHP(c)}${c.tempHp?` +${c.tempHp} temp`:""}</small></span></div>
+    <div class="hp-bar"><div class="hp-fill" style="width:${Math.max(0,Math.min(100,100*c.hp/maxHP(c)))}%"></div></div>
+    <div class="hp-ctrl">
+      <button class="dmg" id="hpDmg">− Damage</button>
+      <button class="heal" id="hpHeal">+ Heal</button>
+      <button class="temp" id="hpTemp">Temp HP</button>
+    </div>
+    ${c.hp===0?`<div class="death"><span>Death saves</span>
+      <span style="display:flex;gap:14px;align-items:center">
+        <span class="pips" id="dsS">${[0,1,2].map(i=>`<button class="pip s ${c.deathS>i?"on":""}" data-ds="${i}"></button>`).join("")}</span>
+        <span class="pips" id="dsF">${[0,1,2].map(i=>`<button class="pip f ${c.deathF>i?"on":""}" data-df="${i}"></button>`).join("")}</span>
+      </span></div>`:""}
+  </div>
+
+  <div class="statrow" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-big"><div class="lb">Proficiency</div><div class="vl">+${pb}</div></div>
+    <div class="stat-big"><div class="lb">Hit Die</div><div class="vl">1d${k.hitDie}</div></div>
+    <button class="stat-big tap" id="rollD20"><div class="lb">d20</div><div class="vl">🎲</div><div class="lb" style="color:var(--dim)">plain roll</div></button>
+  </div>
+
+  <div class="sheet-sec"><h3>Abilities — tap to roll a check</h3>
+    <div class="abl-grid">${ABILITIES.map(a=>`
+      <button class="abl tap" data-chk="${a}" style="cursor:pointer">
+        <div class="nm">${ABL_NAMES[a].slice(0,3).toUpperCase()}</div>
+        <div class="val">${finalScore(c,a)}</div><div class="mod">${fmt(mod(c,a))}</div>
+      </button>`).join("")}</div>
+  </div>
+
+  <div class="sheet-sec"><h3>Saving Throws — tap to roll</h3>
+    <div class="tablet" style="padding:4px 12px">${ABILITIES.map(a=>{
+      const p=k.saves.includes(a), m=mod(c,a)+(p?pb:0);
+      return `<button class="skill-row ${p?"prof":""}" data-sv="${a}"><span class="sk-nm">${ABL_NAMES[a]}</span><span class="sk-md">${fmt(m)}</span></button>`;
+    }).join("")}</div>
+  </div>
+
+  <div class="sheet-sec"><h3>Skills — tap to roll</h3>
+    <div class="tablet" style="padding:4px 12px">${SKILLS.map(s=>{
+      const p=prof.has(s.id), m=mod(c,s.abl)+(p?pb:0);
+      return `<button class="skill-row ${p?"prof":""}" data-skr="${s.id}"><span class="sk-nm">${s.name}<small>${s.abl.toUpperCase()}</small></span><span class="sk-md">${fmt(m)}</span></button>`;
+    }).join("")}</div>
+    <p class="hint" style="text-align:center;margin-top:6px">Passive Perception ${10+mod(c,"wis")+(prof.has("perception")?pb:0)}</p>
+  </div>
+
+  ${sc?`<div class="sheet-sec"><h3>Spellcasting</h3>
+    <div class="tablet">
+      <div class="feat"><b>Ability.</b> <span>${ABL_NAMES[sc.abl]} · Spell save DC ${8+pb+mod(c,sc.abl)} · Spell attack ${fmt(pb+mod(c,sc.abl))}</span></div>
+      <div class="feat"><b>Cantrips.</b> <span>${sc.cantrips} known</span></div>
+      <div class="feat"><b>Spells.</b> <span>${sc.prep}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+        <span style="font-size:.85rem;color:var(--faded)">1st-level slots — tap to spend</span>
+        <div class="slots">${Array.from({length:sc.slots},(_,i)=>`<button class="slot ${c.slotsSpent>i?"spent":""}" data-sl="${i}"></button>`).join("")}</div>
+      </div>
+    </div></div>`:""}
+
+  <div class="sheet-sec"><h3>Features &amp; Traits</h3>
+    <div class="tablet">
+      ${k.features.map(f=>`<div class="feat"><b>${f[0]}.</b> <span>${f[1]}</span></div>`).join("")}
+      <div class="feat"><b>${esc(subclassOf(c).name)}${subclassOf(c).level>1?` (level ${subclassOf(c).level})`:""}.</b> <span>${esc(subclassOf(c).desc)}</span></div>
+      ${r.traits.map(t=>`<div class="feat"><b>${t[0]}${r.id==="dragonborn"&&t[0].startsWith("Draconic")?` (${c.dragonType})`:""}.</b> <span>${t[1]}</span></div>`).join("")}
+      <div class="feat"><b>${b.name} — Feature.</b> <span>${b.feature}</span></div>
+    </div>
+  </div>
+
+  <div class="sheet-sec"><h3>Proficiencies &amp; Languages</h3>
+    <div class="tablet">
+      <div class="feat"><b>Armor.</b> <span>${k.armor}</span></div>
+      <div class="feat"><b>Weapons.</b> <span>${k.weapons}</span></div>
+      <div class="feat"><b>Languages.</b> <span>${r.langs}</span></div>
+      <div class="feat"><b>Background.</b> <span>${b.extra}</span></div>
+    </div>
+  </div>
+
+  <div class="sheet-sec"><h3>Equipment</h3>
+    <div class="tablet">
+      <ul class="inv-list">${(c.inventory||[]).map((it,i)=>`<li><span>${esc(it)}</span><button data-rm="${i}">✕</button></li>`).join("")||"<li style='color:var(--dim)'>Empty pack</li>"}</ul>
+      <div class="inv-add"><input id="invNew" placeholder="Add an item…" autocomplete="off"><button id="invAdd">Add</button></div>
+    </div>
+  </div>
+
+  <div class="sheet-sec"><h3>Notes</h3>
+    <textarea class="notes-box" id="notes" placeholder="Quests taken, debts owed, friends made along the way…">${esc(c.notes||"")}</textarea>
+  </div>`;
+
+  /* wiring */
+  byId("editAC").onclick=()=>{ const v=prompt("Armor Class ("+k.acNote+")",c.ac); const n=parseInt(v,10); if(!isNaN(n)&&n>0&&n<40){ c.ac=n; scheduleSave(); renderSheet(); } };
+  byId("rollInit").onclick=()=>rollToast("Initiative",mod(c,"dex"));
+  byId("rollD20").onclick=()=>rollToast("d20",0);
+  byId("hpDmg").onclick=()=>{ let dmg=askNum("Damage taken?"); if(dmg===null)return;
+    if(c.tempHp>0){ const t=Math.min(c.tempHp,dmg); c.tempHp-=t; dmg-=t; }
+    c.hp=Math.max(0,c.hp-dmg); if(c.hp>0){c.deathS=0;c.deathF=0;} scheduleSave(); renderSheet(); };
+  byId("hpHeal").onclick=()=>{ const h=askNum("HP healed?"); if(h===null)return;
+    if(c.hp===0){c.deathS=0;c.deathF=0;} c.hp=Math.min(maxHP(c),c.hp+h); scheduleSave(); renderSheet(); };
+  byId("hpTemp").onclick=()=>{ const t=askNum("Temporary HP? (replaces current temp)"); if(t===null)return; c.tempHp=t; scheduleSave(); renderSheet(); };
+  el.querySelectorAll("[data-ds]").forEach(p=>p.onclick=()=>{ c.deathS=(+p.dataset.ds+1===c.deathS)?+p.dataset.ds:+p.dataset.ds+1; scheduleSave(); renderSheet(); });
+  el.querySelectorAll("[data-df]").forEach(p=>p.onclick=()=>{ c.deathF=(+p.dataset.df+1===c.deathF)?+p.dataset.df:+p.dataset.df+1; scheduleSave(); renderSheet(); });
+  el.querySelectorAll("[data-chk]").forEach(x=>x.onclick=()=>rollToast(ABL_NAMES[x.dataset.chk]+" check",mod(c,x.dataset.chk)));
+  el.querySelectorAll("[data-sv]").forEach(x=>x.onclick=()=>{ const a=x.dataset.sv; rollToast(ABL_NAMES[a]+" save",mod(c,a)+(k.saves.includes(a)?pb:0)); });
+  el.querySelectorAll("[data-skr]").forEach(x=>x.onclick=()=>{ const s=SKILLS.find(q=>q.id===x.dataset.skr); rollToast(s.name,mod(c,s.abl)+(prof.has(s.id)?pb:0)); });
+  el.querySelectorAll("[data-sl]").forEach(x=>x.onclick=()=>{ const i=+x.dataset.sl; c.slotsSpent=(c.slotsSpent>i)?i:i+1; scheduleSave(); renderSheet(); });
+  el.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{ c.inventory.splice(+x.dataset.rm,1); scheduleSave(); renderSheet(); });
+  byId("invAdd").onclick=addInv;
+  byId("invNew").onkeydown=e=>{ if(e.key==="Enter") addInv(); };
+  function addInv(){ const v=byId("invNew").value.trim(); if(!v) return; c.inventory.push(v); scheduleSave(); renderSheet(); }
+  byId("notes").oninput=e=>{ c.notes=e.target.value; scheduleSave(); };
+}
+function askNum(msg){ const v=prompt(msg); if(v===null) return null; const n=parseInt(v,10); return isNaN(n)||n<0?null:n; }
+
+/* ── Dice toast ── */
+let toastTimer=null;
+function rollToast(label,m){
+  const roll=d(20), total=roll+m;
+  const t=byId("toast");
+  t.classList.remove("crit","fumble");
+  if(roll===20) t.classList.add("crit");
+  if(roll===1) t.classList.add("fumble");
+  byId("toastLb").textContent=label;
+  byId("toastVl").textContent=total;
+  byId("toastDt").textContent=`d20 (${roll}) ${m>=0?"+ "+m:"− "+Math.abs(m)}${roll===20?" · natural 20!":roll===1?" · natural 1…":""}`;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove("show"),2200);
+}
+
+/* ════════════════ CUSTOM CONTENT LIBRARY ════════════════ */
+let cf={ race:blankRace(), sub:{classId:"barbarian",name:"",level:3,desc:""}, bg:{name:"",skills:[],feature:"",extra:""} };
+function blankRace(){ return {name:"",bonusStr:"",speed:30,darkvision:false,langs:"Common",desc:"",traitsTxt:""}; }
+
+function renderCustom(el){
+  const usedRace=id=>chars.some(c=>c.race===id);
+  const usedSub=id=>chars.some(c=>c.subId===id);
+  const usedBg=id=>chars.some(c=>c.background===id);
+
+  const raceList=CUSTOM.races.length?CUSTOM.races.map(r=>`<li><span>${esc(r.name)}</span><button data-delrace="${r.id}">✕</button></li>`).join(""):"<li style='color:var(--dim)'>None yet</li>";
+  const subList=CUSTOM.subs.length?CUSTOM.subs.map(s=>{const k=CLASSES.find(x=>x.id===s.classId);return `<li><span>${esc(s.name)} <small style="color:var(--dim)">(${k?k.name:"?"})</small></span><button data-delsub="${s.id}">✕</button></li>`;}).join(""):"<li style='color:var(--dim)'>None yet</li>";
+  const bgList=CUSTOM.bgs.length?CUSTOM.bgs.map(b=>`<li><span>${esc(b.name)}</span><button data-delbg="${b.id}">✕</button></li>`).join(""):"<li style='color:var(--dim)'>None yet</li>";
+
+  el.innerHTML=`
+  <div class="step-head"><h2>Custom Content</h2><p>Add races, archetypes, and backgrounds from your own sourcebooks or homebrew. They're saved on this device and appear in the wizard alongside the built-in SRD options.</p></div>
+
+  <div class="tablet" style="margin-bottom:14px">
+    <h3 style="color:var(--gold);font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Archetypes / Subclasses</h3>
+    <ul class="inv-list" style="margin-bottom:12px">${subList}</ul>
+    <div class="field"><label>Class</label><select id="csClass">${CLASSES.map(k=>`<option value="${k.id}" ${cf.sub.classId===k.id?"selected":""}>${k.name}</option>`).join("")}</select></div>
+    <div class="field"><label>Archetype name</label><input id="csName" value="${esc(cf.sub.name)}" placeholder="e.g. Gloom Stalker" autocomplete="off"></div>
+    <div class="field"><label>Unlocks at level</label><select id="csLvl">${[1,2,3].map(l=>`<option ${cf.sub.level===l?"selected":""}>${l}</option>`).join("")}</select></div>
+    <div class="field"><label>Summary (in your own words)</label><textarea id="csDesc" placeholder="One or two sentences on what it does — the full rules live in your book.">${esc(cf.sub.desc)}</textarea></div>
+    <button class="btn primary" style="width:100%" id="csAdd">Add Archetype</button>
+  </div>
+
+  <div class="tablet" style="margin-bottom:14px">
+    <h3 style="color:var(--gold);font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Backgrounds</h3>
+    <ul class="inv-list" style="margin-bottom:12px">${bgList}</ul>
+    <div class="field"><label>Background name</label><input id="cgName" value="${esc(cf.bg.name)}" placeholder="e.g. Far Traveler" autocomplete="off"></div>
+    <div class="field"><label>Two skill proficiencies (${cf.bg.skills.length}/2)</label>
+      <div class="chiplist">${SKILLS.map(s=>`<button class="chip ${cf.bg.skills.includes(s.id)?"on":""}" data-cgs="${s.id}">${s.name}</button>`).join("")}</div></div>
+    <div class="field"><label>Feature (optional, your own words)</label><textarea id="cgFeat" placeholder="What the story feature does…">${esc(cf.bg.feature)}</textarea></div>
+    <div class="field"><label>Languages &amp; tools (optional)</label><input id="cgExtra" value="${esc(cf.bg.extra)}" placeholder="e.g. One language, one gaming set" autocomplete="off"></div>
+    <button class="btn primary" style="width:100%" id="cgAdd">Add Background</button>
+  </div>
+
+  <div class="tablet">
+    <h3 style="color:var(--gold);font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Races</h3>
+    <ul class="inv-list" style="margin-bottom:12px">${raceList}</ul>
+    <div class="field"><label>Race name</label><input id="crName" value="${esc(cf.race.name)}" placeholder="e.g. Tabaxi" autocomplete="off"></div>
+    <div class="field"><label>Ability bonuses</label><input id="crBon" value="${esc(cf.race.bonusStr)}" placeholder="e.g. dex+2, cha+1" autocomplete="off">
+      <p class="hint">Comma-separated: str, dex, con, int, wis, cha with +1/+2.</p></div>
+    <div style="display:flex;gap:10px">
+      <div class="field" style="flex:1"><label>Speed (ft)</label><input id="crSpeed" type="number" value="${cf.race.speed}" min="10" max="50" step="5"></div>
+      <div class="field" style="flex:1"><label>Darkvision</label><select id="crDark"><option value="no" ${cf.race.darkvision?"":"selected"}>No</option><option value="yes" ${cf.race.darkvision?"selected":""}>Yes (60 ft)</option></select></div>
+    </div>
+    <div class="field"><label>Languages</label><input id="crLangs" value="${esc(cf.race.langs)}" autocomplete="off"></div>
+    <div class="field"><label>Description (optional, your own words)</label><textarea id="crDesc" placeholder="A sentence of flavor…">${esc(cf.race.desc)}</textarea></div>
+    <div class="field"><label>Traits — one per line, "Name: summary"</label><textarea id="crTraits" placeholder="Feline Agility: double your speed until you stop moving; recharge by standing still&#10;Cat's Claws: climbing speed 20 ft; claws deal 1d4 slashing">${esc(cf.race.traitsTxt)}</textarea></div>
+    <button class="btn primary" style="width:100%" id="crAdd">Add Race</button>
+  </div>
+
+  <p class="hint" style="text-align:center;margin-top:14px">Enter summaries in your own words for personal reference at your table — the full rules text stays in the books you own.</p>`;
+
+  /* wiring — keep form state on every input */
+  byId("csClass").onchange=e=>cf.sub.classId=e.target.value;
+  byId("csName").oninput=e=>cf.sub.name=e.target.value;
+  byId("csLvl").onchange=e=>cf.sub.level=+e.target.value;
+  byId("csDesc").oninput=e=>cf.sub.desc=e.target.value;
+  byId("csAdd").onclick=async()=>{
+    if(!cf.sub.name.trim()) return alert("Give the archetype a name.");
+    CUSTOM.subs.push({id:"sub"+Date.now(),classId:cf.sub.classId,name:cf.sub.name.trim(),level:cf.sub.level,desc:cf.sub.desc.trim()||"See your sourcebook for details."});
+    cf.sub={classId:cf.sub.classId,name:"",level:3,desc:""};
+    await saveCustom(); renderCustom(el); flashSave();
+  };
+
+  el.querySelectorAll("[data-cgs]").forEach(b=>b.onclick=()=>{ toggle(cf.bg.skills,b.dataset.cgs,2); renderCustom(el); });
+  byId("cgName").oninput=e=>cf.bg.name=e.target.value;
+  byId("cgFeat").oninput=e=>cf.bg.feature=e.target.value;
+  byId("cgExtra").oninput=e=>cf.bg.extra=e.target.value;
+  byId("cgAdd").onclick=async()=>{
+    if(!cf.bg.name.trim()) return alert("Give the background a name.");
+    if(cf.bg.skills.length!==2) return alert("Pick exactly two skills.");
+    CUSTOM.bgs.push({id:"bg"+Date.now(),custom:true,name:cf.bg.name.trim(),skills:[...cf.bg.skills],
+      feature:cf.bg.feature.trim()||"As written in your sourcebook.",extra:cf.bg.extra.trim()||"As written in your sourcebook."});
+    cf.bg={name:"",skills:[],feature:"",extra:""};
+    await saveCustom(); renderCustom(el); flashSave();
+  };
+
+  byId("crName").oninput=e=>cf.race.name=e.target.value;
+  byId("crBon").oninput=e=>cf.race.bonusStr=e.target.value;
+  byId("crSpeed").oninput=e=>cf.race.speed=+e.target.value||30;
+  byId("crDark").onchange=e=>cf.race.darkvision=e.target.value==="yes";
+  byId("crLangs").oninput=e=>cf.race.langs=e.target.value;
+  byId("crDesc").oninput=e=>cf.race.desc=e.target.value;
+  byId("crTraits").oninput=e=>cf.race.traitsTxt=e.target.value;
+  byId("crAdd").onclick=async()=>{
+    if(!cf.race.name.trim()) return alert("Give the race a name.");
+    const bonuses={};
+    cf.race.bonusStr.split(",").map(p=>p.trim()).filter(Boolean).forEach(p=>{
+      const m=p.toLowerCase().match(/^(str|dex|con|int|wis|cha)\s*\+?\s*(\d)$/);
+      if(m) bonuses[m[1]]=+m[2];
+    });
+    const traits=cf.race.traitsTxt.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{
+      const i=l.indexOf(":"); return i>0?[l.slice(0,i).trim(),l.slice(i+1).trim()]:[l,""];
+    });
+    if(cf.race.darkvision) traits.unshift(["Darkvision","See in dim light within 60 feet as if it were bright light."]);
+    CUSTOM.races.push({id:"race"+Date.now(),custom:true,name:cf.race.name.trim(),tag:"Custom race",
+      bonuses,speed:cf.race.speed,darkvision:cf.race.darkvision,
+      desc:cf.race.desc.trim()||"A custom race from your library.",traits,langs:cf.race.langs.trim()||"Common"});
+    cf.race=blankRace();
+    await saveCustom(); renderCustom(el); flashSave();
+  };
+
+  el.querySelectorAll("[data-delrace]").forEach(b=>b.onclick=async()=>{
+    const id=b.dataset.delrace;
+    if(usedRace(id)) return alert("A saved character uses this race. Bury them first.");
+    CUSTOM.races=CUSTOM.races.filter(r=>r.id!==id); await saveCustom(); renderCustom(el);
+  });
+  el.querySelectorAll("[data-delsub]").forEach(b=>b.onclick=async()=>{
+    const id=b.dataset.delsub;
+    if(usedSub(id)) return alert("A saved character uses this archetype. Bury them first.");
+    CUSTOM.subs=CUSTOM.subs.filter(s=>s.id!==id); await saveCustom(); renderCustom(el);
+  });
+  el.querySelectorAll("[data-delbg]").forEach(b=>b.onclick=async()=>{
+    const id=b.dataset.delbg;
+    if(usedBg(id)) return alert("A saved character uses this background. Bury them first.");
+    CUSTOM.bgs=CUSTOM.bgs.filter(x=>x.id!==id); await saveCustom(); renderCustom(el);
+  });
+}
+
+/* ════════════════ LEGAL & LICENSING ════════════════ */
+function renderLegal(el){
+  el.innerHTML=`
+  <div class="step-head"><h2>Legal &amp; Licensing</h2><p>What this tool contains, and on what terms.</p></div>
+  <div class="tablet" style="line-height:1.7;font-size:.95rem">
+    <h3 style="color:var(--gold);font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;margin:4px 0 8px">Licensed game content</h3>
+    <p style="color:var(--faded)">This work includes material taken from the <b style="color:var(--parchment)">System Reference Document 5.1 ("SRD 5.1")</b> by Wizards of the Coast LLC, available at dnd.wizards.com. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License (creativecommons.org/licenses/by/4.0/legalcode). All built-in races, classes, archetypes, and rules text derive from the SRD 5.1 or are original paraphrases. No content from the 2024 ruleset is included.</p>
+    <h3 style="color:var(--gold);font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 8px">Trademarks</h3>
+    <p style="color:var(--faded)">Dungeons &amp; Dragons, D&amp;D, and their respective logos are trademarks of Wizards of the Coast LLC. This is an unofficial fan-made tool, not affiliated with, endorsed, or sponsored by Wizards of the Coast.</p>
+    <h3 style="color:var(--gold);font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 8px">Your custom content</h3>
+    <p style="color:var(--faded)">Content you enter in the Custom Content library is stored on your device and is your responsibility. Enter summaries in your own words for personal reference; do not use this tool to redistribute copyrighted rules text.</p>
+    <h3 style="color:var(--gold);font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 8px">Personal use &amp; no warranty</h3>
+    <p style="color:var(--faded)">This tool is provided as-is for personal, non-commercial use at your own table, with no warranty of any kind. Rules summaries are abbreviated for play convenience — when in doubt, the printed rules and your DM are the authority.</p>
+  </div>`;
+}
+
+/* ════════════════ BOOT ════════════════ */
+(async function(){
+  const saved=(await storeGet("forge-chars")) || (await storeGet("toa-chars"));
+  if(Array.isArray(saved)) chars=saved;
+  const cust=await storeGet("forge-custom");
+  if(cust && typeof cust==="object") CUSTOM={races:cust.races||[],subs:cust.subs||[],bgs:cust.bgs||[]};
+  applyCustom();
+  render();
+})();
+
+</script>
+</body>
+</html>
