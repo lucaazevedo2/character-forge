@@ -11,3 +11,18 @@ Open `index.html` in a browser. No build step is required.
 ## Public use
 
 Open https://lucas-character-forge.lucaazevedo.chatgpt.site/
+
+The version maintained in this repository is published at
+https://lucaazevedo2.github.io/character-forge/.
+
+## Design and assets
+
+Responsive layouts support phones, tablets, and desktop screens. The artwork,
+Inter and Cormorant Garamond fonts, and selected Lucide icons are embedded in the
+HTML. Font and icon licenses are preserved in `licenses/`.
+
+Landscape photograph: https://images.unsplash.com/photo-1464822759023-fed622ff2c3b
+
+Characters and custom content are saved in the current browser's local storage
+when the ChatGPT storage API is unavailable. Data stays specific to that browser
+and site address; it does not sync through GitHub.
