@@ -7,3 +7,7 @@ The site is a self-contained static app served from `index.html`. Changes pushed
 ## Local use
 
 Open `index.html` in a browser. No build step is required.
+
+## Public use
+
+Open https://lucas-character-forge.lucaazevedo.chatgpt.site/
