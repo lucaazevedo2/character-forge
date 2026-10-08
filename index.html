@@ -249,7 +249,7 @@ body.sheet-view .nav-inner{max-width:1752px}
 .sheet-head{position:relative;padding-right:68px!important;text-align:left!important;margin-bottom:18px!important}
 .sheet-head h2{font-size:30px!important;margin-bottom:6px}
 .sheet-head .sh-sub{font-size:14px;line-height:1.6}
-.sheet-gear{position:absolute;right:0;top:0;width:48px;height:48px;font-size:26px!important;border:1px solid var(--gold-dim)!important;border-radius:10px!important}
+.sheet-gear{position:absolute;right:0;top:0;display:grid;place-items:center;width:48px;height:48px;padding:0!important;box-sizing:border-box;line-height:1;border:1px solid var(--gold-dim)!important;border-radius:10px!important}.sheet-gear svg{width:24px;height:24px;display:block;pointer-events:none}.sheet-gear:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .sheet-grid{display:grid;grid-template-columns:290px minmax(0,1fr) 310px;gap:18px;align-items:start}
 .sheet-left,.sheet-main,.sheet-right{min-width:0}
 .sheet-left .sheet-sec,.sheet-right .sheet-sec{margin:0 0 16px}
@@ -1854,7 +1854,7 @@ function showSheetSettings(c){const m=JSON.parse(JSON.stringify(manual(c))),box=
 const desktopTab=new Map(),spellClassTab=new Map();
 const longSheetRenderer=renderSheet;
 renderSheet=function(){longSheetRenderer();const c=draft,el=byId('scr-sheet');document.body.classList.add('sheet-view');
- const head=el.querySelector('.sheet-head'),gear=document.createElement('button');gear.id='sheetGear';gear.className='btn ghost sheet-gear';gear.title='Sheet settings';gear.setAttribute('aria-label','Open sheet settings');gear.textContent='⚙';gear.onclick=()=>showSheetSettings(c);head.append(gear);
+ const head=el.querySelector('.sheet-head'),gear=document.createElement('button');gear.id='sheetGear';gear.className='btn ghost sheet-gear';gear.title='Sheet settings';gear.setAttribute('aria-label','Open sheet settings');gear.type='button';gear.innerHTML='<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /> <circle cx="12" cy="12" r="3" /> </svg>';gear.onclick=()=>showSheetSettings(c);head.append(gear);
  if(c.multiclass?.length)head.querySelector('.sh-sub').textContent='Level '+totalLevel(c)+' · '+classContexts(c).map(x=>classOf(x).name+' '+x.level).join(' / ')+' · '+raceOf(c).name;
  const abilities=el.querySelector('[data-chk]')?.closest('.sheet-sec'),saves=el.querySelector('[data-sv]')?.closest('.sheet-sec'),skills=el.querySelector('[data-skr]')?.closest('.sheet-sec');
  el.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>sheetRoll(ABL_NAMES[b.dataset.chk]+' check',mod(c,b.dataset.chk)+(manual(c).jack?Math.floor(proficiency(c)/2):0)));
