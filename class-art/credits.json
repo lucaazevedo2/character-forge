@@ -1,0 +1,106 @@
+{
+  "artificer": {
+    "src": "class-art/artificer.jpg",
+    "credit": "Alex Chen",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/YKBYeq",
+    "pinterest": "https://www.pinterest.com/pin/556053885252276476/",
+    "title": "The Artificer - Personal Character, Alex Chen"
+  },
+  "sorcerer": {
+    "src": "class-art/sorcerer.jpg",
+    "credit": "Kurolines",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/Oyd4dJ",
+    "pinterest": "https://www.pinterest.com/pin/99853316732372506/",
+    "title": "Blackflame sorcerer , Kurolines"
+  },
+  "rogue": {
+    "src": "class-art/rogue.jpg",
+    "credit": "Tamás Patkós",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/P6X3lo",
+    "pinterest": "https://www.pinterest.com/pin/586242076565857397/",
+    "title": "Thief, Tamás Patkós"
+  },
+  "warlock": {
+    "src": "class-art/warlock.jpg",
+    "credit": "Kian Reglos",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/1xxzxL",
+    "pinterest": "https://www.pinterest.com/pin/295408056841887858/",
+    "title": "Changeling / Warlock, Kian Reglos"
+  },
+  "barbarian": {
+    "src": "class-art/barbarian.jpg",
+    "credit": "Oleg Matsokin",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/BeXrD",
+    "pinterest": "https://www.pinterest.com/pin/64950419613333173/",
+    "title": "Barbarian"
+  },
+  "bard": {
+    "src": "class-art/bard.jpg",
+    "credit": "Gautier Foucart (model) / Je Choi (concept)",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/eRqwZJ",
+    "pinterest": "https://www.pinterest.com/pin/321655598412977769/",
+    "title": "Bard"
+  },
+  "cleric": {
+    "src": "class-art/cleric.jpg",
+    "credit": "David Koo",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/GanR5N",
+    "pinterest": "https://www.pinterest.com/pin/818881144752678549/",
+    "title": "Lucius Dejarin the Cleric, David Koo"
+  },
+  "monk": {
+    "src": "class-art/monk.jpg",
+    "credit": "Fabián Rivera",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/xYYyyY",
+    "pinterest": "https://www.pinterest.com/pin/1128433250375210525/",
+    "title": "Monk"
+  },
+  "druid": {
+    "src": "class-art/druid.jpg",
+    "credit": "Joel Pigou",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/xQyXY",
+    "pinterest": "https://www.pinterest.com/pin/529102656225931309/",
+    "title": "Circle of Spores, Joel Pigou"
+  },
+  "ranger": {
+    "src": "class-art/ranger.jpg",
+    "credit": "Masha Kuravcova",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/8eAQG6",
+    "pinterest": "https://www.pinterest.com/pin/139541288449180857/",
+    "title": "Ranger, Masha Kuravcova"
+  },
+  "fighter": {
+    "src": "class-art/fighter.jpg",
+    "credit": "Brian Valeza",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/4PAAq",
+    "pinterest": "https://www.pinterest.com/pin/144959681750031820/",
+    "title": "Fighter"
+  },
+  "wizard": {
+    "src": "class-art/wizard.jpg",
+    "credit": "Diana Bakieva",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/1xG6Lo",
+    "pinterest": "https://www.pinterest.com/pin/1688918606449232/",
+    "title": "Divination wizard | D&amp;D character commission"
+  },
+  "paladin": {
+    "src": "class-art/paladin.jpg",
+    "credit": "Muel Kim",
+    "creditKind": "Art",
+    "source": "https://www.artstation.com/artwork/gJoBnm",
+    "pinterest": "https://www.pinterest.com/pin/302022718760505836/",
+    "title": "Knight , Muel Kim"
+  }
+}
