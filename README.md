@@ -10,9 +10,9 @@ Open `index.html` in a browser. No build step is required.
 
 ## Public use
 
-The most stable version is maintained here: https://lucas-character-forge.lucaazevedo.chatgpt.site/
+The latest version (could have experimental features) is maintained here: https://lucas-character-forge.lucaazevedo.chatgpt.site/
 
-The version maintained in this repository is still in development and can be accessed at:
+The most stable version maintained in this repository can be accessed at:
 https://lucaazevedo2.github.io/character-forge/.
 
 ## Design and assets
