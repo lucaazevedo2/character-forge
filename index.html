@@ -386,6 +386,33 @@ header.masthead{gap:16px;flex-wrap:wrap}.masthead h1{display:flex;align-items:ce
 .subclass-rules-popover table{width:100%;border-collapse:collapse;margin:12px 0}
 .subclass-rules-popover caption{text-align:left;padding:8px 0;font-weight:bold}
 .subclass-rules-popover th,.subclass-rules-popover td{padding:8px;border-bottom:1px solid var(--stone-hi);text-align:left;vertical-align:top}
+
+.character-identity{display:flex;align-items:center;gap:20px;min-width:0}
+.character-identity-text{min-width:0;overflow-wrap:anywhere}
+.character-avatar{flex:0 0 112px;text-align:center}
+.character-avatar-picture{display:flex;align-items:center;justify-content:center;width:96px;height:96px;margin:0 auto;overflow:hidden;border:1px solid var(--stone-hi);border-radius:18px;background:var(--panel2);color:var(--gold);font-size:38px;cursor:pointer;padding:0}
+.character-avatar-picture img{width:100%;height:100%;object-fit:cover;display:block}
+.character-avatar-picture:hover,.character-avatar-picture:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.character-avatar-controls{display:flex;justify-content:center;gap:4px;margin-top:8px;flex-wrap:wrap}
+.character-avatar-controls .btn{font-size:11px;min-height:30px;padding:4px 7px;white-space:nowrap}
+.avatar-status{display:block;font-size:12px;color:var(--faded);line-height:1.4;margin-top:4px;overflow-wrap:anywhere}
+.character-avatar input[hidden]{display:none}
+@media(max-width:520px){.character-identity{align-items:flex-start;gap:12px}.character-avatar{flex-basis:80px}.character-avatar-picture{width:72px;height:72px;border-radius:14px}.character-identity-text h2{font-size:24px!important}.character-avatar-controls{flex-direction:column}.character-avatar-controls .btn{padding:4px}.sheet-head{padding-right:48px!important}}
+@media print{.character-avatar-controls,.avatar-status{display:none}.character-avatar-picture{border:0}}
+.char-card .cc-ini{overflow:hidden}
+.char-card .ledger-avatar{display:block;width:100%;height:100%;object-fit:cover}
+
+.ledger-card{position:relative;min-width:0}
+.ledger-card .char-card{height:100%;padding-right:64px}
+.favorite-star{position:absolute;right:14px;top:14px;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--faded);font-size:26px;line-height:1;cursor:pointer}
+.favorite-star:hover,.favorite-star.is-favorite{color:var(--gold);background:#b4a7ff18}
+.favorite-star:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.ledger-group{margin:0 0 24px}
+.ledger-group>h3{font-size:15px;color:var(--gold);margin:0 0 12px}
+.ledger-group>h3 span{font-size:12px;color:var(--faded);margin-left:5px}
+/* Center the settings icon independently of font metrics and shared button padding. */
+#sheetGear{display:grid;place-items:center;padding:0!important;box-sizing:border-box;line-height:1;font-size:0!important;min-width:48px;min-height:48px}
+#sheetGear svg{display:block;width:24px;height:24px;pointer-events:none;flex:none}
 </style>
 </head>
 <body>
@@ -864,14 +891,16 @@ function renderZig(cur){
 /* ════════════════ HOME ════════════════ */
 function renderHome(){
   const el=byId("scr-home");
-  let list = chars.length ? chars.map(c=>{
+  const characterCardHTML=c=>{
     const r=raceOf(c),k=classOf(c);
-    return `<button class="char-card" data-id="${c.id}">
-      <div class="cc-ini">${esc((c.name||"?").trim().charAt(0).toUpperCase()||"?")}</div>
+    return `<div class="ledger-card"><button class="char-card" data-id="${esc(c.id)}">
+      <div class="cc-ini">${validCharacterAvatar(c.avatar)?`<img class="ledger-avatar" src="${esc(c.avatar)}" alt="${esc(c.name||'Character')} avatar" width="50" height="50">`:esc((c.name||"?").trim().charAt(0).toUpperCase()||"?")}</div>
       <div><div class="cc-nm">${esc(c.name||"Unnamed adventurer")}</div>
       <div class="cc-sub">${esc(r?.name||"")} ${esc(k?.name||"")} · Level ${c.level||1} · ${c.hp}/${maxHP(c)} HP</div></div>
-    </button>`;}).join("")
-    : `<div class="empty">No adventurers yet. Every great campaign starts with one brave fool— er, hero.</div>`;
+    </button><button type="button" class="favorite-star ${c.favorite===true?'is-favorite':''}" data-favorite="${esc(c.id)}" aria-pressed="${c.favorite===true}" aria-label="${c.favorite===true?'Unfavorite':'Favorite'} ${esc(c.name||'Unnamed adventurer')}" title="${c.favorite===true?'Remove from favorites':'Add to favorites'}"><span aria-hidden="true">${c.favorite===true?'★':'☆'}</span></button></div>`;};
+  const favorites=chars.filter(c=>c.favorite===true),others=chars.filter(c=>c.favorite!==true);
+  const grid=items=>`<div class="character-library">${items.map(characterCardHTML).join('')}</div>`;
+  const list=favorites.length?`<section class="ledger-group" aria-labelledby="favoritesTitle"><h3 id="favoritesTitle">Favorites <span>${favorites.length}</span></h3>${grid(favorites)}</section>${others.length?`<section class="ledger-group" aria-labelledby="otherCharactersTitle"><h3 id="otherCharactersTitle">Other characters</h3>${grid(others)}</section>`:''}`:grid(chars);
   el.innerHTML = `
     <div class="home-hero">
       <div class="home-eyebrow">Your next adventure starts here</div>
@@ -880,12 +909,13 @@ function renderHome(){
       <div class="home-actions"><button class="btn primary" id="btnNew">＋ Create character</button><button class="btn ghost" id="btnCustom">Custom content</button></div>
     </div>
     <div class="library-heading"><h2>Your characters</h2><span>${chars.length} ${chars.length===1?'adventurer':'adventurers'}</span></div>
-    <div class="character-library">${chars.length?list:`<div class="library-empty"><div class="empty-symbol" aria-hidden="true">✦</div><b>Your party starts with you.</b><p>Create your first character to begin your collection.</p></div>`}</div>
+    ${chars.length?list:`<div class="library-empty"><div class="empty-symbol" aria-hidden="true">✦</div><b>Your party starts with you.</b><p>Create your first character to begin your collection.</p></div>`}
     <div class="home-utility"><button class="btn ghost" id="btnLegal">Rules &amp; licensing</button></div>`;
   byId("btnNew").onclick=()=>{ editingCreation=false; editSnapshot=null; draft=newDraft(); step=0; view="wizard"; render(); };
   byId("btnCustom").onclick=()=>{ view="custom"; render(); };
   byId("btnLegal").onclick=()=>{ view="legal"; render(); };
   el.querySelectorAll(".char-card").forEach(b=>b.onclick=()=>{ activeId=b.dataset.id; draft=chars.find(c=>c.id===activeId); view="sheet"; render(); });
+  el.querySelectorAll('[data-favorite]').forEach(button=>button.onclick=()=>{const c=chars.find(x=>x.id===button.dataset.favorite);if(!c)return;c.favorite=c.favorite!==true;storeSet('forge-chars',chars);render();[...byId('scr-home').querySelectorAll('[data-favorite]')].find(b=>b.dataset.favorite===c.id)?.focus({preventScroll:true})});
 }
 
 function beginCreationEdit(){
@@ -1911,7 +1941,7 @@ function showSheetSettings(c){const m=JSON.parse(JSON.stringify(manual(c))),box=
 const desktopTab=new Map(),spellClassTab=new Map();
 const longSheetRenderer=renderSheet;
 renderSheet=function(){longSheetRenderer();const c=draft,el=byId('scr-sheet');document.body.classList.add('sheet-view');
- const head=el.querySelector('.sheet-head'),gear=document.createElement('button');gear.id='sheetGear';gear.className='btn ghost sheet-gear';gear.title='Sheet settings';gear.setAttribute('aria-label','Open sheet settings');gear.textContent='⚙';gear.onclick=()=>showSheetSettings(c);head.append(gear);
+ const head=el.querySelector('.sheet-head'),gear=document.createElement('button');gear.id='sheetGear';gear.className='btn ghost sheet-gear';gear.title='Sheet settings';gear.setAttribute('aria-label','Open sheet settings');gear.type='button';gear.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M18.929,9.130 L21.781,9.921 L21.781,14.079 L18.929,14.870 L18.929,14.870 L20.387,17.446 L17.446,20.387 L14.870,18.929 L14.870,18.929 L14.079,21.781 L9.921,21.781 L9.130,18.929 L9.130,18.929 L6.554,20.387 L3.613,17.446 L5.071,14.870 L5.071,14.870 L2.219,14.079 L2.219,9.921 L5.071,9.130 L5.071,9.130 L3.613,6.554 L6.554,3.613 L9.130,5.071 L9.130,5.071 L9.921,2.219 L14.079,2.219 L14.870,5.071 L14.870,5.071 L17.446,3.613 L20.387,6.554 L18.929,9.130 Z M15.25 12 A3.25 3.25 0 1 1 8.75 12 A3.25 3.25 0 1 1 15.25 12 Z"/></svg>';gear.onclick=()=>showSheetSettings(c);head.append(gear);
  if(c.multiclass?.length)head.querySelector('.sh-sub').textContent='Level '+totalLevel(c)+' · '+classContexts(c).map(x=>classOf(x).name+' '+x.level).join(' / ')+' · '+raceOf(c).name;
  const abilities=el.querySelector('[data-chk]')?.closest('.sheet-sec'),saves=el.querySelector('[data-sv]')?.closest('.sheet-sec'),skills=el.querySelector('[data-skr]')?.closest('.sheet-sec');
  el.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>sheetRoll(ABL_NAMES[b.dataset.chk]+' check',mod(c,b.dataset.chk)+(manual(c).jack?Math.floor(proficiency(c)/2):0)));
@@ -3089,6 +3119,49 @@ document.addEventListener('click',e=>{
  if(!e.target.closest('.subclass-rules-popover'))document.querySelectorAll('[data-rules-toggle][aria-expanded="true"]').forEach(closeSubclassRulesHelp);
 });
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const open=document.querySelector('[data-rules-toggle][aria-expanded="true"]');if(open){e.preventDefault();e.stopImmediatePropagation();closeSubclassRulesHelp(open);open.focus()}},true);
+
+/* Avatars are compressed browser-local character data and travel with JSON backups. */
+const characterAvatarUploads=new WeakMap();
+function validCharacterAvatar(value){return typeof value==='string'&&value.length<=700000&&/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+=*$/.test(value)}
+async function prepareCharacterAvatar(file){
+ if(!file||!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type))throw Error('Choose a JPG, PNG, WebP or GIF image. Convert HEIC images to JPG first.');
+ if(!file.size||file.size>10*1024*1024)throw Error('Choose an image smaller than 10 MB.');
+ const url=URL.createObjectURL(file);
+ try{
+  const image=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('This image could not be opened. Try a different image.'));img.src=url});
+  if(!image.naturalWidth||!image.naturalHeight||image.naturalWidth*image.naturalHeight>40000000)throw Error('Choose an image with fewer than 40 million pixels.');
+  const scale=Math.min(1,512/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+  const context=canvas.getContext('2d');if(!context)throw Error('Your browser could not prepare this image.');
+  context.drawImage(image,0,0,canvas.width,canvas.height);
+  let data=canvas.toDataURL('image/webp',0.85);
+  if(!validCharacterAvatar(data)){context.fillStyle='#ffffff';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);data=canvas.toDataURL('image/jpeg',0.8)}
+  if(!validCharacterAvatar(data))throw Error('This image could not be resized. Try a smaller image.');
+  return data;
+ }finally{URL.revokeObjectURL(url)}
+}
+function renderCharacterAvatar(c,head){
+ if(!head||head.querySelector('.character-identity'))return;
+ const identity=document.createElement('div');identity.className='character-identity';
+ const avatar=document.createElement('div');avatar.className='character-avatar';
+ const hasAvatar=validCharacterAvatar(c.avatar);
+ avatar.innerHTML=`<button type="button" class="character-avatar-picture" aria-label="${hasAvatar?'Replace':'Upload'} character avatar">${hasAvatar?`<img src="${esc(c.avatar)}" alt="${esc(c.name||'Character')} avatar" width="96" height="96">`:'<span aria-hidden="true">'+esc((c.name||'?').trim().slice(0,1).toUpperCase()||'?')+'</span>'}</button><div class="character-avatar-controls"><button type="button" class="btn ghost" data-avatar-upload>${hasAvatar?'Change':'Add avatar'}</button>${hasAvatar?'<button type="button" class="btn ghost" data-avatar-remove>Remove</button>':''}</div><input type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Choose character avatar image" hidden><span class="avatar-status" role="status" aria-live="polite"></span>`;
+ const heading=document.createElement('div');heading.className='character-identity-text';
+ for(const child of [...head.children])if(child.matches('h2,.sh-sub'))heading.append(child);
+ identity.append(avatar,heading);head.prepend(identity);
+ const input=avatar.querySelector('input'),upload=avatar.querySelector('[data-avatar-upload]'),picture=avatar.querySelector('.character-avatar-picture'),status=avatar.querySelector('.avatar-status');
+ const choose=()=>input.click();upload.onclick=choose;picture.onclick=choose;
+ input.onchange=async()=>{
+  const file=input.files?.[0];if(!file)return;
+  const request={};characterAvatarUploads.set(c,request);status.textContent='Preparing avatar…';upload.disabled=true;picture.disabled=true;
+  try{const data=await prepareCharacterAvatar(file);if(characterAvatarUploads.get(c)!==request)return;c.avatar=data;if(draft===c)scheduleSave();else{const index=chars.findIndex(x=>x.id===c.id);if(index>=0){chars[index]=c;await storeSet('forge-chars',chars)}}if(draft===c&&view==='sheet')renderSheet()}
+  catch(error){if(characterAvatarUploads.get(c)===request)status.textContent=error.message||'Could not upload this image.'}
+  finally{input.value='';upload.disabled=false;picture.disabled=false}
+ };
+ const remove=avatar.querySelector('[data-avatar-remove]');if(remove)remove.onclick=()=>{characterAvatarUploads.delete(c);delete c.avatar;scheduleSave();renderSheet()};
+}
+const sheetBeforeCharacterAvatar=renderSheet;
+renderSheet=function(){sheetBeforeCharacterAvatar();renderCharacterAvatar(draft,byId('scr-sheet')?.querySelector('.sheet-head'))};
 
 /* ════════════════ BOOT ════════════════ */
 /* Official printable sheet with paginated reference appendices. */
