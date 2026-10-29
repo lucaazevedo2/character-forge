@@ -452,6 +452,12 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 .site-navigation button[aria-current=page]{color:var(--gold);background:#b4a7ff18;border-color:var(--stone-hi)}
 @media(max-width:960px){header.masthead{align-items:flex-start;gap:10px}.site-navigation{width:100%;justify-content:flex-start}.site-navigation button{flex:1;text-align:center;padding:10px 8px}}
 @media(max-width:520px){.site-navigation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.forge-home-link{gap:10px;min-height:52px}.site-navigation button{font-size:12px}.masthead h1{max-width:100%}}
+.home-support{margin:32px 0 8px;padding-top:22px;border-top:1px solid var(--stone);text-align:center}
+.home-support p{margin:0 0 10px;font-size:12px;color:var(--faded)}
+.home-support a{display:inline-block;max-width:100%;border-radius:8px;line-height:0}
+.home-support img{display:block;width:145px;height:40px;max-width:100%;object-fit:contain}
+.home-support a:hover{filter:brightness(1.06)}
+.home-support a:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
 </style>
 </head>
 <body>
@@ -3269,6 +3275,10 @@ document.querySelectorAll('[data-site-view]').forEach(button=>button.onclick=()=
 const renderBeforeSiteNavigation=render;
 render=function(){renderBeforeSiteNavigation();document.querySelectorAll('[data-site-view]').forEach(button=>{if(button.dataset.siteView===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current')})};
 
+
+/* Small home-only support link using the supplied Buy Me a Coffee artwork. */
+const homeBeforeSupportLink=renderHome;
+renderHome=function(){homeBeforeSupportLink();byId('scr-home').insertAdjacentHTML('beforeend',`<div class="home-support"><p>Support me</p><a href="https://www.buymeacoffee.com/lucaazevedo" target="_blank" rel="noopener noreferrer" aria-label="Support Luca on Buy Me a Coffee (opens in a new tab)"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" width="145" height="40" loading="lazy"></a></div>`)};
 
 /* ════════════════ BOOT ════════════════ */
 /* Official printable sheet with paginated reference appendices. */

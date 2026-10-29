@@ -1,28 +1,43 @@
 # Character Forge
 
-A browser-based D&D 5e (2014) character creator.
+A browser-based D&D 5e (2014) character creator, interactive character sheet, and spell explorer.
 
-The site is a self-contained static app served from `index.html`. Changes pushed to `main` are deployed automatically with GitHub Pages.
+## Live versions
 
-## Local use
+| Version | Address | Purpose |
+| --- | --- | --- |
+| **Stable** | [characterforge5e.com](https://characterforge5e.com/) | Recommended for regular use. Hosted on Cloudflare Pages. |
+| **Beta — GitHub Pages** | [lucaazevedo2.github.io/character-forge](https://lucaazevedo2.github.io/character-forge/) | Experimental features and testing. |
+| **Beta — ChatGPT Sites** | [lucas-character-forge.lucaazevedo.chatgpt.site](https://lucas-character-forge.lucaazevedo.chatgpt.site/) | Experimental features and testing. |
 
-Open `index.html` in a browser. No build step is required.
+The beta sites may change more frequently and may contain unfinished features or bugs. The stable site is updated separately after changes have been reviewed and tested. A GitHub push does not automatically release changes to the stable Cloudflare site.
 
-## Public use
+## Local development
 
-The latest version (could have experimental features) is maintained here: https://lucas-character-forge.lucaazevedo.chatgpt.site/
+This is a static application with no build step. The entry point is `index.html`; keep the accompanying asset directories beside it.
 
-The most stable version maintained in this repository can be accessed at:
-https://lucaazevedo2.github.io/character-forge/.
+Run a local web server from the repository root:
 
-## Design and assets
+```sh
+python -m http.server 8000
+```
 
-Responsive layouts support phones, tablets, and desktop screens. The artwork,
-Inter and Cormorant Garamond fonts, and selected Lucide icons are embedded in the
-HTML. Font and icon licenses are preserved in `licenses/`.
+Then open <http://localhost:8000/>. A local server supports features such as printable PDF export that fetch files from the asset directories.
 
-Landscape photograph: https://images.unsplash.com/photo-1464822759023-fed622ff2c3b
+Changes pushed to `main` publish to the GitHub Pages **beta** site. ChatGPT Sites beta and the stable Cloudflare deployment are published separately.
 
-Characters and custom content are saved in the current browser's local storage
-when the ChatGPT storage API is unavailable. Data stays specific to that browser
-and site address; it does not sync through GitHub.
+## Character storage and backups
+
+Characters, avatars, favorites, and custom content are saved in your browser. They do not automatically sync across devices or between the stable and beta addresses.
+
+To move a character between versions, use **Export as JSON** on its character sheet, then **Import a character backup** on the destination site's home page. Import custom content used by that character first. Keep JSON backups before testing beta changes.
+
+## Design, assets, and rules
+
+Responsive layouts support phones, tablets, and desktop screens. Images, fonts, PDF assets, and license files are included in the repository's asset directories. Artwork credits and source links are shown in the app; supporting provenance is in `docs/`. Font, icon, and other license notices are preserved in `licenses/`.
+
+Core game content uses the D&D SRD 5.1 (2014 rules) under CC BY 4.0. Supplemental rules link to Wikidot. Character Forge is an unofficial fan tool and does not use the 2024 rules.
+
+## Support
+
+[Buy Luca a coffee](https://buymeacoffee.com/lucaazevedo) to support ongoing development.
