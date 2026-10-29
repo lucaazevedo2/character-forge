@@ -413,14 +413,58 @@ header.masthead{gap:16px;flex-wrap:wrap}.masthead h1{display:flex;align-items:ce
 /* Center the settings icon independently of font metrics and shared button padding. */
 #sheetGear{display:grid;place-items:center;padding:0!important;box-sizing:border-box;line-height:1;font-size:0!important;min-width:48px;min-height:48px}
 #sheetGear svg{display:block;width:24px;height:24px;pointer-events:none;flex:none}
+
+.explorer-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:28px 0}.explorer-heading h2{font-size:36px;margin:8px 0}.explorer-heading p{color:var(--faded)}
+.explorer-filters{margin-bottom:24px}.explorer-search{display:block;font-weight:600}.explorer-search input{margin-top:8px}.explorer-filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:18px}.explorer-filter-grid label{display:grid;gap:6px;font-size:13px}.explorer-filter-grid select{width:100%;min-width:0}.explorer-filter-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0}.explorer-check{display:flex;align-items:center;gap:8px}.explorer-check input{width:18px;min-height:18px;accent-color:var(--gold)}
+.explorer-results-bar{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--faded);font-size:13px;margin:18px 0}.explorer-levels{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 28px}.explorer-levels button{border:1px solid var(--stone-hi);border-radius:8px;background:var(--panel);color:var(--faded);padding:10px 12px;cursor:pointer}.explorer-levels button[aria-pressed=true]{background:#b4a7ff25;color:var(--gold);border-color:var(--gold)}.explorer-levels small{opacity:.65;margin-left:5px}
+.explorer-level{margin-bottom:30px}.explorer-level h3{font-size:22px;margin-bottom:12px;color:var(--gold)}.explorer-level h3 span{font-size:12px;color:var(--faded);margin-left:10px}.explorer-table-wrap{overflow-x:auto;border:1px solid var(--stone);border-radius:12px}.explorer-table{width:100%;border-collapse:collapse;min-width:780px;font-size:13px}.explorer-table th,.explorer-table td{text-align:left;vertical-align:top;padding:13px 14px;border-bottom:1px solid var(--stone)}.explorer-table thead{background:var(--panel2);color:var(--faded);font-size:11px;text-transform:uppercase;letter-spacing:.04em}.explorer-table tbody>tr:nth-child(4n+1){background:var(--panel)}.explorer-table th[scope=row]{min-width:190px;font-weight:normal}.explorer-spell-name{border:0;padding:0;background:none;color:var(--parchment);font:inherit;font-weight:600;text-align:left;cursor:pointer}.explorer-spell-name:hover{color:var(--gold)}.explorer-spell-name span{color:var(--gold);margin-left:6px}.explorer-mini-tags,.explorer-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.explorer-mini-tags span{font-size:10px;color:var(--gold)}.explorer-tag{font-size:11px;padding:5px 8px;border:1px solid var(--stone-hi);border-radius:6px;color:var(--gold);background:var(--panel2)}button.explorer-tag{cursor:pointer}.explorer-description{max-width:850px;padding:8px 4px 14px;line-height:1.65}.explorer-description p{margin:12px 0}.explorer-description h4{margin-top:18px}.explorer-table tr[hidden]{display:none!important}
+@media(max-width:800px){.explorer-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.explorer-heading{align-items:flex-start;flex-direction:column}.explorer-results-bar{align-items:flex-start;flex-direction:column}.explorer-heading h2{font-size:30px}}
+@media(max-width:420px){.explorer-filter-grid{grid-template-columns:1fr}.explorer-filter-footer{align-items:flex-start;flex-direction:column}}
+
+/* Spell reference layout: consistent controls and a readable rules block. */
+.spell-explorer .explorer-search{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:0;font-size:13px;font-weight:600}
+.spell-explorer .explorer-search input{display:block;width:100%;min-width:0;box-sizing:border-box;margin:0;height:44px;padding:10px 12px}
+.spell-explorer .explorer-filter-grid{gap:16px;align-items:end;margin-top:20px}
+.spell-explorer .explorer-filter-grid label{margin:0;gap:8px;font-weight:600}
+.spell-explorer .explorer-filter-grid select{display:block;width:100%;min-width:0;box-sizing:border-box;height:44px;margin:0;padding:10px 12px;font-weight:400}
+.spell-explorer .explorer-filter-footer{justify-content:flex-end;margin:20px 0 12px}
+.spell-explorer .explorer-description{width:min(740px,calc(100vw - 96px));max-width:100%;box-sizing:border-box;padding:20px 10px 24px;line-height:1.7;color:var(--parchment)}
+.explorer-description .explorer-spell-heading h4{margin:0 0 4px;font-size:24px;line-height:1.25;color:var(--gold)}
+.explorer-description .explorer-spell-type{margin:0 0 10px;font-style:italic;color:var(--faded)}
+.explorer-description .explorer-spell-source{margin:0 0 20px;font-size:12px;color:var(--faded)}
+.explorer-description .explorer-spell-stats{display:grid;gap:3px;margin:0 0 22px}
+.explorer-spell-stats>div{display:flex;align-items:baseline;gap:6px}
+.explorer-spell-stats dt{font-weight:700;flex-shrink:0}
+.explorer-spell-stats dd{margin:0}
+.explorer-description .explorer-spell-body p{margin:0 0 16px;max-width:72ch}
+.explorer-description .explorer-spell-lists{border-top:1px solid var(--stone);padding-top:14px;margin-top:24px;font-size:13px;color:var(--faded)}
+.explorer-description .explorer-spell-lists p{margin:0 0 8px}
+.explorer-spell-lists b{color:var(--parchment)}
+
+header.masthead{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0 20px!important}
+.masthead h1{margin:0;flex:0 0 auto}
+.forge-home-link{display:flex;align-items:center;gap:14px;min-height:56px;padding:6px 8px;border-radius:10px;text-decoration:none;color:inherit;box-sizing:border-box}
+.forge-home-link:hover{background:var(--panel2)}
+.forge-home-link:focus-visible,.site-navigation button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.site-navigation{display:flex;align-items:center;justify-content:flex-end;gap:5px;flex-wrap:wrap}
+.site-navigation button{display:block;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--faded);padding:11px 12px;min-height:44px;font:inherit;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer}
+.site-navigation button:hover{background:var(--panel2);color:var(--parchment)}
+.site-navigation button[aria-current=page]{color:var(--gold);background:#b4a7ff18;border-color:var(--stone-hi)}
+@media(max-width:960px){header.masthead{align-items:flex-start;gap:10px}.site-navigation{width:100%;justify-content:flex-start}.site-navigation button{flex:1;text-align:center;padding:10px 8px}}
+@media(max-width:520px){.site-navigation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.forge-home-link{gap:10px;min-height:52px}.site-navigation button{font-size:12px}.masthead h1{max-width:100%}}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="masthead">
     <div class="glyphs">▲ ◆ ▲ ◆ ▲</div>
-    <h1><img class="forge-brand-icon" src="assets/brand/anvil.svg" alt="" aria-hidden="true"><span class="forge-wordmark">Character <strong>Forge</strong></span></h1>
-    <div class="sub">A D&amp;D 5e character builder — 2014 rules edition</div>
+    <h1><a class="forge-home-link" href="#home" aria-label="Character Forge home"><img class="forge-brand-icon" src="assets/brand/anvil.svg" alt="" aria-hidden="true"><span class="forge-wordmark">Character <strong>Forge</strong></span></a></h1>
+    <nav class="site-navigation" aria-label="Main navigation">
+      <button type="button" data-site-view="home" id="siteHome">Home</button>
+      <button type="button" data-site-view="explorer" id="openSpellExplorer">Spell Explorer</button>
+      <button type="button" data-site-view="custom" id="btnCustom">Custom Content</button>
+      <button type="button" data-site-view="legal" id="btnLegal">Rules &amp; Licensing</button>
+    </nav>
     <div class="rule">✦</div>
   </header>
 
@@ -873,6 +917,7 @@ function render(){
   if(view==="home"){ zig.style.display="none"; cap.style.display="none"; byId("scr-home").classList.add("active"); renderHome(); }
   else if(view==="wizard"){ zig.style.display="flex"; cap.style.display="block"; byId("scr-step").classList.add("active"); renderZig(step); renderStep(); }
   else if(view==="custom"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderCustom(byId("scr-step")); }
+  else if(view==="explorer"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderSpellExplorer(byId("scr-step")); }
   else if(view==="legal"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderLegal(byId("scr-step")); }
   else { zig.style.display="flex"; cap.style.display="block"; byId("scr-sheet").classList.add("active"); renderZig(5); renderSheet(); }
   renderNav();
@@ -906,14 +951,12 @@ function renderHome(){
       <div class="home-eyebrow">Your next adventure starts here</div>
       <h2>A character worth<br>telling stories about.</h2>
       <p>Bring your next hero to life. Build with the 2014 rules, make it your own, and keep everything you need at the table in one place.</p>
-      <div class="home-actions"><button class="btn primary" id="btnNew">＋ Create character</button><button class="btn ghost" id="btnCustom">Custom content</button></div>
+      <div class="home-actions"><button class="btn primary" id="btnNew">＋ Create character</button></div>
     </div>
     <div class="library-heading"><h2>Your characters</h2><span>${chars.length} ${chars.length===1?'adventurer':'adventurers'}</span></div>
     ${chars.length?list:`<div class="library-empty"><div class="empty-symbol" aria-hidden="true">✦</div><b>Your party starts with you.</b><p>Create your first character to begin your collection.</p></div>`}
-    <div class="home-utility"><button class="btn ghost" id="btnLegal">Rules &amp; licensing</button></div>`;
+    `;
   byId("btnNew").onclick=()=>{ editingCreation=false; editSnapshot=null; draft=newDraft(); step=0; view="wizard"; render(); };
-  byId("btnCustom").onclick=()=>{ view="custom"; render(); };
-  byId("btnLegal").onclick=()=>{ view="legal"; render(); };
   el.querySelectorAll(".char-card").forEach(b=>b.onclick=()=>{ activeId=b.dataset.id; draft=chars.find(c=>c.id===activeId); view="sheet"; render(); });
   el.querySelectorAll('[data-favorite]').forEach(button=>button.onclick=()=>{const c=chars.find(x=>x.id===button.dataset.favorite);if(!c)return;c.favorite=c.favorite!==true;storeSet('forge-chars',chars);render();[...byId('scr-home').querySelectorAll('[data-favorite]')].find(b=>b.dataset.favorite===c.id)?.focus({preventScroll:true})});
 }
@@ -956,7 +999,7 @@ function renderNav(){
   const bar=byId("navbar"), inner=byId("navInner");
   if(view==="home"){ bar.classList.remove("show"); return; }
   bar.classList.add("show");
-  if(view==="custom"||view==="legal"){
+  if(view==="custom"||view==="legal"||view==="explorer"){
     inner.innerHTML=`<button class="btn ghost" id="nvHome">Back to Ledger</button>`;
     byId("nvHome").onclick=()=>{ view="home"; render(); };
     bar.querySelectorAll(".hint").forEach(x=>x.remove());
@@ -3162,6 +3205,70 @@ function renderCharacterAvatar(c,head){
 }
 const sheetBeforeCharacterAvatar=renderSheet;
 renderSheet=function(){sheetBeforeCharacterAvatar();renderCharacterAvatar(draft,byId('scr-sheet')?.querySelector('.sheet-head'))};
+
+/* Standalone reference browser. It never changes character spell selections. */
+const spellExplorerState={search:'',level:'all',klass:'',subclass:'',school:'',time:'',concentration:'',ritual:'',component:'',scope:'available',open:new Set()};
+function explorerCatalog(){return [...new Map(allSpells().map(s=>[s.index,s])).values()].filter(s=>!s.ua&&Number.isInteger(s.level)&&s.level>=0&&s.level<=9).sort((a,b)=>a.level-b.level||a.name.localeCompare(b.name))}
+function explorerSubclasses(){const rows=[];for(const k of CLASSES)for(const sub of subsFor(k.id)){const key=sub.id==='srd'?subclassKey({klass:k.id,subId:'srd'}):sub.id;if(!rows.some(x=>x.key===key))rows.push({key,klass:k.id,name:sub.name})}return rows}
+function explorerGrants(s){return SPELL_GRANTS.filter(g=>g.spell===s.index)}
+function explorerSpecialAccess(s,key){
+ if(['fighter:eldritch-knight','rogue:arcane-trickster'].includes(key))return s.level<=4&&classMember(s,'wizard');
+ if(key==='sorcerer:divine-soul')return classMember(s,'cleric');
+ const extras={'warlock:celestial':['light','sacred-flame'],'cleric:light':['light'],'cleric:grave':['spare-the-dying'],'druid:stars':['guidance','guiding-bolt']};
+ return (extras[key]||[]).includes(s.index);
+}
+function explorerMatches(s,ignoreLevel=false){
+ const f=spellExplorerState;if(s.ua)return false;
+ if(!ignoreLevel&&f.level!=='all'&&s.level!==Number(f.level))return false;
+ if(f.school&&s.school?.index!==f.school)return false;
+ if(f.concentration&&Boolean(s.concentration)!==(f.concentration==='yes'))return false;
+ if(f.ritual&&Boolean(s.ritual)!==(f.ritual==='yes'))return false;
+ if(f.component&&!(s.components||[]).includes(f.component))return false;
+ const time=(s.casting_time||'').toLowerCase(),kind=time.includes('bonus')?'bonus':time.includes('reaction')?'reaction':/^(1 |one )?action$/.test(time.trim())?'action':'longer';
+ if(f.time&&f.time!==kind)return false;
+ if(f.subclass){const grants=explorerGrants(s).some(g=>g.subclass===f.subclass)||explorerSpecialAccess(s,f.subclass);if(f.scope==='subclass'?!grants:!grants&&!classMember(s,f.klass))return false}
+ else if(f.klass&&!classMember(s,f.klass))return false;
+ const query=f.search.trim().toLowerCase();
+ if(query){const subs=explorerSubclasses(),tags=explorerGrants(s).map(g=>subs.find(x=>x.key===g.subclass)?.name||g.subclass);const text=[s.name,s.school?.name,s.range,s.casting_time,...(s.classes||[]).map(x=>x.name||x.index),...tags].join(' ').toLowerCase();if(!query.split(/\s+/).every(word=>text.includes(word)))return false}
+ return true;
+}
+function explorerClassTags(s){return [...new Set((s.classes||[]).map(x=>x.index))].map(id=>`<button type="button" class="explorer-tag" data-explore-class="${esc(id)}" title="Filter by ${esc(CLASSES.find(k=>k.id===id)?.name||id)}">${esc(CLASSES.find(k=>k.id===id)?.name||id)}</button>`).join('')}
+function explorerSpellDetails(s){
+ const subs=explorerSubclasses(),grants=explorerGrants(s),names=[...new Set(grants.map(g=>g.subclass))];
+ const ordinal=n=>n===1?'1st':n===2?'2nd':n===3?'3rd':n+'th';
+ const school=s.school?.name||'Unknown school';
+ const type=s.level===0?school+' cantrip':ordinal(s.level)+'-level '+school.toLowerCase();
+ const classes=[...new Set((s.classes||[]).map(x=>CLASSES.find(k=>k.id===x.index)?.name||x.name||x.index))].join(', ');
+ const duration=(s.concentration&&!/concentration/i.test(s.duration||'')?'Concentration, up to ':'')+(s.duration||'—');
+ const components=(s.components||[]).join(', ')+(s.material?' ('+s.material+')':'');
+ const stats=[['Casting Time',s.casting_time||'—'],['Range',s.range||'—'],['Components',components||'—'],['Duration',duration]];
+ return `<article class="explorer-description" aria-label="${esc(s.name)} spell description"><header class="explorer-spell-heading"><h4>${esc(s.name)}</h4><p class="explorer-spell-type">${esc(type)}${s.ritual?' (ritual)':''}</p><p class="explorer-spell-source"><b>Source:</b> ${sourceLink(s.source||'https://dnd5e.wikidot.com/spell:'+s.index)}</p></header><dl class="explorer-spell-stats">${stats.map(([label,value])=>`<div><dt>${label}:</dt><dd>${esc(value)}</dd></div>`).join('')}</dl><div class="explorer-spell-body">${(s.desc||[]).map(p=>`<p>${esc(p)}</p>`).join('')}${s.higher_level?.length?`<p><b>At Higher Levels.</b> ${esc(s.higher_level.join(' '))}</p>`:''}${s.supplemental||!s.desc?.length?'<p class="hint">Open the rules source above for the full spell description.</p>':''}</div><footer class="explorer-spell-lists">${classes?`<p><b>Spell Lists.</b> ${esc(classes)}</p>`:''}${names.length?`<p><b>Subclass Spell Lists.</b> ${names.map(key=>{const sub=subs.find(x=>x.key===key),gs=grants.filter(g=>g.subclass===key),variants=[...new Set(gs.map(g=>g.variant).filter(Boolean))];return esc(sub?.name||key)+(gs.some(g=>g.mode==='expanded')?' (expanded list)':'')+(variants.length?' — '+esc(variants.join(', ')):'')}).join('; ')}</p>`:''}</footer></article>`;
+}
+function explorerSubclassOptions(){const f=spellExplorerState;return '<option value="">'+(f.klass?'Base class list':'No subclass filter')+'</option>'+explorerSubclasses().filter(s=>!f.klass||s.klass===f.klass).map(s=>`<option value="${esc(s.key)}" ${f.subclass===s.key?'selected':''}>${esc(CLASSES.find(k=>k.id===s.klass)?.name||s.klass)} · ${esc(s.name)}</option>`).join('')}
+function renderExplorerResults(el){
+ const f=spellExplorerState,all=explorerCatalog(),base=all.filter(s=>explorerMatches(s,true)),visible=base.filter(s=>f.level==='all'||s.level===Number(f.level));
+ el.querySelector('[data-explorer-count]').textContent=`${visible.length} of ${all.length} spells`;
+ el.querySelector('[data-explorer-levels]').innerHTML=`<button type="button" data-explore-level="all" aria-pressed="${f.level==='all'}">All levels <small>${base.length}</small></button>${Array.from({length:10},(_,lv)=>`<button type="button" data-explore-level="${lv}" aria-pressed="${f.level===String(lv)}">${lv===0?'Cantrips':'Level '+lv} <small>${base.filter(s=>s.level===lv).length}</small></button>`).join('')}`;
+ const groups=[];for(let lv=0;lv<=9;lv++){const rows=visible.filter(s=>s.level===lv);if(!rows.length)continue;groups.push(`<section class="explorer-level"><h3>${lv===0?'Cantrips':'Level '+lv} <span>${rows.length} spells</span></h3><div class="explorer-table-wrap"><table class="explorer-table"><thead><tr><th scope="col">Spell name</th><th scope="col">School</th><th scope="col">Casting time</th><th scope="col">Range</th><th scope="col">Duration</th><th scope="col">Components</th></tr></thead><tbody>${rows.map(s=>{const open=f.open.has(s.index),granted=f.subclass&&(explorerGrants(s).some(g=>g.subclass===f.subclass)||explorerSpecialAccess(s,f.subclass)),expanded=granted&&explorerGrants(s).some(g=>g.subclass===f.subclass&&g.mode==='expanded');return `<tr><th scope="row"><button type="button" class="explorer-spell-name" data-explore-open="${esc(s.index)}" aria-expanded="${open}" aria-controls="explorer-detail-${esc(s.index)}">${esc(s.name)} <span aria-hidden="true">${open?'−':'+'}</span></button><div class="explorer-mini-tags">${s.ritual?'<span>Ritual</span>':''}${s.concentration?'<span>Concentration</span>':''}${granted?`<span>${expanded?'Expanded list':'Subclass grant'}</span>`:''}</div></th><td>${esc(s.school?.name||'—')}</td><td>${esc(s.casting_time||'—')}</td><td>${esc(s.range||'—')}</td><td>${s.concentration?'Concentration, ':''}${esc(s.duration||'—')}</td><td>${esc((s.components||[]).join(', ')||'—')}</td></tr><tr id="explorer-detail-${esc(s.index)}" ${open?'':'hidden'}><td colspan="6">${open?explorerSpellDetails(s):''}</td></tr>`}).join('')}</tbody></table></div></section>`)}
+ el.querySelector('[data-explorer-results]').innerHTML=groups.join('')||'<div class="library-empty"><h3>No spells match these filters</h3><p>Try another search, select All levels, or reset the filters.</p></div>';
+}
+function renderSpellExplorer(el){
+ const f=spellExplorerState,select=(key,label,options)=>`<label>${label}<select data-explore-filter="${key}"><option value="">Any</option>${options.map(([v,n])=>`<option value="${esc(v)}" ${f[key]===v?'selected':''}>${esc(n)}</option>`).join('')}</select></label>`;
+ el.innerHTML=`<section class="spell-explorer"><header class="explorer-heading"><div><p class="home-eyebrow">2014 rules reference</p><h2>Spell Explorer</h2><p>Browse the entire spell catalog, from cantrips to 9th level.</p></div><a class="source" href="https://dnd5e.wikidot.com/spells" target="_blank" rel="noopener">Wikidot spell index ↗</a></header><div class="explorer-filters tablet"><label class="explorer-search">Search spells<input type="search" data-explore-search value="${esc(f.search)}" placeholder="Spell name, school, class or subclass" autocomplete="off"></label><div class="explorer-filter-grid">${select('klass','Class',CLASSES.map(k=>[k.id,k.name]))}<label>Subclass<select data-explore-filter="subclass">${explorerSubclassOptions()}</select></label>${select('school','School',[...new Map(explorerCatalog().filter(s=>s.school?.index).map(s=>[s.school.index,s.school.name])).entries()].sort((a,b)=>a[1].localeCompare(b[1])))}${select('time','Casting time',[['action','Action'],['bonus','Bonus action'],['reaction','Reaction'],['longer','Longer casting time']])}${select('concentration','Concentration',[['yes','Required'],['no','Not required']])}${select('ritual','Ritual',[['yes','Ritual spells'],['no','Non-ritual spells']])}${select('component','Component',[['V','Verbal'],['S','Somatic'],['M','Material']])}<label>Subclass filter<select data-explore-filter="scope" ${f.subclass?'':'disabled'}><option value="available" ${f.scope==='available'?'selected':''}>Class list + subclass options</option><option value="subclass" ${f.scope==='subclass'?'selected':''}>Subclass grants only</option></select></label></div><div class="explorer-filter-footer"><button type="button" class="btn ghost" data-explore-reset>Reset filters</button></div><p class="hint">Subclass lists include recorded grants and variants. Expanded lists add choices, not automatically known spells. Features such as Magical Secrets may allow additional choices; follow their individual restrictions.</p></div><div class="explorer-results-bar"><p role="status" aria-live="polite" data-explorer-count></p><span>Sorted by spell level, then name</span></div><nav class="explorer-levels" aria-label="Spell levels" data-explorer-levels></nav><div data-explorer-results></div></section>`;
+ el.querySelector('[data-explore-filter="scope"]').disabled=!f.subclass;
+ const update=()=>renderExplorerResults(el),sync=()=>{el.querySelector('[data-explore-filter="scope"]').disabled=!f.subclass;el.querySelector('[data-explore-filter="klass"]').value=f.klass;el.querySelector('[data-explore-filter="subclass"]').innerHTML=explorerSubclassOptions()};
+ el.querySelector('[data-explore-search]').oninput=e=>{f.search=e.target.value;update()};
+ el.querySelectorAll('[data-explore-filter]').forEach(input=>input.onchange=()=>{const key=input.dataset.exploreFilter;f[key]=input.value;if(key==='klass'){f.subclass='';sync()}if(key==='subclass'&&f.subclass){f.klass=explorerSubclasses().find(s=>s.key===f.subclass)?.klass||'';sync()}update()});
+ el.onclick=e=>{const level=e.target.closest('[data-explore-level]'),open=e.target.closest('[data-explore-open]'),klass=e.target.closest('[data-explore-class]'),sub=e.target.closest('[data-explore-sub]');if(e.target.closest('[data-explore-reset]')){Object.assign(f,{search:'',level:'all',klass:'',subclass:'',school:'',time:'',concentration:'',ritual:'',component:'',scope:'available'});f.open.clear();renderSpellExplorer(el)}else if(level){f.level=level.dataset.exploreLevel;update()}else if(open){const id=open.dataset.exploreOpen,panel=document.getElementById('explorer-detail-'+id),s=explorerCatalog().find(s=>s.index===id),show=!f.open.has(id);show?f.open.add(id):f.open.delete(id);open.setAttribute('aria-expanded',String(show));open.querySelector('span').textContent=show?'−':'+';panel.hidden=!show;panel.querySelector('td').innerHTML=show?explorerSpellDetails(s):''}else if(klass){f.klass=klass.dataset.exploreClass;f.subclass='';sync();update()}else if(sub){f.subclass=sub.dataset.exploreSub;f.klass=explorerSubclasses().find(x=>x.key===f.subclass)?.klass||'';sync();update()}};
+ update();
+}
+/* The persistent header is shared across the ledger, builder and references. */
+function navigateSite(next){view=next;render()}
+document.querySelector('.forge-home-link').onclick=e=>{e.preventDefault();navigateSite('home')};
+document.querySelectorAll('[data-site-view]').forEach(button=>button.onclick=()=>navigateSite(button.dataset.siteView));
+const renderBeforeSiteNavigation=render;
+render=function(){renderBeforeSiteNavigation();document.querySelectorAll('[data-site-view]').forEach(button=>{if(button.dataset.siteView===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current')})};
+
 
 /* ════════════════ BOOT ════════════════ */
 /* Official printable sheet with paginated reference appendices. */
