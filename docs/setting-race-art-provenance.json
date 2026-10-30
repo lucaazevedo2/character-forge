@@ -1,0 +1,163 @@
+{
+  "note": "Existing official illustrations restored after the later portrait pass cleared their mappings. Unidentified individual artists are credited to the publisher rather than guessed.",
+  "astralElf": {
+    "image": "https://www.dndbeyond.com/attachments/9/982/astral-elf.jpg",
+    "source": "https://www.dndbeyond.com/posts/1291-sneak-peek-play-as-the-immortal-astral-elf-from"
+  },
+  "existingIllustrations": {
+    "Aetherborn": {
+      "src": "race-previews/aetherborn.webp",
+      "credit": "Tidy Conclusion by Bastien L. Deharme",
+      "source": "https://5e.tools/races.html#aetherborn_psk"
+    },
+    "Autognome": {
+      "src": "race-previews/autognome.webp",
+      "credit": "Nikki Dawes",
+      "source": "https://5e.tools/races.html#autognome_aag"
+    },
+    "Aven": {
+      "src": "race-previews/aven.webp",
+      "credit": "Raoul Vitale",
+      "source": "https://5e.tools/races.html#aven_psa"
+    },
+    "Boggart": {
+      "src": "race-previews/boggart.webp",
+      "credit": "Ioannis Fiore",
+      "source": "https://5e.tools/races.html#boggart_lfl"
+    },
+    "Dhampir": {
+      "src": "race-previews/dhampir.webp",
+      "credit": "Helge C. Balzer",
+      "source": "https://5e.tools/races.html#dhampir_rhw"
+    },
+    "Flamekin": {
+      "src": "race-previews/flamekin.webp",
+      "credit": "Joshua Raphael",
+      "source": "https://5e.tools/races.html#flamekin_lfl"
+    },
+    "Giff": {
+      "src": "race-previews/giff.webp",
+      "credit": "Scott Murphy",
+      "source": "https://5e.tools/races.html#giff_aag"
+    },
+    "Hadozee": {
+      "src": "race-previews/hadozee.webp",
+      "credit": "Zuzanna Wužyk",
+      "source": "https://5e.tools/races.html#hadozee_aag"
+    },
+    "Hexblood": {
+      "src": "race-previews/hexblood.webp",
+      "credit": "Kai Carpenter",
+      "source": "https://5e.tools/races.html#hexblood_vrgr"
+    },
+    "Kalashtar": {
+      "src": "race-previews/kalashtar.webp",
+      "credit": "Eric Belisle",
+      "source": "https://5e.tools/races.html#kalashtar_erlw"
+    },
+    "Kender": {
+      "src": "race-previews/kender.webp",
+      "credit": "Linda Lithén",
+      "source": "https://5e.tools/races.html#kender_dsotdq"
+    },
+    "Khenra": {
+      "src": "race-previews/khenra.webp",
+      "credit": "Matt Stewart",
+      "source": "https://5e.tools/races.html#khenra_psa"
+    },
+    "Kor": {
+      "src": "race-previews/kor.webp",
+      "credit": "Dan Scott",
+      "source": "https://5e.tools/races.html#kor_psz"
+    },
+    "Leonin": {
+      "src": "race-previews/leonin.webp",
+      "credit": "Wisnu Tan",
+      "source": "https://5e.tools/races.html#leonin_mot"
+    },
+    "Lorwyn Changeling": {
+      "src": "race-previews/lorwyn-changeling.webp",
+      "credit": "Wayne Reynolds",
+      "source": "https://5e.tools/races.html#lorwyn%20changeling_lfl"
+    },
+    "Loxodon": {
+      "src": "race-previews/loxodon.webp",
+      "credit": "",
+      "source": "https://5e.tools/races.html#loxodon_ggr"
+    },
+    "Merfolk": {
+      "src": "race-previews/merfolk.webp",
+      "credit": "Igor Kieryluk",
+      "source": "https://5e.tools/races.html#merfolk_psz"
+    },
+    "Naga": {
+      "src": "race-previews/naga.webp",
+      "credit": "Deruchenko Alexander",
+      "source": "https://5e.tools/races.html#naga_psa"
+    },
+    "Plasmoid": {
+      "src": "race-previews/plasmoid.webp",
+      "credit": "Claudio Pozas",
+      "source": "https://5e.tools/races.html#plasmoid_aag"
+    },
+    "Reborn": {
+      "src": "race-previews/reborn.webp",
+      "credit": "Nikki Dawes",
+      "source": "https://5e.tools/races.html#reborn_vrgr"
+    },
+    "Rimekin": {
+      "src": "race-previews/rimekin.webp",
+      "credit": "Jason A. Engle",
+      "source": "https://5e.tools/races.html#rimekin_lfl"
+    },
+    "Simic Hybrid": {
+      "src": "race-previews/simic-hybrid.webp",
+      "credit": "",
+      "source": "https://5e.tools/races.html#simic%20hybrid_ggr"
+    },
+    "Siren": {
+      "src": "race-previews/siren.webp",
+      "credit": "Eric Deschamps",
+      "source": "https://5e.tools/races.html#siren_psx"
+    },
+    "Thri-kreen": {
+      "src": "race-previews/thri-kreen.webp",
+      "credit": "Irina Nordsol",
+      "source": "https://5e.tools/races.html#thri-kreen_aag"
+    },
+    "Vampire": {
+      "src": "race-art/vampire-dire-moon.jpg",
+      "credit": "Anna Podedworna",
+      "creditKind": "Art",
+      "source": "https://www.artstation.com/artwork/nQO0D9",
+      "pinterest": "https://www.pinterest.com/pin/1038220520323731724/",
+      "title": "Vampire of the Dire Moon",
+      "image": "https://i.pinimg.com/originals/3a/d7/d0/3ad7d00fb16380bd2db500ba387d4356.jpg",
+      "artistVerification": "Original artist’s ArtStation post; artist and copyright also visible on supplied image."
+    },
+    "Vedalken": {
+      "src": "race-previews/vedalken.webp",
+      "credit": "",
+      "source": "https://5e.tools/races.html#vedalken_ggr"
+    },
+    "Warforged": {
+      "src": "race-previews/warforged.webp",
+      "credit": "Craig J Spearing",
+      "source": "https://5e.tools/races.html#warforged_erlw"
+    }
+  },
+  "additionalIllustrations": {
+    "Owlin": {
+      "src": "race-art/owlin.jpg",
+      "credit": "Wizards of the Coast · D&D Beyond",
+      "creditKind": "Source",
+      "source": "https://www.dndbeyond.com/posts/1124-take-to-the-skies-with-the-new-owlin-race-from"
+    },
+    "Verdan": {
+      "src": "race-art/verdan.png",
+      "credit": "Aviv Or",
+      "creditKind": "Art",
+      "source": "https://www.dndbeyond.com/posts/459-everything-you-need-to-know-about-acquisitions"
+    }
+  }
+}

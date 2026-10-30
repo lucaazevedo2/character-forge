@@ -44,4 +44,4 @@ Core game content uses the D&D SRD 5.1 (2014 rules) under CC BY 4.0. Supplementa
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for dated feature history and version numbers. Older versions are retrospective milestones; each entry identifies its release channel. The latest documented Sites beta is **0.15.0-beta.1** (October 30, 2026). Documenting newer Sites work does not automatically sync the GitHub app or deploy stable production.
+See [CHANGELOG.md](CHANGELOG.md) for dated feature history and version numbers. Older versions are retrospective milestones; each entry identifies its release channel. The latest consolidated release is **0.15.0** (October 30, 2026), compiling the accumulated Sites beta work for GitHub and stable Cloudflare production. Small edits are batched into meaningful changelog updates at release milestones.

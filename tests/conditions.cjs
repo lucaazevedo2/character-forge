@@ -1,0 +1,10 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');const ctx=vm.createContext({renderSheet(){},structuredClone});vm.runInContext(fs.readFileSync('dist/conditions.js','utf8'),ctx);const run=s=>vm.runInContext(s,ctx);
+run('const c={};');assert.equal(run('sheetConditionState(c).active.length'),0);assert.equal(run('sheetConcentrationBlocked(c)'),false);
+run("sheetSetCondition(c,'poisoned',true);sheetSetCondition(c,'poisoned',true)");assert.equal(run('c.conditionTracker.active.length'),1);assert.equal(run('sheetConcentrationBlocked(c)'),false);
+run("c.conditionTracker.concentrating=true;c.conditionTracker.effect='Bless';sheetSetCondition(c,'stunned',true)");assert.equal(run('c.conditionTracker.concentrating'),false);assert.equal(run('c.conditionTracker.effect'),'');assert.equal(run('sheetConcentrationBlocked(c)'),true);
+run("sheetSetCondition(c,'stunned',false)");assert.equal(run('sheetConcentrationBlocked(c)'),false);assert.equal(run('c.conditionTracker.concentrating'),false);
+run("sheetSetCondition(c,'invalid',true)");assert.equal(run('c.conditionTracker.active.length'),1);
+for(const [damage,dc] of [[0,10],[19,10],[21,10],[22,11],[49,24],[100,50]])assert.equal(run('sheetConcentrationDC('+damage+')'),dc);
+run('c.conditionTracker.exhaustion=6');assert.equal(run('sheetConcentrationBlocked(c)'),true);
+assert.equal(run('JSON.parse(JSON.stringify(c)).conditionTracker.active[0]'),'poisoned');assert.equal(run('SHEET_CONDITIONS.length'),14);assert.equal(run('SHEET_EXHAUSTION.length'),7);
+console.log('PASS condition toggles, concentration interruption, 2014 damage DCs, exhaustion and saved state');

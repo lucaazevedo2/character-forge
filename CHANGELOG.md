@@ -2,15 +2,28 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest documented version: 0.15.0-beta.1 — October 30, 2026 (Sites beta).**
+**Latest release: 0.15.0 — October 30, 2026.**
 
 ## How to read this history
 
 - Versions were introduced on October 30, 2026. Versions 0.1.0–0.14.0 below are **retrospective milestone labels**, not previously published tags or exact historical build identifiers.
 - Dates use **America/New_York**. Older entries group related changes from accessible project conversations and source/GitHub commit history. Date ranges mean the work spanned multiple updates. This is a reconstruction, not a verbatim export of every chat.
-- **Sites beta** and **GitHub beta** can differ. Documenting a Sites feature here does not mean the repository's app or stable website contains it yet. GitHub app source was last synced on October 29 with the form-control/spacing update (`da9d6f7`). Later entries describe Sites beta work.
-- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its release is managed separately; this documentation update does not deploy stable production.
+- **Sites beta** and **GitHub beta** can differ. Documenting a Sites feature here does not mean the repository's app or stable website contains it yet. Before 0.15.0, GitHub app source was last synced on October 29 (`da9d6f7`). Release 0.15.0 compiles subsequent Sites beta work for GitHub and stable Cloudflare production.
+- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its release is managed separately; 0.15.0 is the consolidated stable-production release.
 - Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and the future magic-item catalog are not described as completed.
+
+## 0.15.0 — 2026-10-30
+
+### Consolidated release — GitHub and stable Cloudflare production
+
+- Compiled the accumulated Sites beta work in milestones 0.11.0–0.15.0-beta.1 into one release.
+- Added class-specific choice managers, infusion prerequisite/item validation, full-width infusion references, and the unfinished-choice alert.
+- Added inventory stacking, recovery snapshots, and the intermediate-width character-sheet layout fix.
+- Added the searchable equipment shop, cart, affordability calculation, five-currency wallet, automatic change, and free Add checkout.
+- Refreshed the character sheet and homepage, including the blacksmith silhouette and footer cleanup.
+- Added colored rest buttons, conditions/exhaustion tracking, concentration reminders, and quick rules explanations.
+- Added the footer release number, dated changelog, and persistent release policy.
+- Future minor edits accumulate until a meaningful feature set or GitHub/Cloudflare release; changelog entries and versions are compiled at those milestones instead of on every small edit.
 
 ## 0.15.0-beta.1 — 2026-10-30
 
@@ -210,4 +223,4 @@ Earliest retained source commit: `5f254bb` (Sites source, September 15 in Americ
 
 ## Maintenance policy
 
-Use `major.minor.patch` for future documented versions, with `-beta.N` for beta builds. Add entries when shipping user-visible changes; increase the patch for fixes and the minor version for features. Keep the displayed footer version and `dist/version.json` synchronized. Retrospective entries above are historical groupings, not a promise that every channel contains every feature. Do not publish private chat excerpts, account identifiers, feedback keys, or user contact details in this file.
+Use `major.minor.patch` for future documented versions, with `-beta.N` for beta builds. Accumulate small edits until a substantial feature set or a requested GitHub/Cloudflare release. Automatically compile one changelog entry at that milestone; increase the patch for a collected fix release and the minor version for a feature release. Keep the displayed footer version and `dist/version.json` synchronized. Retrospective entries above are historical groupings, not a promise that every channel contains every feature. Do not publish private chat excerpts, account identifiers, feedback keys, or user contact details in this file.

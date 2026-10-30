@@ -12,3 +12,10 @@
 - GitHub Pages and ChatGPT Sites are experimental beta sites.
 - Continue publishing requested changes to ChatGPT Sites beta by default; push GitHub beta only when Luca explicitly requests it.
 - Release to stable Cloudflare production only when Luca explicitly requests a stable/production release. A request to push GitHub or update the beta sites does not authorize a stable deployment.
+
+## Changelog and versions
+
+- Batch small edits into the next substantial release; do not create a version for every cosmetic tweak.
+- Automatically compile accumulated user-visible changes and update CHANGELOG.md when publishing a meaningful GitHub/Cloudflare release or shipping a substantial feature set.
+- Keep the footer version and version.json synchronized with the release, using America/New_York dates.
+- Summarize final behavior and identify the release channel. Preserve separate authorization requirements for GitHub and stable Cloudflare publication.
