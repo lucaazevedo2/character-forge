@@ -2,15 +2,24 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest release: 0.15.0 — October 30, 2026.**
+**Latest release: 0.18.0 — October 30, 2026.**
 
 ## How to read this history
 
 - Versions were introduced on October 30, 2026. Versions 0.1.0–0.14.0 below are **retrospective milestone labels**, not previously published tags or exact historical build identifiers.
 - Dates use **America/New_York**. Older entries group related changes from accessible project conversations and source/GitHub commit history. Date ranges mean the work spanned multiple updates. This is a reconstruction, not a verbatim export of every chat.
 - **Sites beta** and **GitHub beta** can differ. Documenting a Sites feature here does not mean the repository's app or stable website contains it yet. Before 0.15.0, GitHub app source was last synced on October 29 (`da9d6f7`). Release 0.15.0 compiles subsequent Sites beta work for GitHub and stable Cloudflare production.
-- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its release is managed separately; 0.15.0 is the consolidated stable-production release.
+- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its latest stable release is 0.18.0.
 - Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and the future magic-item catalog are not described as completed.
+
+## 0.18.0 — 2026-10-30
+
+### Stable production — characterforge5e.com
+
+- Promoted the accumulated 0.15.1-beta.1 through 0.18.0-beta.1 features to stable production: editable weapon damage, inline selections, anvil icon, death-save tracking, roll history and dice commands, interactive Wild Shape, and racial-aware recommended ability scores.
+- Restored the complete verified Sites HTML after a corrupted GitHub upload caused an empty homepage; verified the production homepage renders correctly.
+- Connected Cloudflare Pages to GitHub main and corrected watched paths so pushes trigger deployments.
+- Production footer and version.json now identify version 0.18.0 and the production channel. Historical beta entries below retain their original release labels.
 
 ## 0.18.0-beta.1 — 2026-10-30
 
