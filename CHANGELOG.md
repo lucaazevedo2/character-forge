@@ -12,6 +12,58 @@ A history of the D&D 5e **2014 rules** character builder and sheet.
 - Stable production is [characterforge5e.com](https://characterforge5e.com/). Its release is managed separately; 0.15.0 is the consolidated stable-production release.
 - Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and the future magic-item catalog are not described as completed.
 
+## 0.18.0-beta.1 — 2026-10-30
+
+### Recommended ability scores — Sites beta
+
+- Barbarian presets prioritize all three physical abilities over mental-score parity. Standard Human now recommends 16 STR, 16 DEX, 16 CON, 9 INT, 9 WIS, 9 CHA using all 27 points.
+
+- Follow-up: racial-aware recommendations now search valid allocations instead of using a fixed array; verified 128 class/build/racial-bonus combinations, including flexible bonus selections.
+- New characters default to Point Buy. Existing characters retain their scoring method and allocation.
+- Added Pick for me: editable class-specific builds for all 13 classes, using all 27 points on base scores from 8 to 15. Recommendations account for racial bonuses, favor even final scores, preserve the original build’s modifiers, then spend remaining points in build-priority order, even when that creates an odd final score. Racial bonuses remain separate and apply once.
+- Added Strength/Dexterity fighter and ranger choices, plus medium/heavy-armor cleric builds. Heavy-armor clerics receive base Strength 15 and a proficiency reminder.
+- Build descriptions show actual class priorities instead of incorrectly suggesting saving-throw proficiencies as ability priorities. Applied-state feedback updates when scores are customized.
+- Point-buy controls have accessible names and disable illegal increases/decreases. Standard Array, rolled scores, and Manual remain available; fixed Manual controls being replaced by disabled rolled-score dropdowns.
+- Verified every preset's point cost/range, safe class/profile fallback, preservation of racial/manual/other-method state, and browser checks for fighter variants and racial bonuses.
+
+## 0.17.0-beta.1 — 2026-10-30
+
+### Interactive 2014 Wild Shape and death cues — Sites beta
+
+- Added Mark all as seen in the Wild Shape picker; marks the full catalog for this character while preserving level restrictions. Individual seen checkboxes now save immediately.
+- Follow-up polish: inset all Wild Shape picker content consistently, and replace active roll popups immediately for every new roll, including beast damage and manual commands.
+
+- Bury pulses after three failed death saves. The cue respects reduced-motion preferences and preserves the existing deletion confirmation.
+- Added a searchable, role-filtered picker with 88 SRD forms (84 beasts and four Moon elementals), stat-block previews, locked-form explanations, and a seen-creature confirmation.
+- Added recommendations and situational caveats informed by Luca’s supplied RPGBOT 2014 Wild Shape guide. Some non-SRD book options from that guide are outside this catalog.
+- Wild Shape consumes the existing resource, enforces druid-level/CR/swim/fly limits, supports Moon CR progression and two-use elemental forms, and supports unlimited uses at druid level 20.
+- Transforming temporarily replaces physical scores, AC, HP/Hit Dice, movement, and the Actions tab. Mental scores and applicable proficiencies remain; the higher applicable skill/save bonus is used. The hero’s original scores, HP, equipment and spell choices remain intact.
+- Beast Actions, conditional Bonus Actions, Reactions, traits, senses, defenses, attack rolls, damage, critical damage, and secondary save damage are available on the sheet. Beast rolls enter the character’s roll history.
+- Revert remains available as a bonus action. At 0 beast HP, duration expiry, or unconsciousness it pulses; ended forms cannot attack or heal. Excess damage is applied once to normal HP immediately, and confirmation returns the normal sheet. Temporary HP is shared normally.
+- Added Moon Combat Wild Shape spell-slot healing, component-aware Beast Spells/Archdruid casting restrictions, manually tracked duration, and saved active forms. Merged equipment is inactive; DM-dependent retained features, immunities/resistances, recharge availability, and situational effects remain explicit/manual.
+- Validated form eligibility, resource use, scores, HP/temporary HP/overflow/massive damage, restoration, spells, conditional actions, persistence, all prior regression suites, and browser transform/damage/revert/death cues.
+
+## 0.16.0-beta.1 — 2026-10-30
+
+### Roll history and manual dice commands — Sites beta
+
+- Added a compact local chat-style roll history immediately under Passive Perception. It saves the last 100 entries per character, with timestamps, totals, individual dice, typed notes, and a confirmed Clear action.
+- Sheet checks, saving throws, initiative, spell/weapon attacks, custom and equipped damage/critical damage, and death saves record their existing result without rolling again.
+- Added `/r` and `/roll` commands for dice, arithmetic, parentheses, powers, rounding/math functions, keep/drop, grouped rolls, exploding/compounding/penetrating dice, rerolls, min/max, sorting, critical/fumble markers, success/failure counting, percentile and Fate dice, and inline labels.
+- Added Dice help with examples and supported syntax, inline errors, Enter to send, Shift+Enter for notes, and Up to recall the last entry. History stays local to the saved character; multiplayer chat is not included.
+- Parser uses no JavaScript evaluation. Pool size, nesting, expression length, total draws, and result limits stop runaway rolls. Unsupported commands fail explicitly.
+- Verified deterministic parser/history tests, existing regression checks, and browser checks for manual rolls, sheet rolls, damage, death saves, notes, errors, and persistence after reload.
+
+## 0.15.1-beta.1 — 2026-10-30
+
+### Combat controls and inline selections — Sites beta
+
+- Equipped weapons now have Damage and Critical damage buttons, plus an Edit action for attack/damage modifiers, extra damage dice and types, and critical settings. Character-owned overrides persist and class bonuses remain live.
+- Class details, skill choices, and race/source-version details open immediately beneath the selected card.
+- Replaced decorative four-point star marks with an anvil icon.
+- Death-save counters remain visible with labeled successes/failures, status, manual controls, and reset. Rolls update counters, including natural 1 and 20; rolling stops after stabilization or death. Healing above 0 resets counters, and damage at 0 adds a failure.
+- Verified JavaScript syntax and all five regression suites. GitHub and stable Cloudflare production are separate release channels.
+
 ## 0.15.0 — 2026-10-30
 
 ### Consolidated release — GitHub and stable Cloudflare production
