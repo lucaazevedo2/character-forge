@@ -41,3 +41,7 @@ Core game content uses the D&D SRD 5.1 (2014 rules) under CC BY 4.0. Supplementa
 ## Support
 
 [Buy Luca a coffee](https://buymeacoffee.com/lucaazevedo) to support ongoing development.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for dated feature history and version numbers. Older versions are retrospective milestones; each entry identifies its release channel. The latest documented Sites beta is **0.15.0-beta.1** (October 30, 2026). Documenting newer Sites work does not automatically sync the GitHub app or deploy stable production.
