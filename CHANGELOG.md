@@ -2,15 +2,25 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest release: 0.18.1 — October 30, 2026.**
+**Latest release: 0.18.2 — October 31, 2026.**
 
 ## How to read this history
 
 - Versions were introduced on October 30, 2026. Versions 0.1.0–0.14.0 below are **retrospective milestone labels**, not previously published tags or exact historical build identifiers.
 - Dates use **America/New_York**. Older entries group related changes from accessible project conversations and source/GitHub commit history. Date ranges mean the work spanned multiple updates. This is a reconstruction, not a verbatim export of every chat.
 - **Sites beta** and **GitHub beta** can differ. Documenting a Sites feature here does not mean the repository's app or stable website contains it yet. Before 0.15.0, GitHub app source was last synced on October 29 (`da9d6f7`). Release 0.15.0 compiles subsequent Sites beta work for GitHub and stable Cloudflare production.
-- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its latest stable release is 0.18.0.
+- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its latest stable release is 0.18.2.
 - Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and the future magic-item catalog are not described as completed.
+
+## 0.18.2 — 2026-10-31
+
+### Performance — stable production
+
+- Cache equipment catalogs and name/alias lookups instead of rebuilding the list repeatedly during sheet calculations.
+- Cache spell catalogs and ID lookups; homebrew library replacement and added records refresh both caches.
+- Skip the full eligibility scan for the closed Add Spell picker when opening or updating a character.
+- Generate owned and picker spell descriptions only when expanded; preserve currently open descriptions on updates.
+- This release includes performance changes only. Item Explorer and magic-item features remain on Sites beta.
 
 ## 0.18.1 — 2026-10-30
 
