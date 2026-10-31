@@ -507,7 +507,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 
   <footer id="foot">
     Core game content from the <b>System Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. Supplemental options are linked to Wikidot. No 2024 rules. Unofficial fan tool.
-    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.18.0 · Changelog ↗</a><span>Updated October 30, 2026</span></div>
+    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.18.1 · Changelog ↗</a><span>Updated October 30, 2026</span></div>
   </footer>
 </div>
 
@@ -1209,23 +1209,29 @@ const SCORE_BUILDS={
  artificer:[['intelligence','Intelligence / inventions',['int','con','dex','wis','cha','str']]]
 };
 function scoreBuildOptions(c){return SCORE_BUILDS[c.klass]||[]}
-function recommendedScoreBuild(c){const options=scoreBuildOptions(c);return options.find(x=>x[0]===c.scoreBuild)||options[0]||null}
+function scoreHeavyArmor(c){
+ if(proficiencyRecords(c).some(p=>p.type==='armor'&&/heavy|all armor/i.test(p.name)))return true;
+ return classContexts(c).some(ctx=>{const key=subclassKey(ctx),lv=ctx.level||1;return ctx.klass==='cleric'&&lv>=1&&/^cleric:(life|nature|tempest|war|forge|order|twilight)$/.test(key)||ctx.klass==='artificer'&&lv>=3&&key==='artificer:armorer'});
+}
+function scoreUsesHeavyArmor(c){return !(c.klass==='cleric'&&c.scoreBuild==='medium')&&(scoreHeavyArmor(c)||c.klass==='paladin'||c.klass==='cleric'&&c.scoreBuild==='heavy')}
+function recommendedScoreBuild(c){const options=scoreBuildOptions(c);let b=options.find(x=>x[0]===c.scoreBuild)||options[0]||null;if(!b)return null;if(scoreUsesHeavyArmor(c)){if(c.klass==='cleric'&&!c.scoreBuild)b=options.find(x=>x[0]==='heavy')||b;return [b[0],b[1],b[2].filter(a=>a!=='dex').concat('dex')]}return b}
 function recommendedScoreSeed(c){const build=recommendedScoreBuild(c);if(!build)return null;const values=c.klass==='barbarian'?[15,15,15,8,8,8]:[15,14,14,12,8,8];
  // Heavy armor needs Strength 15 for plate without its speed penalty.
  if(c.klass==='cleric'&&build[0]==='heavy')return {str:15,dex:8,con:14,int:8,wis:15,cha:10};
- if(c.klass==='paladin')return {str:15,dex:10,con:14,int:8,wis:10,cha:14};
+ if(c.klass==='paladin')return {str:15,dex:8,con:14,int:8,wis:10,cha:15};
  return Object.fromEntries(build[2].map((a,i)=>[a,values[i]]));
 }
 const recommendedScoreCache=new Map();
 function recommendedPointBuy(c){
  const build=recommendedScoreBuild(c),seed=recommendedScoreSeed(c);if(!build||!seed)return null;
  const bonuses=Object.fromEntries(ABILITIES.map(a=>[a,Number(racialBonus(c,a))||0]));
- const key=[c.klass,build[0],...ABILITIES.map(a=>bonuses[a])].join(':');
+ const heavy=scoreUsesHeavyArmor(c);
+ if(heavy)seed.dex=8;
+ const key=[c.klass,build[0],heavy,...ABILITIES.map(a=>bonuses[a])].join(':');
  if(recommendedScoreCache.has(key))return {...recommendedScoreCache.get(key)};
  const priority=build[2],weights=[9,6,5,3,2,1],minimum={};
  for(const a of ABILITIES){const target=Math.min(20,seed[a]+bonuses[a]);minimum[a]=Math.floor((target-10)/2);}
- const heavy=c.klass==='paladin'||(c.klass==='cleric'&&build[0]==='heavy');
- const choices=ABILITIES.map(a=>Array.from({length:8},(_,i)=>i+8).filter(v=>Math.floor((v+bonuses[a]-10)/2)>=minimum[a]&&v+bonuses[a]<=20&&(!heavy||a!=='str'||v+bonuses[a]>=15)));
+ const choices=ABILITIES.map(a=>Array.from({length:8},(_,i)=>i+8).filter(v=>(!heavy||a!=='dex'||v===8)&&Math.floor((v+bonuses[a]-10)/2)>=minimum[a]&&v+bonuses[a]<=20&&(!(c.klass==='paladin'||c.klass==='cleric'&&build[0]==='heavy')||a!=='str'||v+bonuses[a]>=15)));
  let best=null,bestRank=null;const candidate={};
  function visit(i,cost){if(cost>27)return;if(i===ABILITIES.length){
    const odd=ABILITIES.reduce((n,a)=>n+Math.abs((candidate[a]+bonuses[a])%2),0);
@@ -1238,7 +1244,7 @@ function recommendedPointBuy(c){
  visit(0,0);best||=seed;
  // Fill the remaining budget in build-priority order, even when the last point makes a score odd.
  let spent=ABILITIES.reduce((n,a)=>n+PB_COST[best[a]],0);
- while(spent<27){const a=priority.find(a=>best[a]<15&&best[a]+1+bonuses[a]<=20&&spent+PB_COST[best[a]+1]-PB_COST[best[a]]<=27);if(!a)break;spent+=PB_COST[best[a]+1]-PB_COST[best[a]];best[a]++}
+ while(spent<27){const a=priority.find(a=>(!heavy||a!=='dex')&&best[a]<15&&best[a]+1+bonuses[a]<=20&&spent+PB_COST[best[a]+1]-PB_COST[best[a]]<=27);if(!a)break;spent+=PB_COST[best[a]+1]-PB_COST[best[a]];best[a]++}
  if(recommendedScoreCache.size>=128)recommendedScoreCache.clear();recommendedScoreCache.set(key,{...best});return {...best};
 }
 
