@@ -2,15 +2,34 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest release: 0.18.2 — October 31, 2026.**
+**Latest release: 0.19.0 — October 31, 2026.**
 
 ## How to read this history
 
 - Versions were introduced on October 30, 2026. Versions 0.1.0–0.14.0 below are **retrospective milestone labels**, not previously published tags or exact historical build identifiers.
 - Dates use **America/New_York**. Older entries group related changes from accessible project conversations and source/GitHub commit history. Date ranges mean the work spanned multiple updates. This is a reconstruction, not a verbatim export of every chat.
 - **Sites beta** and **GitHub beta** can differ. Documenting a Sites feature here does not mean the repository's app or stable website contains it yet. Before 0.15.0, GitHub app source was last synced on October 29 (`da9d6f7`). Release 0.15.0 compiles subsequent Sites beta work for GitHub and stable Cloudflare production.
-- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its latest stable release is 0.18.2.
-- Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and the future magic-item catalog are not described as completed.
+- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its latest stable release is 0.19.0.
+- Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and future item-effect automation are not described as completed.
+
+## 0.19.0 — 2026-10-31
+
+### Item Explorer and magic items
+
+- Added a full-page Item Explorer with alphabetical sorting, compact rows, 50 items per page, search, rarity/source filters, and setting-specific items hidden until explicitly enabled.
+- Added 912 magic-item rarity records, with 830 supplied descriptions covering rarity variants, expandable rules, tables, and source links. Added supplied equipment descriptions for 71 mundane entries.
+- Magic items have no purchase price and bypass the cart through a rarity-confirmed Add to sheet action; ownership does not automate bonuses, charges, or attunement. Stack increases also require confirmation.
+- Applied distinct rarity colors throughout the catalog and inventory, animated teal/magenta Artifact and red/orange Unique gradients with reduced-motion support, and darker gray mundane names.
+- Browse Equipment lists purchasable gear only, with standard Potion of Healing at 50 gp as its sole magic-item exception. Added an Item Explorer shortcut.
+- Named healing potions Healing, Greater Healing, Superior Healing, and Supreme Healing; legacy names continue to resolve without changing quantities.
+
+### Performance
+
+- Cache the combined item catalog, indexed name/legacy lookups, spell catalog, and spell ID lookups; homebrew imports refresh the caches.
+- Render item and spell descriptions only when expanded; reuse sorted item lists while filtering.
+- Skip eligibility scans for the closed Add Spell picker when opening or updating a character sheet.
+- Controlled benchmarks reduced 2,000 item lookups from approximately 447 ms to 2 ms and level-12 cleric spell-panel generation from approximately 17 ms to 3 ms. These are component benchmarks, not end-to-end load guarantees.
+- Verified catalog protections, legacy healing names, homebrew cache invalidation, spell grants, class choices, combat, Wild Shape, and browser character-opening/description/picker flows.
 
 ## 0.18.2 — 2026-10-31
 

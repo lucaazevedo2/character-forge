@@ -1,0 +1,35 @@
+.item-rarity{font-weight:700}.rarity-common{color:#e9edf5;text-shadow:0 0 9px #d5e7ff25}.rarity-uncommon{color:#88dc40;text-shadow:0 0 9px #65bf182b}.rarity-rare{color:#68dcff;text-shadow:0 0 9px #38bafa35}.rarity-very-rare{color:#d38aff;text-shadow:0 0 10px #b945f23b}.rarity-legendary{color:#ffc55b;text-shadow:0 0 10px #f7872438}.rarity-artifact{color:#62e9e2;background:linear-gradient(110deg,#60eee1 0%,#94f5ff 22%,#eb8be8 48%,#ff68bd 68%,#64e7d9 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 12px #e47cbe20}.rarity-unique,.rarity--{color:#d9d6e9}.magic-meta{font-size:13px;line-height:1.6;margin:6px 0}.magic-source{font-size:13px;color:var(--gold);display:inline-block;margin:6px 0}.magic-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 0}.magic-filters label,.item-explorer-controls>label{display:grid;gap:6px;text-align:left;font-size:13px}.magic-filters select,.item-explorer-controls input{width:100%;min-width:0;background:var(--night);border:1px solid var(--stone-hi);border-radius:8px;padding:10px;color:var(--parchment)}.item-explorer{width:min(1080px,96vw);max-height:92dvh;padding:0}.item-explorer[open]{display:flex;flex-direction:column;overflow:hidden}.item-explorer>.settings-bar,.item-explorer>.settings-footer{flex-shrink:0}.item-explorer-controls{padding:18px 24px;border-bottom:1px solid var(--stone)}.item-explorer-controls .hint{margin-top:10px;font-size:12px!important}.item-explorer-scroll{padding:18px 24px;overflow:auto;min-height:0}.item-explorer-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.item-setting-heading{grid-column:1/-1;font-size:14px;color:var(--faded);padding:18px 0 4px}.explorer-item{padding:18px;border:1px solid var(--stone-hi);border-radius:12px;background:var(--night);min-width:0;overflow-wrap:anywhere}.explorer-item h3{font-size:16px;line-height:1.4;margin:0 0 8px}.explorer-item .btn{display:block;margin-top:12px}.magic-confirm{width:min(520px,94vw)}.magic-confirm .settings-body{display:grid;gap:12px}.magic-confirm p{line-height:1.6}.magic-confirm label{display:grid;gap:8px}.magic-confirm select{width:100%;padding:10px}.shop-item h3.item-rarity{font-size:15px}.nav-inner{flex-wrap:wrap}@media(max-width:650px){.magic-filters{grid-template-columns:1fr}.item-explorer-results{grid-template-columns:1fr}.item-explorer-controls,.item-explorer-scroll{padding:16px}.item-explorer>.settings-bar{padding:16px}.item-explorer .settings-footer{gap:10px;justify-content:space-between}.explorer-item{padding:14px}}
+@keyframes artifact-flow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.item-rarity.rarity-artifact{background-image:linear-gradient(100deg,#63ede1 0%,#8decfa 18%,#df99ed 36%,#ff69bf 50%,#d192f3 65%,#62e9df 82%,#63ede1 100%);background-size:200% 100%;animation:artifact-flow 5s linear infinite}
+@media(prefers-reduced-motion:reduce){.item-rarity.rarity-artifact{animation:none}}
+.items-page{width:100%;min-width:0}.items-page>header h2{margin-bottom:8px}.items-page .item-explorer-controls{padding:16px 0;border-bottom:1px solid var(--stone)}
+.items-page label.item-settings-toggle{display:flex;align-items:center;gap:10px;margin:12px 0 0;cursor:pointer}.items-page .item-settings-toggle input{width:18px!important;height:18px!important;min-height:18px!important;flex:none;margin:0;accent-color:var(--gold)}
+.item-page-toolbar{display:flex;justify-content:space-between;gap:12px;padding:16px 0;color:var(--faded);font-size:13px}.item-page-results{display:grid;gap:0}.item-compact-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 14px;border-bottom:1px solid var(--stone);background:var(--panel)}.item-compact-row:nth-child(even){background:var(--night)}.item-compact-info{min-width:0;overflow-wrap:anywhere}.item-compact-row h3{font-size:15px;margin:0 0 4px;line-height:1.4}.item-compact-row .magic-meta,.item-compact-row .hint{font-size:12px!important;line-height:1.4;margin:3px 0}.item-compact-row .magic-source{font-size:12px;margin:3px 0 0}.item-compact-row>button{flex:none;width:auto;min-width:110px;padding:8px 12px;font-size:12px}.item-page-pagination{display:flex;justify-content:center;align-items:center;gap:18px;margin:24px 0}.item-page-pagination .btn{width:auto;min-width:110px}.items-page select:disabled{opacity:.5}
+@media(max-width:600px){.item-compact-row{padding:12px 8px;gap:10px}.item-compact-row>button{min-width:88px;padding:8px;font-size:11px}.item-settings-toggle{flex-wrap:wrap}.item-page-toolbar{font-size:11px}.item-page-pagination{gap:10px}}
+
+/* Mundane equipment stays subdued beside luminous Common magic items. */
+.item-rarity.rarity-mundane{color:#9a9da5;text-shadow:none}
+.item-rarity.rarity-unique{color:#ff8c32;background:linear-gradient(100deg,#ff6570 0%,#f04438 20%,#ff8c32 40%,#ffc15a 55%,#ff8c32 72%,#f04438 88%,#ff6570 100%);background-size:200% 100%;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 10px #ff8c3228;animation:artifact-flow 5s linear infinite}
+@media(prefers-reduced-motion:reduce){.item-rarity.rarity-unique{animation:none}}
+
+.item-description{min-width:0;width:100%}
+.item-description>summary{display:flex;align-items:center;gap:12px;cursor:pointer;list-style:none;border-radius:6px;text-align:left}
+.item-description>summary::-webkit-details-marker{display:none}
+.item-description>summary:focus-visible{outline:2px solid var(--gold);outline-offset:5px}
+.item-description-summary{flex:1;min-width:0}
+.item-description-chevron{font-size:23px;color:var(--faded);flex-shrink:0;width:28px;text-align:center;transition:transform .18s ease}
+.item-description[open]>summary .item-description-chevron{transform:rotate(180deg)}
+.item-description-body{border-top:1px solid var(--stone-hi);margin-top:12px;padding:12px 0 4px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.item-description-body p{margin:0 0 12px;white-space:pre-line}
+.item-description-body .item-rules-credit{font-size:12px;color:var(--faded)}
+.item-description-body a{color:var(--gold)}
+.item-rules-table{max-width:100%;overflow-x:auto;margin:12px 0 18px}
+.item-rules-table table{border-collapse:collapse;width:100%;font-size:13px;text-align:left}
+.item-rules-table th,.item-rules-table td{padding:8px 10px;border:1px solid var(--stone-hi);vertical-align:top}
+.item-rules-table th{background:var(--night);font-weight:700}
+.item-compact-row:has(.item-description[open]){align-items:start}
+@media(prefers-reduced-motion:reduce){.item-description-chevron{transition:none}}
+.item-compact-info{flex:1}
+.item-description .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.item-description-body .item-rules-heading{font-size:14px;margin:16px 0 8px;color:var(--parchment)}

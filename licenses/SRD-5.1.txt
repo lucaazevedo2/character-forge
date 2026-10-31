@@ -1,0 +1,6 @@
+This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+
+SRD 5.1: https://media.dndbeyond.com/compendium-images/srd/5.1/SRD_CC_v5.1.pdf
+JSON transcription: https://github.com/5e-bits/5e-database/blob/main/src/2014/en/5e-SRD-Magic-Items.json
+Transcription license: 5e-database-MIT.txt (included alongside this file).
+Presentation changes: Markdown formatting rendered as HTML; names matched to catalog entries and aliases. No 2024 SRD content included.

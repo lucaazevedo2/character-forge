@@ -507,7 +507,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 
   <footer id="foot">
     Core game content from the <b>System Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. Supplemental options are linked to Wikidot. No 2024 rules. Unofficial fan tool.
-    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.18.2 · Changelog ↗</a><span>Updated October 31, 2026</span></div>
+    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.19.0 · Changelog ↗</a><span>Updated October 31, 2026</span></div>
   </footer>
 </div>
 
@@ -946,6 +946,7 @@ function render(){
   if(view==="home"){ zig.style.display="none"; cap.style.display="none"; byId("scr-home").classList.add("active"); renderHome(); }
   else if(view==="wizard"){ zig.style.display="flex"; cap.style.display="block"; byId("scr-step").classList.add("active"); renderZig(step); renderStep(); }
   else if(view==="custom"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderCustom(byId("scr-step")); }
+  else if(view==="items"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderItemExplorerPage(byId("scr-step")); }
   else if(view==="explorer"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderSpellExplorer(byId("scr-step")); }
   else if(view==="legal"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderLegal(byId("scr-step")); }
   else { zig.style.display="flex"; cap.style.display="block"; byId("scr-sheet").classList.add("active"); renderZig(5); renderSheet(); }
@@ -1028,7 +1029,7 @@ function renderNav(){
   const bar=byId("navbar"), inner=byId("navInner");
   if(view==="home"){ bar.classList.remove("show"); return; }
   bar.classList.add("show");
-  if(view==="custom"||view==="legal"||view==="explorer"){
+  if(view==="custom"||view==="legal"||view==="explorer"||view==="items"){
     inner.innerHTML=`<button class="btn ghost" id="nvHome">Back to Ledger</button>`;
     byId("nvHome").onclick=()=>{ view="home"; render(); };
     bar.querySelectorAll(".hint").forEach(x=>x.remove());
@@ -1743,9 +1744,8 @@ const originalAutoSkills=autoSkills;
 autoSkills=function(c){const s=originalAutoSkills(c);(raceOf(c)?.skills||[]).forEach(x=>s.add(x));(c.extraSkills||[]).forEach(x=>s.add(x));return s};
 const originalApplyCustom=applyCustom;
 applyCustom=function(){originalApplyCustom();for(let i=CLASSES.length-1;i>=0;i--)if(CLASSES[i].custom)CLASSES.splice(i,1);(CUSTOM.classes||[]).forEach(x=>CLASSES.push({...x,custom:true,ac:c=>10+mod(c,'dex'),acNote:'Equipment determines armor class'}));};
-let itemCatalogCache,itemCatalogCustom,itemCatalogLength=-1,itemCatalogNames;
-function allItems(){const custom=CUSTOM.items;if(!itemCatalogCache||custom!==itemCatalogCustom||(custom?.length||0)!==itemCatalogLength){itemCatalogCustom=custom;itemCatalogLength=custom?.length||0;itemCatalogCache=[...ITEMS,...(custom||[])];itemCatalogNames=new Map();for(const it of itemCatalogCache)if(!itemCatalogNames.has(it.name.toLowerCase()))itemCatalogNames.set(it.name.toLowerCase(),it)}return itemCatalogCache}
-function itemData(name){allItems();const key=String(name||'').toLowerCase();return itemCatalogNames.get(key)||itemCatalogNames.get({'wooden shield':'shield','light crossbow and 20 bolts':'crossbow, light'}[key])}
+function allItems(){return [...ITEMS,...(CUSTOM.items||[])]}
+function itemData(name){return allItems().find(x=>x.name.toLowerCase()===name.toLowerCase())||allItems().find(x=>x.name.toLowerCase()===({'wooden shield':'shield','light crossbow and 20 bolts':'crossbow, light'}[name.toLowerCase()]))}
 function itemHands(it){return it?.armor_category==='Shield'?1:it?.equipment_category?.index==='weapon'?((it.properties||[]).some(p=>p.index==='two-handed')?2:1):0}
 function armorClass(c){const worn=(c.equipped||[]).map(i=>itemData(c.inventory?.[i]||'')).filter(Boolean);const armor=worn.find(x=>x.armor_class&&x.armor_category!=='Shield');const shield=worn.some(x=>x.armor_category==='Shield');let ac=10+mod(c,'dex');if(armor){ac=armor.armor_class.base;if(armor.armor_class.dex_bonus)ac+=Math.min(mod(c,'dex'),armor.armor_class.max_bonus??99)}else{if(c.klass==='barbarian')ac=Math.max(ac,10+mod(c,'dex')+mod(c,'con'));if(c.klass==='monk'&&!shield)ac=Math.max(ac,10+mod(c,'dex')+mod(c,'wis'));if(c.klass==='sorcerer'&&c.subId==='srd')ac=Math.max(ac,13+mod(c,'dex'));if(raceOf(c)?.naturalAC)ac=Math.max(ac,raceOf(c).naturalAC)}return ac+(shield?2:0)+(Number(c.acBonus)||0)+(armor&&c.fightingStyle==='defense'?1:0)}
 function equip(c,i){c.equipped||=[];if(c.equipped.includes(i)){c.equipped=c.equipped.filter(n=>n!==i);return true}const it=itemData(c.inventory[i]);if(!it)return false;const other=c.equipped.map(n=>itemData(c.inventory[n])).filter(Boolean);if(it.armor_class&&it.armor_category!=='Shield'&&other.some(x=>x.armor_class&&x.armor_category!=='Shield')){alert('Unequip your current armor first.');return false}if(it.armor_category==='Shield'&&other.some(x=>x.armor_category==='Shield')){alert('Only one shield may be equipped.');return false}if(other.reduce((n,x)=>n+itemHands(x),0)+itemHands(it)>2){alert('Both hands are occupied. Unequip a weapon or shield first.');return false}c.equipped.push(i);return true}
@@ -3581,6 +3581,14 @@ const sheetBeforeRecovery=renderSheet;renderSheet=function(){sheetBeforeRecovery
 <script src="dice-chat.js"></script>
 <script src="wild-shape-data.js"></script>
 <script src="wild-shape.js"></script>
+<link rel="stylesheet" href="magic-items.css">
+<script src="magic-items-data.js"></script>
+<script src="srd-item-descriptions.js"></script>
+<script src="supplied-item-descriptions.js"></script>
+<script src="wondrous-item-descriptions.js"></script>
+<script src="item-descriptions.js"></script>
+<script src="magic-items.js"></script>
+<script src="items-page.js"></script>
 <script>
 (async function(){
   const saved=(await storeGet("forge-chars")) || (await storeGet("toa-chars"));

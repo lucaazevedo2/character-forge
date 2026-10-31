@@ -19,3 +19,9 @@
 - Automatically compile accumulated user-visible changes and update CHANGELOG.md when publishing a meaningful GitHub/Cloudflare release or shipping a substantial feature set.
 - Keep the footer version and version.json synchronized with the release, using America/New_York dates.
 - Summarize final behavior and identify the release channel. Preserve separate authorization requirements for GitHub and stable Cloudflare publication.
+
+## Meaning of push to main
+
+- When Luca says "push to main", publish ALL accumulated Sites beta changes to GitHub main and the connected stable Cloudflare site, unless he explicitly narrows the scope. This is explicit production-release authorization.
+- Include magic-item and other completed beta features, not only the changes from the latest turn. Update the stable footer, version.json, and consolidated changelog together.
+- Continue to make ordinary feature edits on Sites beta only until this release instruction is given.
