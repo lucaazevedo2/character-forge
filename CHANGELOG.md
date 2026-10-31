@@ -2,7 +2,7 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest release: 0.18.0 — October 30, 2026.**
+**Latest release: 0.18.1 — October 30, 2026.**
 
 ## How to read this history
 
@@ -11,6 +11,16 @@ A history of the D&D 5e **2014 rules** character builder and sheet.
 - **Sites beta** and **GitHub beta** can differ. Documenting a Sites feature here does not mean the repository's app or stable website contains it yet. Before 0.15.0, GitHub app source was last synced on October 29 (`da9d6f7`). Release 0.15.0 compiles subsequent Sites beta work for GitHub and stable Cloudflare production.
 - Stable production is [characterforge5e.com](https://characterforge5e.com/). Its latest stable release is 0.18.0.
 - Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and the future magic-item catalog are not described as completed.
+
+## 0.18.1 — 2026-10-30
+
+### Stable production polish
+
+- Metamagic choices use compact left-aligned checkboxes beside names, costs, and descriptions in creation, editing, and level-up views; selected cards are highlighted.
+- Recommended heavy-armor builds keep base Dexterity at 8 and spend the full 27-point budget on other abilities. Racial bonuses remain separate.
+- Heavy-armor proficiency from classes, supported cleric domains, and Armorer artificers informs recommendations.
+- Clerics can explicitly select Medium armor without the dropdown snapping back to Heavy; medium builds can invest in Dexterity.
+- Verified heavy-armor allocations and explicit cleric preset switching. Promoted the tested Sites beta changes to production.
 
 ## 0.18.0 — 2026-10-30
 
