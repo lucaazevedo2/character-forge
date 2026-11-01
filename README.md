@@ -28,7 +28,7 @@ Changes pushed to `main` publish to the GitHub Pages **beta** site. ChatGPT Site
 
 ## Character storage and backups
 
-Characters, avatars, favorites, and custom content are saved in your browser. They do not automatically sync across devices or between the stable and beta addresses.
+Guest characters stay in their browser. Sign in with Google to use an account workspace with private cloud saves across devices; importing guest characters is an explicit choice. JSON/PDF backups remain available.
 
 To move a character between versions, use **Export as JSON** on its character sheet, then **Import a character backup** on the destination site's home page. Import custom content used by that character first. Keep JSON backups before testing beta changes.
 
@@ -44,4 +44,4 @@ Core game content uses the D&D SRD 5.1 (2014 rules) under CC BY 4.0. Supplementa
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for dated feature history and version numbers. Older versions are retrospective milestones; each entry identifies its release channel. The latest consolidated release is **0.15.0** (October 30, 2026), compiling the accumulated Sites beta work for GitHub and stable Cloudflare production. Small edits are batched into meaningful changelog updates at release milestones.
+See [CHANGELOG.md](CHANGELOG.md) for dated feature history and version numbers. Older versions are retrospective milestones; each entry identifies its release channel. The latest consolidated release is **0.23.0** (November 1, 2026), compiling the accumulated Sites beta work for GitHub and stable Cloudflare production. Small edits are batched into meaningful changelog updates at release milestones.

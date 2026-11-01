@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),path=require('path');
 const stub=new Proxy(function(){},{get:(t,k)=>k==='style'?{}:k==='querySelectorAll'?()=>[]:k==='querySelector'?()=>stub:k==='classList'?{add(){},remove(){},toggle(){}}:stub,apply:()=>stub,set:()=>true});
-const ctx=vm.createContext({console,document:stub,window:stub,localStorage:{getItem:()=>null},location:{hash:''},setTimeout:()=>0,clearTimeout(){},crypto:require('crypto').webcrypto});const file=fs.readFileSync(path.join(__dirname,'../dist/index.html'),'utf8');vm.runInContext(file.match(/<script>([\s\S]*?)<\/script>/)[1],ctx);vm.runInContext(fs.readFileSync(path.join(__dirname,'../dist/class-choices.js'),'utf8'),ctx);
+const ctx=vm.createContext({console,document:stub,window:stub,localStorage:{getItem:()=>null},location:{hash:''},setTimeout:()=>0,clearTimeout(){},crypto:require('crypto').webcrypto});const file=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');vm.runInContext(file.match(/<script>([\s\S]*?)<\/script>/)[1],ctx);vm.runInContext(fs.readFileSync(path.join(__dirname,'../class-choices.js'),'utf8'),ctx);
 vm.runInContext(`
 function hero(klass,level,subId='srd'){return {id:'test',klass,level,subId,race:'human',background:'sage',base:{str:14,dex:14,con:14,int:16,wis:16,cha:16},spells:[],feats:[],inventory:[],equipped:[],skills:['arcana','history'],prepared:[],resourceState:{}}}
 function savePicks(c,picks){cfSave(c,{picks,history:{},assignments:{}})}

@@ -2,14 +2,101 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest release: 0.19.0 — October 31, 2026.**
+**Latest release: 0.23.0 — November 1, 2026.**
+
+## 0.23.0 — November 1, 2026 (GitHub main and stable release)
+
+Consolidates completed Sites beta work since stable 0.19.0:
+
+- Google sign-in, separate account workspaces, private cloud character/portrait saves, offline retry, revision-conflict handling, guest import, Trash, recovery and account tools.
+- Organizer-led parties, optional assigned DMs, live HP/condition/initiative summaries, sessions, combat order, manual NPC tracking, private DM prep notes and read-only character overviews.
+- Favorites remain in Favorites and party groups. DM quick dice includes the complete expression reference.
+- CSS mobile navigation with an unboxed left hamburger, centered branding and an animated left drawer. Compact party portraits have no surrounding cards; damage tint clips to the portrait.
+- A separate DM portrait area between the character and party, account/default avatar fallbacks, and green dots only for the DM Tools page or assigned character sheet. Stale activity expires after 45 seconds.
+- Preserve the existing Item Explorer, complete magic-item catalog, source descriptions, performance fixes, printable PDF/JSON exports and all stable character content.
+- **Not enabled:** one-use DM invitations, party admins/ownership transfer, private whispers, shared chat/rolls, ten-player enforcement and item/gold transfers. Their prepared source and tests are included, but the separate social database migration remains pending approval and the client hides its controls.
+- Release metadata and account redirect paths cover the published stable/GitHub app addresses. Database role/isolation tests and app regression checks passed; real multi-account OAuth/browser checks remain a verification limit.
+- The account-deletion function origin update is included as source but was not deployed: automatic approval review requires explicit approval for replacing that production function. Account deletion from the new domains remains a known limitation until approved.
+
+## 0.23.0-beta.2 — November 1, 2026 (Sites beta)
+
+Layout refinement: the DM now has a separate portrait area between the character identity and the party on desktop, with a distinct responsive placement on smaller screens. Avatar, activity indicator and portrait actions remain available.
+
+- Show the assigned DM first, to the left of the other party portraits, with a DM/account-name label. No DM slot appears when none is assigned.
+- Use the DM's Google account avatar; anonymous accounts and failed/missing avatars use a neutral default portrait. Party characters without portraits use the same default.
+- Add page-specific green activity dots: DM Tools for the DM; the assigned character sheet for players. Hidden/closed pages stop activity, and a lost connection expires within 45 seconds. Independent tab IDs preserve activity when another tab remains open.
+- Add a membership-checked presence RPC and transient activity table. No change to party ownership, DM permissions, chat or transfers. Raw presence rows are inaccessible to anonymous and signed-in clients.
+- Replace the party settings gear emoji with a consistently sized SVG for mobile.
+- Verified page-mode UI logic, avatar fallback, DM ordering, activity expiry, role/membership isolation, multiple tabs, live grants and unauthenticated rejection. Existing dice, cloud-save and sheet-combat checks pass. Browser visual QA uses representative party fixtures; multi-account signed-in browser QA remains outstanding.
+
+
+## 0.23.0-beta.1 — November 1, 2026 (Sites beta)
+
+Interface refinements: unboxed top-left hamburger, larger centered mobile branding, animated left drawer with navigation icons, backdrop/Escape dismissal and focus handling. Party full cards no longer stretch vertically; compact mode uses bare circular portraits, small names, and damage tint clipped inside each portrait. Luca’s preference for polished CSS interfaces is recorded in project guidance.
+
+- Hide the party dialog’s DM Tools shortcut from players; the assigned DM retains it.
+- Show favorites both in Favorites and their party groups.
+- Add the sheet’s full dice syntax reference to DM quick dice, including optional `/r` prefixes.
+- Display the assigned account as **DM: [username]**.
+- Add compact party portraits with red missing-HP tint, a DM icon, and clickable condition badges in both portrait modes. Badge artwork remains provisional.
+- Replace mobile navigation with a hamburger menu while retaining home branding and account access.
+- **Prepared, tested, but not enabled:** organizer-only one-use DM invitations, party admins/ownership transfer, participant-only whispers, public party rolls/chat, a ten-player limit plus DM, and atomic gold/item transfers. These require `supabase/party-social.sql`; automatic approval review blocked the live database migration pending explicit approval. The client checks the server’s `social_ready` flag and hides these controls on the existing backend.
+- Verified with party and social database tests, UI fixtures, dice, combat, cloud-save and condition regression checks. Phone-width browser QA confirmed the header and hamburger behavior. Signed-in browser testing across multiple accounts remains outstanding.
+- GitHub and stable Cloudflare publication are separate from this Sites beta.
+
+
+## 0.22.0-beta.1 — 2026-11-01
+
+### Organizer-led parties and optional DM Tools — Sites beta
+
+- Parties now have an organizer and no mandatory DM. HP, portraits and conditions continue sharing without a session. Organizers manage invites/membership and may optionally assign any party member as DM.
+- Replaced Party navigation with a dedicated DM Tools page. Party settings now open through the sheet's party gear, grouped ledger headings, or Organize parties beside Your characters.
+- Grouped signed-in characters by party, with unassigned characters in Not in a party. Favorites stay first within each group; a character in multiple parties appears in each relevant group.
+- Moved optional session/encounter controls into DM Tools, with a PC status column, initiative/round controls, simple named monsters/NPCs with manual HP/initiative, private session notes and a local dice roller. No monster statblocks added.
+- Added read-only PC combat/rules overviews for the assigned DM during a live session: abilities, AC, known/granted spells, feature summaries and equipment. Player notes, biography, email and complete character JSON are excluded.
+- Organizer and DM permissions are separate and server-enforced. Changing/removing the DM ends the optional session/combat and clears private DM notes while preserving the party and characters. Existing active sessions retain their assigned owner as DM during migration; inactive parties become organizer-only.
+- Validated organizer/DM separation, optional sessions, role revocation, overview/notes privacy, upgrade preservation and existing cloud/combat behavior. Browser QA exercised grouped ledger settings, optional DM activation, sessions/combat, manual NPC entry and read-only PC inspection with a disposable fixture.
+- Sites beta only; no GitHub push or stable Cloudflare deployment.
+
+
+## 0.21.0-beta.1 — 2026-11-01
+
+### Shared parties, live sessions and DM combat — Sites beta
+
+- Added Party navigation, persistent parties, random invite codes, member removal/code rotation and character selection per account.
+- Added a responsive party strip beside the character-sheet identity: character portraits, HP/max HP, temporary HP, conditions, exhaustion/concentration, initiative and current-turn highlighting.
+- Added persistent parties with separate live sessions and combats. The DM can add monsters/NPCs, enter/edit initiative, advance turns and rounds, and adjust party characters' HP/conditions during a session.
+- Existing sheet initiative rolls feed into the active combat order before turns begin. Manual totals remain available. Player views omit NPC HP and hidden NPCs' identities/initiative.
+- Party summaries exclude private notes, inventory and complete sheets. Membership and DM permissions are enforced by checked database RPCs. Portrait sharing is scoped to currently selected characters; DM vitals edits preserve character revision/conflict protection.
+- Status refreshes every three seconds while visible; offline updates pause. This release uses near-live polling rather than persistent Realtime subscriptions.
+- Validated database authorization and conflict behavior locally and with rolled-back synthetic accounts in Supabase; visually checked the strip, party manager and DM controls with a disposable browser fixture. A multi-player session with real Google accounts remains to be tested.
+- Sites beta only; no GitHub push or stable Cloudflare publication. Details and limits: docs/shared-parties.md.
+
+
+## 0.20.0-beta.1 — 2026-11-01
+
+### Google login and private cloud saves integration — Sites beta
+
+- Account menu polish: Google profile photo replaces the Account text button, with an initials fallback. Redesigned the dialog with a profile header, sync badge, icon-based action rows, separate sign-out/delete controls, and a compact close button.
+
+- Follow-up: replaced the large homepage cloud panel with a compact, white Google sign-in button in the top-right header. Narrow screens use the circular Google icon; account tools move into a dialog.
+
+- Preserved Sites version 113 / source `cf0042dfe9852e2c947bb4251af4654876ee8a8f` as the pre-account rollback point (see docs/cloud-rollback.md).
+- Added optional Google login through Supabase, with a separate account workspace and explicit, checkbox-based guest imports. Guest mode and JSON/PDF exports remain available.
+- Added immediate local persistence plus debounced cloud writes, offline retry, save status, revision-checked conflict choices, duplicate-import IDs, and account/tab-separated caches and recovery.
+- Added versioned JSON envelopes and an owner-protected SQL schema with atomic save RPCs, data-size limits, Trash/30-day expiry, and a per-account character limit.
+- Added private cloud portrait upload/download using existing compression. Portable JSON keeps embedded images; built-in race/class artwork stays hosted as before.
+- Added Trash restore, bulk JSON backup/import, explicit sign-out cache clearing with an unsynced-edit warning, and server function sources for permanent account deletion and expired-trash maintenance.
+- **Google sign-in enabled on Sites beta:** verified Google provider availability and the authorization redirect to accounts.google.com with the correct Supabase callback. Supabase project character-forge is now connected with private tables/portraits, deployed account-deletion and Trash functions, and daily cleanup. Live PostgreSQL isolation/conflict checks passed. Google OAuth provider is configured and cloud saves are enabled. A first real-account sign-in and cross-device portrait/save check remains pending.
+- Validated sync behavior with a simulated backend and executed the SQL schema/access policies under local PostgreSQL (PGlite). Real OAuth, Storage API, server functions and scheduled maintenance still require the connected project.
+- Sites beta only; no GitHub push or stable Cloudflare deployment in this release.
 
 ## How to read this history
 
 - Versions were introduced on October 30, 2026. Versions 0.1.0–0.14.0 below are **retrospective milestone labels**, not previously published tags or exact historical build identifiers.
 - Dates use **America/New_York**. Older entries group related changes from accessible project conversations and source/GitHub commit history. Date ranges mean the work spanned multiple updates. This is a reconstruction, not a verbatim export of every chat.
 - **Sites beta** and **GitHub beta** can differ. Documenting a Sites feature here does not mean the repository's app or stable website contains it yet. Before 0.15.0, GitHub app source was last synced on October 29 (`da9d6f7`). Release 0.15.0 compiles subsequent Sites beta work for GitHub and stable Cloudflare production.
-- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its latest stable release is 0.19.0.
+- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its latest stable release is 0.23.0.
 - Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and future item-effect automation are not described as completed.
 
 ## 0.19.0 — 2026-10-31

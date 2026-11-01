@@ -1,0 +1,5 @@
+# Both functions validate their own bearer credentials.
+[functions.delete-account]
+verify_jwt = false
+[functions.purge-trash]
+verify_jwt = false

@@ -1,5 +1,5 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
-const context=vm.createContext({});vm.runInContext(fs.readFileSync('dist/item-shop.js','utf8'),context);
+const context=vm.createContext({});vm.runInContext(fs.readFileSync('item-shop.js','utf8'),context);
 const run=code=>vm.runInContext(code,context);
 assert.equal(run("shopCategory({name:'Longsword',weapon_category:'Martial'})"),'weapons');
 assert.equal(run("shopCategory({name:'Shield',armor_class:{base:2}})"),'armor');
@@ -17,7 +17,7 @@ run('shopTransfer(c,dagger,3,false)');assert.equal(run('c.gold'),1);assert.equal
 assert.ok(run('shopTransfer(c,dagger,0,false).error'));assert.ok(run('shopTransfer(c,dagger,1.5,false).error'));
 assert.ok(run("shopTransfer(c,{name:'Unpriced'},1,true).error"));
 assert.equal(run("shopPrice({cost:{quantity:5,unit:'sp'}})"),.5);
-const html=fs.readFileSync('dist/index.html','utf8');assert(!html.includes('id="itemCatalog"'));assert(html.includes('id="customItemName"'));assert(html.includes('id="addOther"'));assert(html.includes('<script src="item-shop.js"></script>'));
+const html=fs.readFileSync('index.html','utf8');assert(!html.includes('id="itemCatalog"'));assert(html.includes('id="customItemName"'));assert(html.includes('id="addOther"'));assert(html.includes('<script src="item-shop.js"></script>'));
 console.log('PASS shop categories, currency, quantity, purchase limits, free additions, and custom item controls');
 
 run("const shopper={gold:10,inventory:[]};const order=[{item:{name:'Arrow',cost:{quantity:5,unit:'cp'}},quantity:3},{item:dagger,quantity:2}];");

@@ -25,3 +25,11 @@
 - When Luca says "push to main", publish ALL accumulated Sites beta changes to GitHub main and the connected stable Cloudflare site, unless he explicitly narrows the scope. This is explicit production-release authorization.
 - Include magic-item and other completed beta features, not only the changes from the latest turn. Update the stable footer, version.json, and consolidated changelog together.
 - Continue to make ordinary feature edits on Sites beta only until this release instruction is given.
+
+## Interface styling
+
+- Luca prefers deliberate CSS styling for GUI features. Use CSS freely to polish layouts, controls, hover/focus states, responsive behavior and transitions while preserving the established visual theme.
+- Mobile navigation should use an unboxed hamburger at the top left, a larger centered logo, and a left-side drawer.
+- Compact party members should have no rectangular card or surrounding box. Clip damage tint precisely to the circular portrait, with a small name beneath it.
+
+- Give the assigned DM a separate portrait area between the main character identity and the party list on desktop; keep it distinct from player portraits on mobile too.

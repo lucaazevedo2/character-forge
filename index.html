@@ -487,7 +487,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
   <header class="masthead">
     <div class="glyphs">▲ ◆ ▲ ◆ ▲</div>
     <h1><a class="forge-home-link" href="#home" aria-label="Character Forge home"><img class="forge-brand-icon" src="assets/brand/anvil.svg" alt="" aria-hidden="true"><span class="forge-wordmark">Character <strong>Forge</strong></span></a></h1>
-    <nav class="site-navigation" aria-label="Main navigation">
+    <button type="button" id="forgeMenuToggle" aria-label="Open navigation" aria-expanded="false" aria-controls="forgeMainNav">☰</button><nav id="forgeMainNav" class="site-navigation" aria-label="Main navigation">
       <button type="button" data-site-view="home" id="siteHome">Home</button>
       <button type="button" data-site-view="explorer" id="openSpellExplorer">Spell Explorer</button>
       <button type="button" data-site-view="custom" id="btnCustom">Custom Content</button>
@@ -507,7 +507,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 
   <footer id="foot">
     Core game content from the <b>System Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. Supplemental options are linked to Wikidot. No 2024 rules. Unofficial fan tool.
-    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.19.0 · Changelog ↗</a><span>Updated October 31, 2026</span></div>
+    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.23.0 · Changelog ↗</a><span>Updated November 1, 2026</span></div>
   </footer>
 </div>
 
@@ -912,10 +912,12 @@ function maxHP(c){
 /* ════════════════ STORAGE ════════════════ */
 const mem={};
 async function storeGet(key){
-  try { return JSON.parse(localStorage.getItem(key)||"null"); } catch(e) { return mem[key]?JSON.parse(mem[key]):null; }
+  const storageKey=window.ForgeCloud?.storageKey(key)||key;
+  try { return JSON.parse(localStorage.getItem(storageKey)||"null"); } catch(e) { return mem[storageKey]?JSON.parse(mem[storageKey]):null; }
 }
 async function storeSet(key,val){
-  const s=JSON.stringify(val); mem[key]=s; try { localStorage.setItem(key,s); } catch(e) { alert("Your browser could not save this character. Export a backup before closing."); }
+  const storageKey=window.ForgeCloud?.storageKey(key)||key;
+  const s=JSON.stringify(val); mem[storageKey]=s; try { localStorage.setItem(storageKey,s); } catch(e) { alert("Your browser could not save this character. Export a backup before closing."); }
 
 }
 
@@ -924,7 +926,7 @@ let view="home", step=0, draft=null, chars=[], activeId=null, saveTimer=null, ed
 const STEPS=["Race","Class","Scores","Origin","Hero","Sheet"];
 
 function newDraft(){
-  return { id:"c"+Date.now(), race:null, dragonType:"Red", halfElfBonus:[], halfElfSkills:[],
+  return { schema_version:1, id:"c"+Date.now(), race:null, dragonType:"Red", halfElfBonus:[], halfElfSkills:[],
     klass:null, subId:"srd", skills:[], ablMethod:"pb",
     base:{str:10,dex:10,con:10,int:10,wis:10,cha:10},
     arrayAssign:{str:null,dex:null,con:null,int:null,wis:null,cha:null},
@@ -946,6 +948,7 @@ function render(){
   if(view==="home"){ zig.style.display="none"; cap.style.display="none"; byId("scr-home").classList.add("active"); renderHome(); }
   else if(view==="wizard"){ zig.style.display="flex"; cap.style.display="block"; byId("scr-step").classList.add("active"); renderZig(step); renderStep(); }
   else if(view==="custom"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderCustom(byId("scr-step")); }
+  else if(view==="dmtools"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); window.ForgeParty.renderDMTools(byId("scr-step")); }
   else if(view==="items"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderItemExplorerPage(byId("scr-step")); }
   else if(view==="explorer"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderSpellExplorer(byId("scr-step")); }
   else if(view==="legal"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderLegal(byId("scr-step")); }
@@ -975,7 +978,9 @@ function renderHome(){
     </button><button type="button" class="favorite-star ${c.favorite===true?'is-favorite':''}" data-favorite="${esc(c.id)}" aria-pressed="${c.favorite===true}" aria-label="${c.favorite===true?'Unfavorite':'Favorite'} ${esc(c.name||'Unnamed adventurer')}" title="${c.favorite===true?'Remove from favorites':'Add to favorites'}"><span aria-hidden="true">${c.favorite===true?'★':'☆'}</span></button></div>`;};
   const favorites=chars.filter(c=>c.favorite===true),others=chars.filter(c=>c.favorite!==true);
   const grid=items=>`<div class="character-library">${items.map(characterCardHTML).join('')}</div>`;
-  const list=favorites.length?`<section class="ledger-group" aria-labelledby="favoritesTitle"><h3 id="favoritesTitle">Favorites <span>${favorites.length}</span></h3>${grid(favorites)}</section>${others.length?`<section class="ledger-group" aria-labelledby="otherCharactersTitle"><h3 id="otherCharactersTitle">Other characters</h3>${grid(others)}</section>`:''}`:grid(chars);
+  const originalList=favorites.length?`<section class="ledger-group" aria-labelledby="favoritesTitle"><h3 id="favoritesTitle">Favorites <span>${favorites.length}</span></h3>${grid(favorites)}</section>${others.length?`<section class="ledger-group" aria-labelledby="otherCharactersTitle"><h3 id="otherCharactersTitle">Other characters</h3>${grid(others)}</section>`:''}`:grid(chars);
+  const partyGroups=window.ForgeParty?.ledgerGroups(chars);
+  const list=partyGroups?partyGroups.map(g=>`<section class="ledger-party-group"><header><h3>${esc(g.name)} <small>${g.characters.length}</small></h3><button type="button" class="ledger-party-gear" data-party-settings="${esc(g.id||'')}" ${g.id==='favorites'?'hidden':''} aria-label="Party settings for ${esc(g.name)}">⚙</button></header>${g.characters.length?grid(g.characters):'<p class="hint">No character selected for this party yet.</p>'}</section>`).join(''):originalList;
   el.innerHTML = `
     <div class="home-hero">
       <div class="home-eyebrow">Your next adventure starts here</div>
@@ -984,7 +989,7 @@ function renderHome(){
       <div class="home-actions"><button class="btn primary" id="btnNew">＋ Create character</button></div>
     </div>
     <div class="library-heading"><h2>Your characters</h2><span>${chars.length} ${chars.length===1?'adventurer':'adventurers'}</span></div>
-    ${chars.length?list:`<div class="library-empty"><div class="empty-symbol" aria-hidden="true"><img src="assets/brand/anvil-mark.svg" width="28" height="24" alt=""></div><b>Your party starts with you.</b><p>Create your first character to begin your collection.</p></div>`}
+    ${chars.length||partyGroups?.length?list:`<div class="library-empty"><div class="empty-symbol" aria-hidden="true"><img src="assets/brand/anvil-mark.svg" width="28" height="24" alt=""></div><b>Your party starts with you.</b><p>Create your first character to begin your collection.</p></div>`}
     `;
   byId("btnNew").onclick=()=>{ editingCreation=false; editSnapshot=null; draft=newDraft(); step=0; view="wizard"; render(); };
   el.querySelectorAll(".char-card").forEach(b=>b.onclick=()=>{ activeId=b.dataset.id; draft=chars.find(c=>c.id===activeId); view="sheet"; render(); });
@@ -1029,7 +1034,7 @@ function renderNav(){
   const bar=byId("navbar"), inner=byId("navInner");
   if(view==="home"){ bar.classList.remove("show"); return; }
   bar.classList.add("show");
-  if(view==="custom"||view==="legal"||view==="explorer"||view==="items"){
+  if(view==="custom"||view==="legal"||view==="explorer"||view==="items"||view==="dmtools"){
     inner.innerHTML=`<button class="btn ghost" id="nvHome">Back to Ledger</button>`;
     byId("nvHome").onclick=()=>{ view="home"; render(); };
     bar.querySelectorAll(".hint").forEach(x=>x.remove());
@@ -1772,7 +1777,7 @@ function downloadJSON(obj,name){const a=document.createElement('a');a.href=URL.c
 const oldRenderCustom=renderCustom;
 renderCustom=function(el){oldRenderCustom(el);const box=document.createElement('div');box.className='sheet-sec custom-library-panel';box.innerHTML=`<h3>Complete content library · JSON</h3><p>Import or edit races, classes, subclasses (subs), backgrounds (bgs), spells and items. IDs must be unique. Export a built-in example to see the required fields.</p><div class="toolbar library-export-controls"><select id="exampleType" aria-label="Example type"><option>races</option><option>classes</option><option>subs</option><option>bgs</option><option>spells</option><option>items</option></select><button class="btn ghost" id="exampleDownload">Export schema example</button><button class="btn ghost" id="libraryExport">Export library</button></div><label>Import library<input type="file" id="libraryImport" accept=".json,application/json"></label><textarea class="library-json" aria-label="Homebrew library JSON" id="libraryJson">${esc(JSON.stringify({...CUSTOM,classes:CUSTOM.classes||[],spells:CUSTOM.spells||[],items:CUSTOM.items||[]},null,2))}</textarea><button class="btn primary" id="librarySave">Validate & save library</button><p role="status" id="libraryStatus"></p>`;el.prepend(box);byId('libraryExport').onclick=()=>downloadJSON(CUSTOM,'homebrew-library.json');byId('exampleDownload').onclick=()=>{const type=byId('exampleType').value;let examples={races:RACES[0],classes:CLASSES[0],subs:{...CLASSES[0].subclass,id:'my-subclass',classId:'barbarian'},bgs:BACKGROUNDS.find(x=>x.id==='acolyte'),spells:SPELLS[0],items:ITEMS[0]};const e=JSON.parse(JSON.stringify(examples[type]));if(e.index)e.index='my-'+e.index;if(e.id)e.id='my-'+e.id;e.name='Custom '+e.name;e.custom=true;downloadJSON({[type]:[e]},type+'-example.json')};byId('libraryImport').onchange=async e=>{const file=e.target.files[0];if(file)byId('libraryJson').value=await file.text()};byId('librarySave').onclick=async()=>{try{const v=JSON.parse(byId('libraryJson').value);for(const key of ['races','classes','subs','bgs','spells','items']){v[key]||=[];if(!Array.isArray(v[key]))throw Error(key+' must be an array');const ids=new Set();for(const o of v[key]){if(!o.name||typeof o.name!=='string')throw Error(key+': name is required');const id=o.id||o.index;if(typeof id!=='string'||!/^[-a-zA-Z0-9_:]+$/.test(id)||ids.has(id))throw Error(key+': IDs must be unique and use letters, numbers, dashes or underscores');ids.add(id);o.custom=true;if(key==='classes'&&(!o.hitDie||!o.saves||!o.skillList||!o.subclass||!o.features||!o.equipment||!o.skillCount))throw Error('Class: use the complete exported class example');if(key==='races'&&(!o.bonuses||!o.traits||!o.speed))throw Error('Race requires bonuses, traits and speed');if(key==='subs'&&(!o.classId||!o.level))throw Error('Subclass requires classId and level');if(key==='spells'&&(!Array.isArray(o.classes)||!Number.isInteger(o.level)))throw Error('Spell requires classes and level');if(key==='bgs'&&!Array.isArray(o.skills))throw Error('Background requires skills array')}}for(const c of chars){for(const [key,id] of [['races',c.race],['classes',c.klass],['subs',c.subId],['bgs',c.background]])if((CUSTOM[key]||[]).some(x=>x.id===id)&&!v[key].some(x=>x.id===id))throw Error('Cannot remove content used by a saved character')}CUSTOM=v;await saveCustom();byId('libraryStatus').textContent='Library saved. Your new options are available in the creator.'}catch(e){byId('libraryStatus').textContent=e.message}}};
 const oldRenderHome=renderHome;
-renderHome=function(){oldRenderHome();const el=byId('scr-home');el.insertAdjacentHTML('beforeend',`<div class="tablet home-restore" style="margin-top:20px"><label>Import a character backup<input id="characterImport" type="file" accept=".json,application/json"></label><p class="hint">Characters stay in this browser on this device. Export a backup to move between devices.</p><p class="hint">${SPELLS.length} catalog spells · ${ITEMS.length} equipment entries · ${SUPPLEMENTAL_SUBS.length} supplemental subclass references</p><a href="https://dnd5e.wikidot.com/" target="_blank" rel="noopener">Supplemental rules: D&D 5e Wikidot</a> · <a href="https://www.dndbeyond.com/srd" target="_blank" rel="noopener">SRD 5.1</a></div>`);byId('characterImport').onchange=async e=>{try{const c=JSON.parse(await e.target.files[0].text());if(!raceOf(c)||!classOf(c)||!bgOf(c)||!c.base||!ABILITIES.every(a=>Number.isFinite(c.base[a]))||typeof c.name!=='string')throw Error('Invalid character or missing homebrew content. Import its library first.');if(c.level&&(!Number.isInteger(c.level)||c.level<1||c.level>20))throw Error('Level must be 1–20.');c.id='c'+(crypto.randomUUID?.()||'c'+Date.now().toString(36)+Array.from(crypto.getRandomValues(new Uint8Array(12)),n=>n.toString(16).padStart(2,'0')).join(''));chars.push(c);await storeSet('forge-chars',chars);render()}catch(e){alert(e.message)}}};
+renderHome=function(){oldRenderHome();const el=byId('scr-home');el.insertAdjacentHTML('beforeend',`<div class="tablet home-restore" style="margin-top:20px"><label>Import a character backup<input id="characterImport" type="file" accept=".json,application/json"></label><p class="hint">Guest characters stay in this browser. When cloud saves are connected, sign in to sync across devices. JSON export remains available for backups and sharing.</p><p class="hint">${SPELLS.length} catalog spells · ${ITEMS.length} equipment entries · ${SUPPLEMENTAL_SUBS.length} supplemental subclass references</p><a href="https://dnd5e.wikidot.com/" target="_blank" rel="noopener">Supplemental rules: D&D 5e Wikidot</a> · <a href="https://www.dndbeyond.com/srd" target="_blank" rel="noopener">SRD 5.1</a></div>`);byId('characterImport').onchange=async e=>{try{const uploaded=JSON.parse(await e.target.files[0].text());const imports=Array.isArray(uploaded.characters)?uploaded.characters:[uploaded];const validated=[];for(const original of imports){const c=JSON.parse(JSON.stringify(original));if(c.schema_version!=null&&c.schema_version!==1)throw Error('This character needs a newer Character Forge version.');c.schema_version=1;if(!raceOf(c)||!classOf(c)||!bgOf(c)||!c.base||!ABILITIES.every(a=>Number.isFinite(c.base[a]))||typeof c.name!=='string')throw Error('Invalid character or missing homebrew content. Import its library first.');if(c.level&&(!Number.isInteger(c.level)||c.level<1||c.level>20))throw Error('Level must be 1–20.');c.id='c'+(crypto.randomUUID?.()||'c'+Date.now().toString(36)+Array.from(crypto.getRandomValues(new Uint8Array(12)),n=>n.toString(16).padStart(2,'0')).join(''));validated.push(c)}chars.push(...validated);await storeSet('forge-chars',chars);render()}catch(e){alert(e.message)}}};
 /* Immediate local persistence avoids losing edits when navigating or refreshing. */
 scheduleSave=function(){if(!draft||editingCreation)return;const i=chars.findIndex(x=>x.id===draft.id);if(i>=0){chars[i]=draft;storeSet('forge-chars',chars);flashSave()}};
 
@@ -3566,11 +3571,12 @@ function removeInventoryCopies(c,indices){const removed=new Set(indices);c.inven
 const sheetBeforeStacks=renderSheet;
 renderSheet=function(){sheetBeforeStacks();const c=draft,root=byId('scr-sheet');const rows=[...root.querySelectorAll('.inventory-row')].filter(r=>r.querySelector('[data-remove]'));if(!rows.length)return;const groups=inventoryStacks(c);const first=rows[0];const fragment=document.createDocumentFragment();for(const g of groups){const row=document.createElement('div');row.className='inventory-row inventory-stack';const it=itemData(g.name);row.innerHTML=`<span><b>${esc(g.name)}</b>${it?.damage?`<small> · ${esc(it.damage.damage_dice)}</small>`:''}<small> ×${g.indices.length}${g.equipped?' · equipped':''}</small></span><div class="stack-controls"><button class="btn ghost" data-less aria-label="Remove one ${esc(g.name)}">−</button><span aria-label="Quantity">${g.indices.length}</span><button class="btn ghost" data-more aria-label="Add one ${esc(g.name)}">+</button></div>${it&&(itemHands(it)||it.armor_class)?`<button class="btn ${g.equipped?'primary':'ghost'}" data-wear>${g.equipped?'Equipped':'Equip one'}</button>`:''}<button class="btn ghost" data-delete aria-label="Remove stack of ${esc(g.name)}">×</button>`;const update=fn=>{fn();scheduleSave();renderSheet()};row.querySelector('[data-more]').onclick=()=>update(()=>c.inventory.push(g.name));row.querySelector('[data-less]').onclick=()=>update(()=>removeInventoryCopies(c,[g.indices.at(-1)]));row.querySelector('[data-delete]').onclick=()=>{if(g.indices.length>1&&!confirm(`Remove all ${g.indices.length} ${g.name}?`))return;update(()=>removeInventoryCopies(c,g.indices))};row.querySelector('[data-wear]')?.addEventListener('click',()=>update(()=>equip(c,g.indices[0])));fragment.append(row)}first.before(fragment);rows.forEach(r=>r.remove());};
 const RECOVERY_KEY='forge-recovery-v1';
-function recoveryEntries(){try{return JSON.parse(localStorage.getItem(RECOVERY_KEY)||'[]')}catch{return []}}
-function saveRecoveryCharacter(c,force=false){if(!c?.id)return;try{let entries=recoveryEntries();const recent=entries.find(x=>x.character.id===c.id),data=JSON.stringify(c);if(recent&&JSON.stringify(recent.character)===data)return;if(!force&&recent&&Date.now()-recent.time<60000)return;entries.unshift({time:Date.now(),character:JSON.parse(data)});const counts={};entries=entries.filter(e=>(counts[e.character.id]=(counts[e.character.id]||0)+1)<=12).slice(0,60);while(entries.length){try{localStorage.setItem(RECOVERY_KEY,JSON.stringify(entries));return}catch{entries.pop()}}}catch{}}
+function recoveryStorageKey(){return window.ForgeCloud?.storageKey(RECOVERY_KEY)||RECOVERY_KEY}
+function recoveryEntries(){try{return JSON.parse(localStorage.getItem(recoveryStorageKey())||'[]')}catch{return []}}
+function saveRecoveryCharacter(c,force=false){if(!c?.id)return;try{let entries=recoveryEntries();const recent=entries.find(x=>x.character.id===c.id),data=JSON.stringify(c);if(recent&&JSON.stringify(recent.character)===data)return;if(!force&&recent&&Date.now()-recent.time<60000)return;entries.unshift({time:Date.now(),character:JSON.parse(data)});const counts={};entries=entries.filter(e=>(counts[e.character.id]=(counts[e.character.id]||0)+1)<=12).slice(0,60);while(entries.length){try{localStorage.setItem(recoveryStorageKey(),JSON.stringify(entries));return}catch{entries.pop()}}}catch{}}
 const storeBeforeRecovery=storeSet;
 storeSet=async function(key,value){if(key==='forge-chars'){const previous=await storeGet(key);for(const c of previous||[]){const next=value.find(x=>x.id===c.id);if(!next||JSON.stringify(c)!==JSON.stringify(next))saveRecoveryCharacter(c,!next)}for(const c of value)if(!recoveryEntries().some(e=>e.character.id===c.id))saveRecoveryCharacter(c)}return storeBeforeRecovery(key,value)};
-function openRecovery(){const box=document.createElement('dialog');box.className='settings-dialog';box.setAttribute('aria-label','Character recovery');box.innerHTML='<div class="settings-bar"><h2>Character recovery</h2><button class="btn ghost" data-close>Close</button></div><div class="settings-body"><p>Automatic snapshots stay in this browser. Up to 12 per character, 60 total. Changes are captured at most once per minute; clearing browser data also clears recovery. Export JSON for a separate backup.</p><div data-list></div><div data-preview></div></div>';document.body.append(box);box.querySelector('[data-close]').onclick=()=>box.remove();box.addEventListener('close',()=>box.remove());const entries=recoveryEntries(),list=box.querySelector('[data-list]');if(!entries.length)list.textContent='No recovery snapshots yet. Snapshots begin when you save or change a character.';for(const e of entries){const b=document.createElement('button');b.className='btn ghost recovery-entry';b.textContent=`${e.character.name||'Unnamed character'} · Level ${e.character.level||1} · ${new Date(e.time).toLocaleString()}`;b.onclick=()=>{const c=e.character,p=box.querySelector('[data-preview]');p.innerHTML=`<h3>${esc(c.name||'Unnamed character')}</h3><p>Level ${c.level||1} · ${esc(c.klass||'')} · HP ${Number(c.hp)||0} · ${(c.inventory||[]).length} inventory items</p><p>Restoring replaces this character’s saved state. Your current saved state is preserved as a recovery snapshot first.</p><div class="toolbar"><button class="btn primary" data-restore>Restore this snapshot</button><button class="btn ghost" data-export>Export snapshot as JSON</button></div>`;p.querySelector('[data-export]').onclick=()=>downloadJSON(c,(c.name||'character')+'-recovery.json');p.querySelector('[data-restore]').onclick=async()=>{clearTimeout(saveTimer);const i=chars.findIndex(x=>x.id===c.id);if(i>=0)saveRecoveryCharacter(chars[i],true);const restored=JSON.parse(JSON.stringify(c));if(i>=0)chars[i]=restored;else chars.push(restored);await storeBeforeRecovery('forge-chars',chars);draft=restored;activeId=restored.id;view='sheet';box.close();render();flashSave()}};list.append(b)}box.showModal()}
+function openRecovery(){const box=document.createElement('dialog');box.className='settings-dialog';box.setAttribute('aria-label','Character recovery');box.innerHTML='<div class="settings-bar"><h2>Character recovery</h2><button class="btn ghost" data-close>Close</button></div><div class="settings-body"><p>Automatic snapshots stay in this browser. Up to 12 per character, 60 total. Changes are captured at most once per minute; clearing browser data also clears recovery. Export JSON for a separate backup.</p><div data-list></div><div data-preview></div></div>';document.body.append(box);box.querySelector('[data-close]').onclick=()=>box.remove();box.addEventListener('close',()=>box.remove());const entries=recoveryEntries(),list=box.querySelector('[data-list]');if(!entries.length)list.textContent='No recovery snapshots yet. Snapshots begin when you save or change a character.';for(const e of entries){const b=document.createElement('button');b.className='btn ghost recovery-entry';b.textContent=`${e.character.name||'Unnamed character'} · Level ${e.character.level||1} · ${new Date(e.time).toLocaleString()}`;b.onclick=()=>{const c=e.character,p=box.querySelector('[data-preview]');p.innerHTML=`<h3>${esc(c.name||'Unnamed character')}</h3><p>Level ${c.level||1} · ${esc(c.klass||'')} · HP ${Number(c.hp)||0} · ${(c.inventory||[]).length} inventory items</p><p>Restoring replaces this character’s saved state. Your current saved state is preserved as a recovery snapshot first.</p><div class="toolbar"><button class="btn primary" data-restore>Restore this snapshot</button><button class="btn ghost" data-export>Export snapshot as JSON</button></div>`;p.querySelector('[data-export]').onclick=()=>downloadJSON(c,(c.name||'character')+'-recovery.json');p.querySelector('[data-restore]').onclick=async()=>{clearTimeout(saveTimer);const i=chars.findIndex(x=>x.id===c.id);if(i>=0)saveRecoveryCharacter(chars[i],true);const restored=JSON.parse(JSON.stringify(c));if(i>=0)chars[i]=restored;else chars.push(restored);await storeSet('forge-chars',chars);draft=restored;activeId=restored.id;view='sheet';box.close();render();flashSave()}};list.append(b)}box.showModal()}
 
 const sheetBeforeRecovery=renderSheet;renderSheet=function(){sheetBeforeRecovery();const target=byId('exportChar');if(target){const b=document.createElement('button');b.className='btn ghost';b.textContent='Recovery snapshots';b.onclick=openRecovery;target.parentElement.append(b)}};
 
@@ -3589,14 +3595,22 @@ const sheetBeforeRecovery=renderSheet;renderSheet=function(){sheetBeforeRecovery
 <script src="item-descriptions.js"></script>
 <script src="magic-items.js"></script>
 <script src="items-page.js"></script>
+<link rel="stylesheet" href="cloud-saves.css">
+<script src="cloud-config.js"></script>
+<script src="vendor/supabase-2.76.1.js"></script>
+<script src="cloud-saves.js"></script>
+<link rel="stylesheet" href="parties.css">
+<script src="parties.js"></script>
 <script>
 (async function(){
-  const saved=(await storeGet("forge-chars")) || (await storeGet("toa-chars"));
+  try { await window.ForgeCloud.initialize(); } catch { /* Guest saves remain available if auth cannot load. */ }
+  const saved=(await storeGet("forge-chars")) || (window.ForgeCloud?.diagnostics().signedIn ? [] : await storeGet("toa-chars"));
   if(Array.isArray(saved)) chars=saved;
   const cust=await storeGet("forge-custom");
   if(cust && typeof cust==="object") CUSTOM={...cust,races:cust.races||[],subs:cust.subs||[],bgs:cust.bgs||[]};
   applyCustom();
   render();
+  window.ForgeCloud?.mount();
 })();
 
 </script>
@@ -3697,5 +3711,6 @@ button.class-choices-unfinished:focus-visible{outline:3px solid #fff4b0!importan
 </style>
 <link rel="stylesheet" href="sheet-polish.css">
 <link rel="stylesheet" href="home-polish.css">
+<script src="mobile-nav.js"></script>
 </body>
 </html>

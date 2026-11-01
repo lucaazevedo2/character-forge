@@ -1,4 +1,4 @@
-const fs=require('fs'),vm=require('vm'),assert=require('assert');const ctx=vm.createContext({renderSheet(){},structuredClone});vm.runInContext(fs.readFileSync('dist/conditions.js','utf8'),ctx);const run=s=>vm.runInContext(s,ctx);
+const fs=require('fs'),vm=require('vm'),assert=require('assert');const ctx=vm.createContext({renderSheet(){},structuredClone});vm.runInContext(fs.readFileSync('conditions.js','utf8'),ctx);const run=s=>vm.runInContext(s,ctx);
 run('const c={};');assert.equal(run('sheetConditionState(c).active.length'),0);assert.equal(run('sheetConcentrationBlocked(c)'),false);
 run("sheetSetCondition(c,'poisoned',true);sheetSetCondition(c,'poisoned',true)");assert.equal(run('c.conditionTracker.active.length'),1);assert.equal(run('sheetConcentrationBlocked(c)'),false);
 run("c.conditionTracker.concentrating=true;c.conditionTracker.effect='Bless';sheetSetCondition(c,'stunned',true)");assert.equal(run('c.conditionTracker.concentrating'),false);assert.equal(run('c.conditionTracker.effect'),'');assert.equal(run('sheetConcentrationBlocked(c)'),true);

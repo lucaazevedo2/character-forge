@@ -1,0 +1,21 @@
+const vm=require('vm'),fs=require('fs'),assert=require('assert');
+let js=fs.readFileSync(require('path').join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].split('(async function(){\n  const saved=')[0];
+const stub=new Proxy(function(){},{get:(t,k)=>k==='style'?{}:k==='querySelectorAll'?()=>[]:k==='querySelector'?()=>stub:k==='classList'?{add(){},remove(){},toggle(){}}:stub,apply:()=>stub,set:()=>true});
+const ctx=vm.createContext({console,document:stub,window:stub,localStorage:{getItem:()=>null},location:{hash:''},setTimeout:()=>0,clearTimeout(){},crypto:require('crypto').webcrypto});
+vm.runInContext(js,ctx);
+vm.runInContext(`
+const perfHero={...newDraft(),id:'perf',name:'Performance test cleric',klass:'cleric',subId:'srd',level:12,race:'human',background:'acolyte',feats:[],spells:['guidance','sacred-flame','bless','cure-wounds'],prepared:['bless','cure-wounds'],base:{str:15,dex:8,con:14,int:10,wis:18,cha:10},hp:75,inventory:[],equipped:[]};
+let perfAccessCalls=0;const savedAccess=spellAccess;spellAccess=function(c,s){perfAccessCalls++;return savedAccess(c,s)};
+const button={};const perfEl={innerHTML:'',insertAdjacentHTML(where,html){this.innerHTML+=html},querySelector:s=>s==='[data-spell-add-toggle]'?button:null,querySelectorAll:()=>[]};
+renderSpells(perfEl,perfHero);
+if(perfAccessCalls>100)throw Error('Closed picker scanned whole catalog: '+perfAccessCalls);
+if(perfEl.innerHTML.includes('Choose up to three creatures'))throw Error('Collapsed spell body rendered');
+const spell=spellById('bless'),ui=spellView(perfHero);if(spellWorkspaceOwnedRow(spell,perfHero,ui).includes(spellDetail(spell,perfHero)))throw Error('Collapsed rules eagerly rendered');
+ui.open.add('bless');if(!spellWorkspaceOwnedRow(spell,perfHero,ui).includes(spellDetail(spell,perfHero)))throw Error('Open rules missing');
+const original=allSpells();if(allSpells()!==original)throw Error('Catalog rebuilt');
+CUSTOM.spells=[{index:'perf-homebrew',name:'Test spell'}];if(!spellById('perf-homebrew'))throw Error('Import missing');
+CUSTOM.spells=[{index:'perf-replacement',name:'Replacement spell'}];if(spellById('perf-homebrew')||!spellById('perf-replacement'))throw Error('Stale cache');
+CUSTOM.spells.push({index:'perf-added',name:'Added spell'});if(!spellById('perf-added'))throw Error('Added spell missing');
+console.log('PASS closed picker avoids catalog scan, lazy/open spell descriptions, homebrew cache invalidation');
+`,ctx);
+if(process.argv[2])fs.writeFileSync(process.argv[2],vm.runInContext('JSON.stringify(perfHero)',ctx));

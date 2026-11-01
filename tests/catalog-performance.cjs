@@ -1,0 +1,17 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+let builds=0;
+const c=vm.createContext({CUSTOM:{items:[]},allItems:()=>{builds++;return [{name:'Dagger'},{name:'Shield'},{name:'Crossbow, light'},...c.CUSTOM.items]},itemData:()=>{},renderNav:()=>{},renderSheet:()=>{},esc:s=>String(s),document:{addEventListener:()=>{}}});
+for(const f of ['magic-items-data.js','magic-items.js','srd-item-descriptions.js','supplied-item-descriptions.js','wondrous-item-descriptions.js','item-descriptions.js'])vm.runInContext(fs.readFileSync(''+f,'utf8'),c);
+const run=s=>vm.runInContext(s,c);
+assert(run("itemData('BAG OF HOLDING').name==='Bag of Holding'"));
+assert(run("itemData('wooden shield').name==='Shield'"));
+assert(run("itemData('light crossbow and 20 bolts').name==='Crossbow, light'"));
+run("for(let i=0;i<2000;i++){itemData('Dagger');itemData('Not an item')}");assert.equal(builds,1);
+c.CUSTOM={items:[{name:'Homebrew'}]};assert.equal(run("itemData('Homebrew').name"),'Homebrew');assert.equal(builds,2);
+c.CUSTOM.items=[{name:'Replacement'}];assert(run("!itemData('Homebrew')&&itemData('Replacement')"));
+c.CUSTOM.items.push({name:'Added'});assert(run("itemData('Added')"));
+run("const bag=itemData('Bag of Holding');const closed=itemDescriptionDisclosureHTML(bag);let inserted='';const detail={open:false,dataset:{itemDescription:bag.index},insertAdjacentHTML:(where,html)=>inserted+=html};itemDescriptionHydrate(detail)");
+assert.equal(run('inserted'),'');assert(!run('closed.includes("500 pounds")'));
+run('detail.open=true;itemDescriptionHydrate(detail)');assert(run('inserted.includes("500 pounds")'));
+const bytes=run('inserted.length');run('itemDescriptionHydrate(detail)');assert.equal(run('inserted.length'),bytes);
+console.log('PASS cached lookups, misses, case/legacy aliases, homebrew replacement/addition, lazy descriptions and no duplicate hydration');
