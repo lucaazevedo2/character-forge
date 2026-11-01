@@ -6,6 +6,8 @@ A history of the D&D 5e **2014 rules** character builder and sheet.
 
 ## 0.23.0 — November 1, 2026 (GitHub main and stable release)
 
+Navigation polish: keep every desktop/tablet destination, including DM Tools, aligned on one row. At intermediate widths, navigation moves as a complete centered row beneath the logo/account instead of wrapping individual links. Mobile drawer layout is preserved.
+
 Consolidates completed Sites beta work since stable 0.19.0:
 
 - Google sign-in, separate account workspaces, private cloud character/portrait saves, offline retry, revision-conflict handling, guest import, Trash, recovery and account tools.

@@ -15,3 +15,18 @@ header.masthead:has(.forge-account)>.site-navigation{grid-column:2;grid-row:1;wi
 @media(max-width:420px){.cloud-profile-header{padding:20px;gap:12px}.cloud-account-dialog>.settings-bar{padding:16px 20px}.cloud-menu-copy small{font-size:11px}.cloud-account-dialog .cloud-menu-row{padding:12px 8px;gap:10px}}
 
 .cloud-dialog .cloud-dialog-close{display:flex!important;align-items:center!important;justify-content:center!important;line-height:0!important;box-sizing:border-box}.cloud-dialog .cloud-dialog-close svg{display:block;flex:none;width:18px;height:18px;margin:0;padding:0}
+/* Keep all navigation destinations on one intentional row. */
+@media(min-width:701px){
+ header.masthead:has(.forge-account){grid-template-columns:auto minmax(0,1fr) auto;column-gap:20px;row-gap:16px;padding:22px 0!important}
+ header.masthead:has(.forge-account)>.site-navigation{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:3px;min-width:0;width:auto;grid-column:2;grid-row:1}
+ header.masthead .site-navigation>button{flex:0 0 auto;min-height:40px;margin:0;padding:10px 10px;font-size:12px;font-weight:600;line-height:20px;border-radius:9px;transition:background .15s,color .15s,border-color .15s}
+ header.masthead .site-navigation>button[aria-current=page]{background:#b4a7ff14;border-color:#b4a7ff35;color:#d4c5ff}
+ header.masthead .site-navigation>button:hover{background:#b4a7ff0b;color:#ece5ff}
+ header.masthead:has(.forge-account)>.forge-account{grid-column:3;grid-row:1;align-self:center}
+}
+@media(min-width:701px) and (max-width:1360px){
+ header.masthead:has(.forge-account){grid-template-columns:minmax(0,1fr) auto;column-gap:16px;row-gap:18px}
+ header.masthead:has(.forge-account)>h1{grid-column:1;grid-row:1;justify-self:start}
+ header.masthead:has(.forge-account)>.forge-account{grid-column:2;grid-row:1}
+ header.masthead:has(.forge-account)>.site-navigation{grid-column:1/-1;grid-row:2;justify-content:center;width:100%;gap:6px}
+}
