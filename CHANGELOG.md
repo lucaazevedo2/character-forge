@@ -2,7 +2,16 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 0.26.0 — November 2, 2026.**
+**Latest stable release: 0.27.0 — November 2, 2026.**
+
+## 0.27.0 — November 2, 2026
+
+- Add supplied full class and subclass rules behind the question-mark controls while preserving current subclass summaries, spell references and all mechanical metadata.
+- Add full descriptions for all 87 enabled published feats. The feat manager shows the selected feat's summary immediately and an expandable full description before applying it; feat sheets also have question-mark references.
+- Remove the redundant underlined Feats text-edit link. Preserve existing character-local text overrides and the separate feat manager.
+- Keep existing catalog exclusions, character data and custom feature behavior. Escape supplied reference text and preserve its plain-text table lines.
+- Verify indexed subclass coverage, all feat references, summary/mechanics preservation, aliases, custom edits, text escaping, and spell/combat/class regressions. Browser fixtures confirm separate summary/full subclass wording and dropdown feat previews.
+- Publish accumulated Sites beta changes to GitHub main and stable Cloudflare production.
 
 ## 0.26.0 — November 2, 2026
 

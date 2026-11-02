@@ -507,7 +507,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 
   <footer id="foot">
     Core game content from the <b>System Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. Supplemental options are linked to Wikidot. No 2024 rules. Unofficial fan tool.
-    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.26.0 · Changelog ↗</a><span>Updated November 2, 2026</span></div>
+    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.27.0 · Changelog ↗</a><span>Updated November 2, 2026</span></div>
   </footer>
 </div>
 
@@ -2876,7 +2876,7 @@ function showFeatEditor(c){const box=document.createElement('dialog');box.classN
  box.innerHTML=`<form><div class="settings-bar"><div><h2 id="featManagerTitle">Feats</h2><p>Review permanent choices or add a DM-granted feat.</p></div><button type="button" class="btn ghost" data-feat-close>Close ×</button></div><div class="settings-body"><div id="featManagerList"></div><div class="feat-choice-panel"><h3>Add or edit a feat</h3><label>Published feat<select id="featManagerSelect"></select></label><div id="featManagerChoice"></div><p role="status" id="featManagerError"></p><button type="button" class="btn ghost" id="featManagerApply">Apply feat choices</button></div><p class="hint">The lineage feat chosen during character creation is locked here. Use Edit creation choices for a permitted respec.</p></div><div class="settings-footer"><button type="button" class="btn ghost" data-feat-close>Cancel</button><button class="btn primary" type="submit">Save changes</button></div></form>`;document.body.append(box);
  const list=box.querySelector('#featManagerList'),select=box.querySelector('#featManagerSelect'),choiceBox=box.querySelector('#featManagerChoice'),error=box.querySelector('#featManagerError');function eligibleOptions(){const current=new Set(chosen),options=FEATS.filter(f=>current.has(f.id)||featEligible({...c,feats:chosen},f));select.innerHTML='<option value="">Choose a feat</option>'+options.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('');if(options.some(f=>f.id===pending))select.value=pending}
  function renderList(){const racial=c.raceFeatChoices?.[c.race],all=[...(racial?[racial]:[]),...chosen];list.innerHTML='<div class="feat-manager-list">'+all.map(id=>{const f=FEATS.find(x=>x.id===id);if(!f)return '';const locked=id===racial,summary=featChoiceSummary(c,f,choices[id]||{});return `<div class="feat-manager-row"><div><div><b>${esc(f.name)}</b>${summary?`<small>${esc(summary)}</small>`:''}</div>${locked?'<span class="feat-locked">Lineage</span>':`<span><button type="button" class="btn ghost" data-feat-edit="${id}">Edit</button> <button type="button" class="btn ghost" data-feat-remove="${id}">Remove</button></span>`}</div>${sourceLink(f.source)}</div>`}).join('')+'</div>';list.querySelectorAll('[data-feat-edit]').forEach(b=>b.onclick=()=>{pending=b.dataset.featEdit;pendingChoice=featChoiceDefaults(FEATS.find(f=>f.id===pending),choices[pending]||{});eligibleOptions();renderPending()});list.querySelectorAll('[data-feat-remove]').forEach(b=>b.onclick=()=>{chosen=chosen.filter(id=>id!==b.dataset.featRemove);delete choices[b.dataset.featRemove];if(pending===b.dataset.featRemove){pending='';pendingChoice={}}eligibleOptions();renderPending();renderList()})}
- function renderPending(){const f=FEATS.find(x=>x.id===pending);choiceBox.innerHTML=f?featChoiceEditorHTML(f,pendingChoice,'manager'):'';if(f)wireFeatChoiceEditor(choiceBox,pendingChoice,input=>{if(input.hasAttribute('data-feat-spell-class'))renderPending()})}
+ function renderPending(){const f=FEATS.find(x=>x.id===pending);choiceBox.innerHTML=f?featPickerPreview(f,'manager')+featChoiceEditorHTML(f,pendingChoice,'manager'):'';if(f)wireFeatChoiceEditor(choiceBox,pendingChoice,input=>{if(input.hasAttribute('data-feat-spell-class'))renderPending()})}
  select.onchange=()=>{pending=select.value;pendingChoice=pending?featChoiceDefaults(FEATS.find(f=>f.id===pending),choices[pending]||{}):{};renderPending()};box.querySelector('#featManagerApply').onclick=()=>{const f=FEATS.find(x=>x.id===pending);if(!f){error.textContent='Choose a feat first.';return}const message=featChoiceError(c,f,pendingChoice);if(message){error.textContent=message;return}if(!chosen.includes(f.id))chosen.push(f.id);choices[f.id]=pendingChoice;error.textContent=f.name+' is ready. Save changes to keep it.';eligibleOptions();renderList()};
  eligibleOptions();renderList();const close=()=>box.remove();box.querySelectorAll('[data-feat-close]').forEach(b=>b.onclick=close);box.addEventListener('cancel',e=>{e.preventDefault();close()});box.querySelector('form').onsubmit=e=>{e.preventDefault();c.feats=chosen;c.featChoices=choices;c.hp=Math.min(Number(c.hp)||0,maxHP(c));scheduleSave();close();renderSheet()};box.showModal()}
 
@@ -3305,10 +3305,10 @@ function subclassRulesHelpHTML(f,source,kind='subclass'){
 const featureSectionBeforeRulesHelp=featureSection;
 featureSection=function(title,subtitle,rows,empty,source){
  const html=featureSectionBeforeRulesHelp(title,subtitle,rows,empty,source);
- const isClass=/^Class features$/.test(title);
- if(!isClass&&!/^Subclass|^Selected subclass options/.test(title))return html;
+ const isClass=/^Class features$/.test(title),isFeat=title==='Feats';
+ if(!isClass&&!isFeat&&!/^Subclass|^Selected subclass options/.test(title))return html;
  const host=document.createElement('div');host.innerHTML=html;
- host.querySelectorAll('.feature-reference').forEach((row,i)=>{const f=rows[i];if(!f)return;const wrapper=document.createElement('div');wrapper.className='subclass-feature-help';row.replaceWith(wrapper);wrapper.append(row);wrapper.insertAdjacentHTML('beforeend',subclassRulesHelpHTML(f,f.source||source,isClass?'class':'subclass'))});return host.innerHTML;
+ host.querySelectorAll('.feature-reference').forEach((row,i)=>{const f=rows[i];if(!f)return;const wrapper=document.createElement('div');wrapper.className='subclass-feature-help';row.replaceWith(wrapper);wrapper.append(row);wrapper.insertAdjacentHTML('beforeend',subclassRulesHelpHTML(f,f.source||source,isClass?'class':isFeat?'feat':'subclass'))});return host.innerHTML;
 };
 function closeSubclassRulesHelp(button){button.setAttribute('aria-expanded','false');button.setAttribute('aria-pressed','false');button.classList.remove('active');const panel=document.getElementById(button.getAttribute('aria-controls'));if(panel)panel.hidden=true}
 document.addEventListener('click',e=>{
@@ -3723,6 +3723,9 @@ button.class-choices-unfinished:focus-visible{outline:3px solid #fff4b0!importan
 <link rel="stylesheet" href="inventory-notes.css">
 <script src="inventory-notes.js"></script>
 <link rel="stylesheet" href="character-feature-edit.css?v=centered">
+<link rel="stylesheet" href="provided-feature-rules.css">
+<script src="provided-feature-rules-data.js"></script>
+<script src="provided-feature-rules.js"></script>
 <script src="character-feature-edit.js?v=centered"></script>
 <link rel="stylesheet" href="divine-smite.css">
 <script src="divine-smite.js"></script>
