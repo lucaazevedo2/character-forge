@@ -2,7 +2,15 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 0.25.2 — November 2, 2026.**
+**Latest stable release: 0.26.0 — November 2, 2026.**
+
+## 0.26.0 — November 2, 2026
+
+- Publish the supplied full text for all 574 existing spell records, filling 255 previously empty descriptions. Spell Explorer and character spell details include effects, higher-level rules, material requirements and source books.
+- Refresh casting details, ritual/concentration flags and class lists from the upload. Preserve stable spell IDs, combat metadata and subclass grants so saved characters retain their spell references.
+- Keep Unearthed Arcana excluded from normal spell choices and Spell Explorer (524 published spells, 50 excluded UA records).
+- Verify complete description rendering, source books, material/scaling details, spell aliases, UA filtering, combat, class choices, feat spells, catalog caching and Divine Smite regressions.
+- Release to GitHub main and connected stable Cloudflare production.
 
 ## 0.25.2 — November 2, 2026
 
