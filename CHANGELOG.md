@@ -2,7 +2,13 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 0.25.1 — November 1, 2026.**
+**Latest stable release: 0.25.2 — November 2, 2026.**
+
+## 0.25.2 — November 2, 2026
+
+- Add Divine Smite to paladin resources from level 2. Select and expend an actual spell slot, with shared multiclass and pact slot support and depleted-slot protection.
+- Preview 2014 radiant damage dice, including the base damage cap, undead/fiend bonus and critical-hit doubling. Existing spell-slot and rest trackers remain authoritative.
+- Verify slot expenditure, multiclass pools in both directions, persistence, level gating, damage dice and combat regressions.
 
 ## 0.25.1 — November 1, 2026; Bug fixes.
 
