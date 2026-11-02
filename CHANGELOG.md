@@ -2,7 +2,13 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 0.25.0 — November 1, 2026.**
+**Latest stable release: 0.25.1 — November 1, 2026.**
+
+## 0.25.1 — November 1, 2026
+
+- Preserve login sessions when token renewal temporarily hits HTTP 429 rate limits. Back off renewal requests using Retry-After (one minute by default) without weakening invalid-token or explicit sign-out handling.
+- Apply the same fix to stable and Sites beta. Existing cleared sessions require signing in again.
+- Verified against the pinned Supabase SDK: rate limits retain session storage without SIGNED_OUT, cooldown suppresses repeat requests, and invalid refresh tokens still remove the session. Cloud-save regressions pass.
 
 ## 0.25.0 — November 1, 2026
 

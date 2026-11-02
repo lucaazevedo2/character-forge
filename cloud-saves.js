@@ -153,10 +153,24 @@ async function switchUser(next){
  }
  paint();window.ForgeParty?.accountChanged();if(user){await refresh();if(pending())queue(100)}
 }
+// Classify only temporary refresh throttling as retryable. Invalid/revoked tokens
+// still reach Supabase unchanged, so real sign-outs remain enforced.
+function forgeAuthFetch(fetchImpl=window.fetch.bind(window),now=()=>Date.now()){
+ let retryAt=0;
+ return async function(input,options){
+  const raw=typeof input==='string'?input:input?.url||String(input);
+  const refresh=raw.startsWith(cfg.supabaseUrl+'/auth/v1/token?')&&/[?&]grant_type=refresh_token(?:&|$)/.test(raw);
+  if(refresh&&now()<retryAt)throw Error('Session renewal paused briefly after rate limiting.');
+  const response=await fetchImpl(input,options);
+  if(refresh&&response.status===429){const header=response.headers.get('Retry-After'),seconds=Number(header);const delay=header?(Number.isFinite(seconds)?seconds*1000:Date.parse(header)-now()):60000;retryAt=now()+Math.min(300000,Math.max(1000,Number.isFinite(delay)?delay:60000));throw Error('Session renewal rate limited; keeping the session and retrying later.');}
+  if(refresh&&response.ok)retryAt=0;
+  return response;
+ };
+}
 async function initialize(){
  if(!cfg.enabled||!cfg.supabaseUrl||!cfg.publishableKey){message='Cloud saves are being connected. Your characters still save in this browser.';return}
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(cfg.supabaseUrl))throw Error('Invalid Supabase configuration');
- client=window.supabase.createClient(cfg.supabaseUrl,cfg.publishableKey,{auth:{flowType:'pkce',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true,storageKey:'forge-auth'}});
+ client=window.supabase.createClient(cfg.supabaseUrl,cfg.publishableKey,{global:{fetch:forgeAuthFetch()},auth:{flowType:'pkce',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true,storageKey:'forge-auth'}});
  client.auth.onAuthStateChange((event,session)=>{setTimeout(()=>switchUser(session?.user||null),0)});
  const {data,error}=await client.auth.getSession();if(error)message='Sign-in could not be restored. Continue as a guest or try again.';
  await switchUser(data?.session?.user||null);
