@@ -2,7 +2,18 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest release: 0.23.0 — November 1, 2026.**
+**Latest release: 0.24.0 — November 1, 2026.**
+
+## 0.24.0 — November 1, 2026 (GitHub main and stable release)
+
+Consolidates completed Sites beta changes since 0.23.0:
+
+- Add a separate, automatically saved Character backstory field in Notes & Bio, using the existing printable PDF backstory support while preserving character notes.
+- Add browser-bound guest party joining with a display name and invite code, optional copying of one local character, local backup mirroring and guest-session recovery tools.
+- Update party portraits with damage/death overlays and condition artwork, including the exhausted figure, incapacitated face and purple concentration brain. Add full condition descriptions.
+- Replace native confirmation prompts for character burial and party departure with accessible in-page dialogs.
+- Preserve the existing stable magic-item catalog, character features, party permissions and exports. Social features remain gated by backend availability; no database migration is part of this release.
+- Synchronize the footer and release metadata for GitHub main and stable Cloudflare production.
 
 ## 0.23.0 — November 1, 2026 (GitHub main and stable release)
 

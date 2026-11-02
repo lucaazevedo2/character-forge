@@ -507,7 +507,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 
   <footer id="foot">
     Core game content from the <b>System Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. Supplemental options are linked to Wikidot. No 2024 rules. Unofficial fan tool.
-    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.23.0 · Changelog ↗</a><span>Updated November 1, 2026</span></div>
+    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 0.24.0 · Changelog ↗</a><span>Updated November 1, 2026</span></div>
   </footer>
 </div>
 
@@ -934,7 +934,7 @@ function newDraft(){
     rolled:[], rollAssign:{str:null,dex:null,con:null,int:null,wis:null,cha:null},
     background:null, customBg:{name:"",skills:[],feature:"",extra:""}, name:"", player:"", alignment:"True Neutral",
     level:1, xp:0, feats:[], spells:[], prepared:[], arcanum:{}, spent:{}, equipped:[], gearChoices:{}, gearMode:"pack",
-    hp:null, tempHp:0, deathS:0, deathF:0, slotsSpent:0, ac:null, inventory:null, notes:"" };
+    hp:null, tempHp:0, deathS:0, deathF:0, slotsSpent:0, ac:null, inventory:null, notes:"", backstory:"" };
 }
 
 /* ════════════════ RENDER SHELL ════════════════ */
@@ -1045,7 +1045,7 @@ function renderNav(){
     byId("nvHome").onclick=()=>{ view="home"; render(); };
     byId("nvEdit").onclick=beginCreationEdit;
     byId("nvDel").onclick=async()=>{
-      if(confirm("Bury this character? This removes them from the ledger.")){
+      if(await window.forgeConfirm("Bury this character? This removes them from the ledger. You can restore cloud characters from Trash.","Bury character")){
         chars=chars.filter(c=>c.id!==draft.id); await storeSet("forge-chars",chars); view="home"; render(); }
     };
     return;
@@ -1534,7 +1534,9 @@ function renderSheet(){
   </div>
 
   <div class="sheet-sec"><h3>Notes</h3>
-    <textarea class="notes-box" id="notes" placeholder="Quests taken, debts owed, friends made along the way…">${esc(c.notes||"")}</textarea>
+    <textarea class="notes-box" id="notes" aria-label="Character notes" placeholder="Quests taken, debts owed, friends made along the way…">${esc(c.notes||"")}</textarea>
+    <h3><label for="backstory">Character backstory</label></h3>
+    <textarea class="notes-box" id="backstory" rows="10" placeholder="Where did your character come from? Describe their past, important people, and what led them to adventure…">${esc(c.backstory||"")}</textarea>
   </div>`;
 
   /* wiring */
@@ -1558,6 +1560,7 @@ function renderSheet(){
   byId("invNew").onkeydown=e=>{ if(e.key==="Enter") addInv(); };
   function addInv(){ const v=byId("invNew").value.trim(); if(!v) return; c.inventory.push(v); scheduleSave(); renderSheet(); }
   byId("notes").oninput=e=>{ c.notes=e.target.value; scheduleSave(); };
+  byId("backstory").oninput=e=>{ c.backstory=e.target.value; scheduleSave(); };
   renderAdvancedSheet(el,c);
 }
 function askNum(msg){ const v=prompt(msg); if(v===null) return null; const n=parseInt(v,10); return isNaN(n)||n<0?null:n; }
@@ -3340,7 +3343,9 @@ function renderCharacterAvatar(c,head){
  const identity=document.createElement('div');identity.className='character-identity';
  const avatar=document.createElement('div');avatar.className='character-avatar';
  const hasAvatar=validCharacterAvatar(c.avatar);
- avatar.innerHTML=`<button type="button" class="character-avatar-picture" aria-label="${hasAvatar?'Replace':'Upload'} character avatar">${hasAvatar?`<img src="${esc(c.avatar)}" alt="${esc(c.name||'Character')} avatar" width="96" height="96">`:'<span aria-hidden="true">'+esc((c.name||'?').trim().slice(0,1).toUpperCase()||'?')+'</span>'}</button><div class="character-avatar-controls"><button type="button" class="btn ghost" data-avatar-upload>${hasAvatar?'Change':'Add avatar'}</button>${hasAvatar?'<button type="button" class="btn ghost" data-avatar-remove>Remove</button>':''}</div><input type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Choose character avatar image" hidden><span class="avatar-status" role="status" aria-live="polite"></span>`;
+ const portraitHP=typeof effectiveHP==='function'?effectiveHP(c):Number(c.hp)||0,portraitMax=typeof effectiveMaxHP==='function'?effectiveMaxHP(c):maxHP(c),portraitDead=Number(c.hp)<=0&&Number(c.deathF)>=3;
+ const portraitDamage=Math.max(0,Math.min(100,100-portraitHP/Math.max(1,portraitMax)*100));
+ avatar.innerHTML=`<button type="button" class="character-avatar-picture ${portraitDead?'portrait-is-dead':''}" style="--portrait-damage:${portraitDamage}%" aria-label="${hasAvatar?'Replace':'Upload'} character avatar">${hasAvatar?`<img src="${esc(c.avatar)}" alt="${esc(c.name||'Character')} avatar" width="96" height="96">`:'<span aria-hidden="true">'+esc((c.name||'?').trim().slice(0,1).toUpperCase()||'?')+'</span>'}<i class="character-portrait-damage" aria-hidden="true"></i>${portraitDead?'<span class="portrait-death-cross" role="img" aria-label="Dead"></span>':''}</button><div class="character-avatar-controls"><button type="button" class="btn ghost" data-avatar-upload>${hasAvatar?'Change':'Add avatar'}</button>${hasAvatar?'<button type="button" class="btn ghost" data-avatar-remove>Remove</button>':''}</div><input type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Choose character avatar image" hidden><span class="avatar-status" role="status" aria-live="polite"></span>`;
  const heading=document.createElement('div');heading.className='character-identity-text';
  for(const child of [...head.children])if(child.matches('h2,.sh-sub'))heading.append(child);
  identity.append(avatar,heading);head.prepend(identity);
@@ -3583,7 +3588,8 @@ const sheetBeforeRecovery=renderSheet;renderSheet=function(){sheetBeforeRecovery
 </script>
 <script src="class-choices.js"></script>
 <script src="item-shop.js"></script>
-<script src="conditions.js"></script>
+<script src="condition-descriptions.js"></script>
+<script src="conditions.js?v=exact-descriptions"></script>
 <script src="dice-chat.js"></script>
 <script src="wild-shape-data.js"></script>
 <script src="wild-shape.js"></script>
@@ -3598,9 +3604,9 @@ const sheetBeforeRecovery=renderSheet;renderSheet=function(){sheetBeforeRecovery
 <link rel="stylesheet" href="cloud-saves.css">
 <script src="cloud-config.js"></script>
 <script src="vendor/supabase-2.76.1.js"></script>
-<script src="cloud-saves.js"></script>
-<link rel="stylesheet" href="parties.css">
-<script src="parties.js"></script>
+<script src="cloud-saves.js?v=20261101-dm-join"></script>
+<link rel="stylesheet" href="party-view-death-v2.css?v=exact-descriptions">
+<script src="party-view-death-v2.js?v=condition-art"></script>
 <script>
 (async function(){
   try { await window.ForgeCloud.initialize(); } catch { /* Guest saves remain available if auth cannot load. */ }
@@ -3712,6 +3718,7 @@ button.class-choices-unfinished:focus-visible{outline:3px solid #fff4b0!importan
 <link rel="stylesheet" href="sheet-polish.css">
 <link rel="stylesheet" href="home-polish.css">
 <link rel="stylesheet" href="navigation-polish.css?v=20261101">
+<script src="action-confirm.js"></script>
 <script src="mobile-nav.js"></script>
 </body>
 </html>

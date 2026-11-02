@@ -18,7 +18,30 @@ function pending(){return Object.values(records).some(r=>r.dirty)}
 function report(text){message=text;paint()}
 function persist(){if(!user)return;const bundle={records,chars:read(key('forge-chars'),[]),custom:read(key('forge-custom'),{})};write(stateKey(),bundle);write(cacheKey(),bundle)}
 function library(){return typeof CUSTOM==='object'?copy(CUSTOM):{}}
-function envelope(c){return {schema_version:1,character:copy({...c,schema_version:1}),homebrew:library(),_party:window.ForgeParty?.summary(c)||{}}}
+function envelope(c){if(typeof sheetConditionState==='function')sheetConditionState(c);return {schema_version:1,character:copy({...c,schema_version:1}),homebrew:library(),_party:window.ForgeParty?.summary(c)||{}}}
+function isGuest(){return user?.is_anonymous===true}
+function mirrorGuest(list){
+ if(!isGuest())return;
+ const linkedKey=prefix(user.id)+'guest-linked',linked=new Set([...read(linkedKey,[]),...list.map(c=>c.id)]),originals=read('forge-chars',null)||read('toa-chars',[])||[];
+ write('forge-chars',[...originals.filter(c=>!linked.has(c.id)),...copy(list)]);write(linkedKey,list.map(c=>c.id));
+ const originalLibrary=read('forge-custom',{}),current=library();for(const [kind,items] of Object.entries(current))if(Array.isArray(items)){originalLibrary[kind]||=[];for(const item of items){const id=item.id||item.index,idx=originalLibrary[kind].findIndex(x=>(x.id||x.index)===id);if(idx<0)originalLibrary[kind].push(item);else originalLibrary[kind][idx]=item}}write('forge-custom',originalLibrary);
+}
+async function startGuestDM(name){
+ if(!client)throw Error('Guest parties are unavailable.');
+ name=String(name||'').trim();if(!name||name.length>60)throw Error('Enter a display name of 1–60 characters.');
+ if(!user){const {data,error}=await client.auth.signInAnonymously({options:{data:{full_name:name}}});if(error)throw error;await switchUser(data.user)}
+}
+async function startGuestSession(name,characterId=null){
+ if(!client)throw Error('Guest parties are unavailable. Try again when connected.');
+ if(user&&!isGuest())throw Error('You are already signed in. Join using your current account.');
+ name=String(name||'').trim();if(!name||name.length>60)throw Error('Enter a display name of 1–60 characters.');
+ const guests=copy(chars),selected=characterId?guests.find(c=>c.id===characterId):null,guestLibrary=library();
+ if(!selected)throw Error('Choose a character from this browser before joining a party.');
+ if(!user){const {data,error}=await client.auth.signInAnonymously({options:{data:{full_name:name}}});if(error)throw Error(/anonymous|disabled/i.test(error.message||'')?'Guest joining is not enabled yet. Please try again shortly.':error.message||'Guest session could not start.');if(!data?.user)throw Error('Guest session could not start.');await switchUser(data.user)}
+ if(selected&&!chars.some(c=>c.id===selected.id)){CUSTOM=mergeLibraries([{data:{homebrew:guestLibrary}}]);write(key('forge-custom'),CUSTOM);applyCustom();chars.push(selected);await storeSet('forge-chars',chars)}
+ await sync();if(pending())throw Error('Your character is saved here. Reconnect and sync it before joining.');
+ return selected?records[selected.id]?.id:null;
+}
 function capture(list){
  if(!user||blocked)return;
  const current=new Set(list.map(c=>c.id));
@@ -28,7 +51,7 @@ function capture(list){
   if(signature(r.data)!==signature(data)||r.deleted){r.data=data;r.deleted=false;r.dirty=true}
  }
  for(const [id,r] of Object.entries(records))if(!current.has(id)&&!r.deleted){r.deleted=true;r.dirty=true}
- try{persist()}catch{report('Browser storage is full. Export your characters before closing.')}queue()
+ try{mirrorGuest(list);persist()}catch{report('Browser storage is full. Export your characters before closing.')}queue()
 }
 function queue(delay=2000){clearTimeout(timer);if(user&&!blocked)timer=setTimeout(()=>sync(),delay);paint()}
 function setWorkspace(list,custom){
@@ -106,6 +129,7 @@ async function sync(){
    else if(data.status==='saved'){
     r.id=data.row.id;r.revision=Number(data.row.revision);r.updated_at=data.row.updated_at;r.deleted_at=data.row.deleted_at;
     r.dirty=signature(r.data)!==signature(sent)||r.deleted!==deleting;
+    if(deleting)window.ForgeParty?.refresh(true);
    }else throw Error('Unexpected cloud response');
    persist();
   }
@@ -139,9 +163,10 @@ async function initialize(){
 }
 function mount(){ready=true;paint();window.ForgeParty?.accountChanged()}
 const googleMark=`<svg class="google-mark" viewBox="0 0 48 48" width="20" height="20" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6C44.4 38.03 46.98 31.87 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.87 23.87 0 0 0 0 24c0 3.87.93 7.53 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
-function cloudStatus(){return message||(busy?'Syncing…':pending()?'Saved on this device · cloud changes pending':user?'Saved to cloud':'Guest · saved in this browser')}
+function cloudStatus(){return message||(isGuest()?'Guest party session · this browser':null)||(busy?'Syncing…':pending()?'Saved on this device · cloud changes pending':user?'Saved to cloud':'Guest · saved in this browser')}
 function profileName(){return String(user?.user_metadata?.full_name||user?.user_metadata?.name||user?.email?.split('@')[0]||'Adventurer')}
 function profileAvatar(){
+ if(isGuest())return null;
  const value=user?.user_metadata?.avatar_url||user?.user_metadata?.picture;
  try{const url=new URL(value);return url.protocol==='https:'&&/(^|\.)googleusercontent\.com$/.test(url.hostname)?url.href:null}catch{return null}
 }
@@ -161,7 +186,7 @@ function account(){
  const conflicts=Object.values(records).filter(r=>r.conflict).length;
  const paths={import:'M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5',sync:'M20 7v5h-5M4 17v-5h5M6 7a7 7 0 0 1 12-1l2 3M4 15l2 3a7 7 0 0 0 12-1',trash:'M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7',export:'M12 16V4m-4 4 4-4 4 4M4 15v5h16v-5',signout:'M9 4H4v16h5m5-12 4 4-4 4m-6-4h13',conflicts:'m12 3 10 18H2L12 3zm0 6v5m0 3v1'};
  const row=(action,title,desc)=>`<button type="button" class="cloud-menu-row" data-cloud="${action}"><span class="cloud-menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[action]}"></path></svg></span><span class="cloud-menu-copy"><strong>${title}</strong><small>${desc}</small></span><span class="cloud-menu-arrow" aria-hidden="true">›</span></button>`;
- const box=dialog('Your account',`<div class="cloud-profile-header"><div class="cloud-profile-large">${profileHTML()}</div><div><h3>${escape(profileName())}</h3><p class="cloud-profile-email">${escape(user.email||'Signed in with Google')}</p><span class="cloud-sync-pill" role="status"><i aria-hidden="true"></i>${escape(cloudStatus())}</span></div></div><div class="cloud-menu-list">${conflicts?row('conflicts','Review changes',`${conflicts} character${conflicts===1?'':'s'} need your attention`):''}${row('import','Import guest characters','Bring characters from this browser into your account')}${row('sync','Sync now','Check for the latest changes across your devices')}${row('trash','Trash','Restore recently deleted characters')}${row('export','Export all characters','Download a JSON backup of your collection')}</div><div class="cloud-menu-footer">${row('signout','Sign out','Return to your guest characters')}<button type="button" class="cloud-delete-link" data-cloud="delete">Delete account</button></div>`);
+ const box=dialog('Your account',`<div class="cloud-profile-header"><div class="cloud-profile-large">${profileHTML()}</div><div><h3>${escape(profileName())}</h3><p class="cloud-profile-email">${escape(isGuest()?'Guest · this browser only':user.email||'Signed in with Google')}</p><span class="cloud-sync-pill" role="status"><i aria-hidden="true"></i>${escape(cloudStatus())}</span></div></div><div class="cloud-menu-list">${conflicts?row('conflicts','Review changes',`${conflicts} character${conflicts===1?'':'s'} need your attention`):''}${row('import','Import guest characters','Bring characters from this browser into your account')}${row('sync','Sync now','Check for the latest changes across your devices')}${row('trash','Trash','Restore recently deleted characters')}${row('export','Export all characters','Download a JSON backup of your collection')}</div><div class="cloud-menu-footer">${isGuest()?'<p class="hint">Your guest identity belongs to this browser. Export a backup before clearing browser data. Signing in with Google opens a separate account; you can import the character copies kept here and rejoin your party.</p>'+row('login','Sign in with Google','Open your Google account workspace'):''}${row('signout',isGuest()?'End guest session':'Sign out','Return to your local characters')}${isGuest()?'':'<button type="button" class="cloud-delete-link" data-cloud="delete">Delete account</button>'}</div>`);
  box.classList.add('cloud-account-dialog');bindProfileImages(box);
  box.querySelectorAll('[data-cloud]').forEach(b=>b.onclick=()=>{const action=b.dataset.cloud;box.close();act(action)});
 }
@@ -203,6 +228,7 @@ function conflicts(){
 }
 async function signout(){
  if(pending()&&!confirm('Some edits have not synced. Signing out clears this account’s cached characters from this device. Cancel to sync or export them first. Sign out anyway?'))return;
+ if(isGuest())mirrorGuest(chars);
  const uid=user.id;const {error}=await client.auth.signOut({scope:'local'});if(error){report('Could not sign out. Try again.');return}
  for(const k of Object.keys(localStorage))if(k.startsWith(prefix(uid)))localStorage.removeItem(k);
  await switchUser(null);
@@ -222,7 +248,7 @@ async function deleteAccount(){
  };
 }
 async function act(action){try{
- if(action==='login'){if(!client){dialog('Sign in with Google','<p>Google sign-in is being connected. You can keep creating and saving characters as a guest in this browser.</p><p>Your existing characters will stay here. Once sign-in is ready, you can choose which ones to import into your account.</p>');return}const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:new URL('.',location.href).href,queryParams:{prompt:'select_account'}}});if(error)throw error}
+ if(action==='login'){if(isGuest()){capture(chars);await sync();mirrorGuest(chars)}if(!client){dialog('Sign in with Google','<p>Google sign-in is being connected. You can keep creating and saving characters as a guest in this browser.</p><p>Your existing characters will stay here. Once sign-in is ready, you can choose which ones to import into your account.</p>');return}const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+'/',queryParams:{prompt:'select_account'}}});if(error)throw error}
  if(action==='account')account();if(action==='import')guestImport();if(action==='trash')trash();if(action==='conflicts')conflicts();if(action==='export')exportAll();if(action==='signout')await signout();if(action==='delete')await deleteAccount();
  if(action==='sync'){message='';await sync();await refresh()}
  }catch{report('That action could not finish. Your local characters are safe. Please try again.')}
@@ -234,10 +260,11 @@ window.addEventListener('online',()=>queue(100));
 window.addEventListener('focus',()=>{if(user){if(pending())queue(100);else if(Date.now()-lastRefresh>15000)refresh()}});
 window.addEventListener('beforeunload',e=>{if(user&&pending()){e.preventDefault();e.returnValue=''}});
 window.ForgeCloud={storageKey:key,initialize,mount,capture,sync,refresh,exportAll,
- partyConnection:()=>({client,user}),
+ partyConnection:()=>({client,user}),startGuestSession,startGuestDM,
+
  characterRef:id=>records[id]?{id:records[id].id,revision:records[id].revision,pending:!!records[id].dirty}:null,
  preparePartyCharacter:async()=>{capture(chars);await sync()},
  signIn:()=>act('login'),
  // Narrow diagnostics for regression tests; contains no session credentials.
- diagnostics:()=>({signedIn:!!user,pending:pending(),conflicts:Object.values(records).filter(r=>r.conflict).length})};
+ diagnostics:()=>({signedIn:!!user&&!isGuest(),guest:isGuest(),pending:pending(),conflicts:Object.values(records).filter(r=>r.conflict).length})};
 })();
