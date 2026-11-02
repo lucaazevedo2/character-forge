@@ -10,7 +10,7 @@ A history of the D&D 5e **2014 rules** character builder and sheet.
 - Apply the same fix to stable and Sites beta. Existing cleared sessions require signing in again.
 - Verified against the pinned Supabase SDK: rate limits retain session storage without SIGNED_OUT, cooldown suppresses repeat requests, and invalid refresh tokens still remove the session. Cloud-save regressions pass.
 
-## 0.25.0 — November 1, 2026
+## 0.25.0 — November 1, 2026; Bug fixes.
 
 - Release all accumulated party social updates: admins and ownership transfer, shared rolls/chat, private whispers, safe item/gold transfers, and ten-player capacity excluding the DM.
 - Add NPC chat speakers and portraits, whisper autocomplete, animated speech/typing bubbles, notification audio, and confirmed DM/organizer chat clearing.
