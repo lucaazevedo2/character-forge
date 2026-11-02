@@ -8,7 +8,7 @@ function harness(db,uid,local=storage(),tabId){
  ctx.window=ctx;ctx.addEventListener=(type,fn)=>ctx.events[type]=fn;ctx.setTimeout=fn=>{ctx.timers.push(fn);return ctx.timers.length};ctx.clearTimeout=()=>{};
  ctx.chars=[];ctx.CUSTOM={races:[],classes:[],subs:[],bgs:[],spells:[],items:[]};ctx.draft=null;ctx.view='home';ctx.activeId=null;ctx.editingCreation=false;ctx.editSnapshot=null;ctx.render=()=>{};ctx.renderHome=()=>{};ctx.applyCustom=()=>{};ctx.validCharacterAvatar=()=>false;ctx.downloadJSON=()=>{};
  ctx.storeSet=async(k,v)=>local.setItem(ctx.ForgeCloud?.storageKey(k)||k,JSON.stringify(v));
- const client={auth:{getSession:async()=>({data:{session:uid?{user:{id:uid,email:uid+'@test'}}:null}}),onAuthStateChange:fn=>{ctx.authEvent=fn},signOut:async()=>({})},
+ const client={auth:{getSession:async()=>({data:{session:uid?{user:{id:uid,email:uid+'@test'}}:null}}),onAuthStateChange:fn=>{ctx.authEvent=fn},signOut:async()=>({}),signInAnonymously:async({options})=>{uid='guest-session';return {data:{user:{id:uid,is_anonymous:true,user_metadata:options.data}}}}},
  from:()=>({select:()=>({order:async()=>db.fail?{error:{}}:{data:[...db.rows.values()].filter(r=>r.owner_id===uid).map(r=>structuredClone(r))}})}),
  rpc:async(name,p)=>{db.calls++;if(db.hold)await db.hold;if(db.fail)return {error:{code:'NETWORK'}};let row=[...db.rows.values()].find(r=>r.owner_id===uid&&r.local_id===p.p_local_id);
  if(row&&(row.id!==p.p_id||row.revision!==p.p_expected_revision))return {data:{status:'conflict',row:structuredClone(row)}};
@@ -40,5 +40,13 @@ const hero=(name='Hero')=>({id:'local-one',name,base:{str:10},notes:'',schema_ve
  const duplicate=harness(raceDB,'race');await duplicate.ForgeCloud.initialize();duplicate.chars=[hero('Imported again')];await duplicate.storeSet('forge-chars',duplicate.chars);await duplicate.ForgeCloud.sync();assert.equal(raceDB.rows.size,1);
  // Auth sign-out hides account data and returns to guest data.
  a.authEvent('SIGNED_OUT',null);await a.timers.pop()();assert.equal(a.ForgeCloud.diagnostics().signedIn,false);assert.equal(a.chars[0].name,'Guest');
+ // Guest party sessions copy only the selected local character and keep local edits recoverable.
+ const guestDB=makeBackend(),guestLocal=storage(),first=hero('Guest party hero'),other={...hero('Unshared hero'),id:'local-other'};guestLocal.setItem('forge-chars',JSON.stringify([first,other]));
+ const guest=harness(guestDB,null,guestLocal);guest.chars=structuredClone([first,other]);await guest.ForgeCloud.initialize();
+ await assert.rejects(()=>guest.ForgeCloud.startGuestSession('',first.id));assert.equal(guestDB.rows.size,0);
+ const cloudId=await guest.ForgeCloud.startGuestSession('Guest player',first.id);assert(cloudId);assert.equal(guestDB.rows.size,1);assert.equal(guest.chars.length,1);assert(guest.ForgeCloud.diagnostics().guest);assert(!guest.ForgeCloud.diagnostics().signedIn);assert.equal(JSON.parse(guestLocal.getItem('forge-chars')).length,2);
+ guest.chars[0].notes='Guest session edits';await guest.storeSet('forge-chars',guest.chars);await guest.ForgeCloud.sync();assert.equal(JSON.parse(guestLocal.getItem('forge-chars')).find(c=>c.id===first.id).notes,'Guest session edits');assert.equal(JSON.parse(guestLocal.getItem('forge-chars')).find(c=>c.id===other.id).name,'Unshared hero');
+ const emptyDB=makeBackend(),empty=harness(emptyDB,null);await empty.ForgeCloud.initialize();await assert.rejects(()=>empty.ForgeCloud.startGuestSession('Observer'),/Choose a character/);assert.equal(emptyDB.rows.size,0,'joining without a character is rejected');
+ await assert.rejects(()=>b.ForgeCloud.startGuestSession('Wrong account')); // An existing Google workspace cannot be replaced by guest joining.
  console.log('PASS cloud saves: guest isolation, account isolation, successful writes, conflicts, offline reload/retry, soft deletes, in-flight edits, duplicate IDs, session sign-out');
 })().catch(e=>{console.error(e);process.exitCode=1});

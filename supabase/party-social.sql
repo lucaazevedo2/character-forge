@@ -1,13 +1,24 @@
--- Party social beta: privileged RPCs validate membership; raw tables stay inaccessible.
+-- Activate party social features; preserve existing separate DM invitations and guest/portrait behavior.
 alter table public.forge_party_members add column is_admin boolean not null default false;
-alter table public.forge_parties add column dm_invite_code text unique;
-create or replace function public.forge_party_list() returns jsonb language sql stable security definer set search_path='' as $$
- select coalesce(jsonb_agg(jsonb_build_object('id',p.id,'name',p.name,'is_dm',coalesce(p.dm_id=auth.uid(),false),'is_organizer',p.owner_id=auth.uid(),'is_admin',exists(select 1 from public.forge_party_members a where a.party_id=p.id and a.user_id=auth.uid() and a.is_admin),'has_dm',p.dm_id is not null,'character_id',m.character_id,'session_active',p.session_active) order by p.created_at),'[]')
+
+CREATE OR REPLACE FUNCTION public.forge_party_list()
+ RETURNS jsonb
+ LANGUAGE sql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+ select coalesce(jsonb_agg(jsonb_build_object('id',p.id,'name',p.name,'is_dm',coalesce(p.dm_id=auth.uid(),false),'is_organizer',p.owner_id=auth.uid(),'is_admin',m.is_admin,'has_dm',p.dm_id is not null,'character_id',m.character_id,'session_active',p.session_active) order by p.created_at),'[]')
  from public.forge_parties p join public.forge_party_members m on m.party_id=p.id
  where m.user_id=auth.uid() and public.forge_account_active();
-$$;
+$function$
+;
 
-create or replace function public.forge_party_state(p_id uuid) returns jsonb language plpgsql stable security definer set search_path='' as $$
+CREATE OR REPLACE FUNCTION public.forge_party_state(p_id uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
 declare p public.forge_parties; dm boolean; members jsonb; fighters jsonb;
 begin
  if not public.forge_party_access(p_id) then raise exception 'Party access denied' using errcode='42501'; end if;
@@ -21,7 +32,8 @@ begin
   'temp_hp',public.forge_party_number(c.data->'character'->'tempHp'),
   'conditions',coalesce(c.data->'character'->'conditionTracker'->'active','[]'),
   'exhaustion',public.forge_party_number(c.data->'character'->'conditionTracker'->'exhaustion'),
-  'concentrating',coalesce(c.data->'character'->'conditionTracker'->'concentrating','false'),
+  'death_failures',public.forge_party_number(c.data->'character'->'deathF'),'dead',(public.forge_party_number(c.data->'character'->'hp')<=0 and public.forge_party_number(c.data->'character'->'deathF')>=3),
+ 'concentrating',coalesce(c.data->'character'->'conditionTracker'->'concentrating','false'),
   'portrait_path',case when c.data->>'portrait_path' like c.owner_id::text||'/'||c.id::text||'/%' then c.data->>'portrait_path' else null end,'initiative_bonus',public.forge_party_number(c.data->'_party'->'initiative_bonus'),'ac',public.forge_party_number(c.data->'_party'->'ac'),
   'updated_at',c.updated_at
  ) order by m.joined_at),'[]') into members
@@ -31,19 +43,25 @@ begin
   'hp',case when dm then b.hp else null end,'max_hp',case when dm then b.max_hp else null end,
   'conditions',b.conditions,'hidden',b.hidden) order by b.initiative desc nulls last,b.id),'[]') into fighters
  from public.forge_combatants b where b.party_id=p_id and (dm or not b.hidden);
- return jsonb_build_object('social_ready',true,'id',p.id,'name',p.name,'is_dm',dm,'is_organizer',p.owner_id=auth.uid(),'is_admin',exists(select 1 from public.forge_party_members a where a.party_id=p.id and a.user_id=auth.uid() and a.is_admin),'has_dm',p.dm_id is not null,'dm_user_id',p.dm_id,'dm_notes',case when dm then p.dm_notes else null end,'version',p.version,'session_active',p.session_active,'combat_active',p.combat_active,
+ return jsonb_build_object('social_ready',true,'is_admin',exists(select 1 from public.forge_party_members a where a.party_id=p.id and a.user_id=auth.uid() and a.is_admin),'id',p.id,'name',p.name,'is_dm',dm,'is_organizer',p.owner_id=auth.uid(),'has_dm',p.dm_id is not null,'dm_user_id',p.dm_id,'dm_notes',case when dm then p.dm_notes else null end,'version',p.version,'session_active',p.session_active,'combat_active',p.combat_active,
   'round',p.round,'turns_running',p.current_id is not null,'current_id',case when exists(select 1 from public.forge_combatants where id=p.current_id and hidden and not dm) then null else p.current_id end,
   'hidden_turn',exists(select 1 from public.forge_combatants where id=p.current_id and hidden and not dm),
-  'dm_invite_code',case when p.owner_id=auth.uid() then p.dm_invite_code else null end,'invite_code',case when p.owner_id=auth.uid() or exists(select 1 from public.forge_party_members a where a.party_id=p.id and a.user_id=auth.uid() and a.is_admin) then p.invite_code else null end,'members',members,'combatants',fighters);
-end $$;
+  'invite_code',case when p.owner_id=auth.uid() or exists(select 1 from public.forge_party_members a where a.party_id=p.id and a.user_id=auth.uid() and a.is_admin) then p.invite_code else null end,'members',members,'combatants',fighters);
+end $function$
+;
 
-create or replace function public.forge_party_command(p_action text,p_id uuid default null,p_args jsonb default '{}') returns jsonb
-language plpgsql security definer set search_path='' as $$
-declare u uuid:=auth.uid(); p public.forge_parties; v_id uuid; char_id uuid; c public.characters; target uuid; idx int; ordered uuid[]; next_id uuid; dat jsonb; hp numeric; cond jsonb; tracker jsonb; limit_row public.forge_party_join_limits; dm_join boolean:=false;
+CREATE OR REPLACE FUNCTION public.forge_party_command(p_action text, p_id uuid DEFAULT NULL::uuid, p_args jsonb DEFAULT '{}'::jsonb)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare u uuid:=auth.uid(); p public.forge_parties; v_id uuid; char_id uuid; c public.characters; target uuid; idx int; ordered uuid[]; next_id uuid; dat jsonb; hp numeric; cond jsonb; tracker jsonb; limit_row public.forge_party_join_limits;
 begin
  if u is null or not public.forge_account_active() then raise exception 'Sign in to use parties' using errcode='42501'; end if;
  if p_args is null or octet_length(p_args::text)>60000 then raise exception 'Invalid request'; end if;
  if p_action='create' then
+  if exists(select 1 from auth.users where id=u and is_anonymous) then raise exception 'Sign in with Google to create a party' using errcode='42501';end if;
   perform pg_advisory_xact_lock(hashtextextended(u::text,1));
   if (select count(*) from public.forge_parties where owner_id=u)>=5 then raise exception 'You can create up to five parties'; end if;
   insert into public.forge_parties(owner_id,name) values(u,trim(p_args->>'name')) returning id into v_id;
@@ -54,19 +72,17 @@ begin
    attempts=case when public.forge_party_join_limits.window_start<now()-interval '1 minute' then 1 else public.forge_party_join_limits.attempts+1 end,
    window_start=case when public.forge_party_join_limits.window_start<now()-interval '1 minute' then now() else public.forge_party_join_limits.window_start end returning * into limit_row;
   if limit_row.attempts>10 then return jsonb_build_object('error','Too many join attempts. Wait one minute.'); end if;
-  select * into p from public.forge_parties where invite_code=upper(regexp_replace(p_args->>'code','[^a-zA-Z0-9]','','g')) or dm_invite_code=upper(regexp_replace(p_args->>'code','[^a-zA-Z0-9]','','g')) for update;
+  select * into p from public.forge_parties where invite_code=upper(regexp_replace(p_args->>'code','[^a-zA-Z0-9]','','g')) for update;
   if not found then return jsonb_build_object('error','Invite code not found'); end if;
   if (select count(*) from public.forge_party_members where user_id=u)>=20 then return jsonb_build_object('error','Party membership limit reached'); end if;
-  dm_join:=coalesce(p.dm_invite_code=upper(regexp_replace(p_args->>'code','[^a-zA-Z0-9]','','g')),false);
-  if dm_join and p.dm_id is not null then return jsonb_build_object('error','This party already has a DM'); end if;
-  if not dm_join and not exists(select 1 from public.forge_party_members where party_id=p.id and user_id=u) and (select count(*) from public.forge_party_members where party_id=p.id and user_id is distinct from p.dm_id)>=10 then return jsonb_build_object('error','This party is full (10 players)'); end if;
+  if not exists(select 1 from public.forge_party_members where party_id=p.id and user_id=u) and (select count(*) from public.forge_party_members where party_id=p.id and user_id is distinct from p.dm_id)>=10 then return jsonb_build_object('error','This party is full (10 players)'); end if;
   insert into public.forge_party_members(party_id,user_id) values(p.id,u) on conflict do nothing;
-  if dm_join then update public.forge_parties set dm_id=u,dm_invite_code=null,version=version+1 where id=p.id;end if;
   return jsonb_build_object('id',p.id);
  end if;
  if not public.forge_party_access(p_id) then raise exception 'Party access denied' using errcode='42501'; end if;
  select * into p from public.forge_parties where id=p_id for update;
  if p_action='select_character' then
+ if p.dm_id=u then raise exception 'The DM cannot select a player character';end if;
   if p.combat_active then raise exception 'Finish combat before changing party characters'; end if;
   char_id:=(p_args->>'character_id')::uuid;
   if char_id is not null and not exists(select 1 from public.characters where id=char_id and owner_id=u and deleted_at is null) then raise exception 'Choose your own cloud-saved character'; end if;
@@ -84,16 +100,13 @@ begin
   update public.forge_combatants set initiative=(p_args->>'initiative')::numeric where party_id=p_id and user_id=target;
   if not found then raise exception 'Choose a party character before starting combat'; end if;
  else
-  if p_action in ('disband','assign_dm','invite_dm','set_admin','transfer_owner') then
+  if p_action in ('disband','assign_dm','set_admin','transfer_owner') then
    if p.owner_id<>u then raise exception 'Only the party organizer can do that' using errcode='42501'; end if;
   elsif p_action in ('rotate_code','remove_member') then
    if p.owner_id<>u and not exists(select 1 from public.forge_party_members where party_id=p_id and user_id=u and is_admin) then raise exception 'Only the organizer or a party admin can do that' using errcode='42501';end if;
   elsif p.dm_id is distinct from u then raise exception 'Only the assigned DM can do that' using errcode='42501'; end if;
   if (p_args->>'version') is null or (p_args->>'version')::bigint<>p.version then return jsonb_build_object('conflict',true); end if;
   case p_action
-   when 'invite_dm' then
-    if p.dm_id is not null then raise exception 'Remove the current DM before inviting a new one';end if;
-    update public.forge_parties set dm_invite_code=upper(replace(gen_random_uuid()::text,'-','')) where id=p_id;
    when 'set_admin' then
     target:=(p_args->>'user_id')::uuid;
     update public.forge_party_members set is_admin=coalesce((p_args->>'enabled')::boolean,false) where party_id=p_id and user_id=target and user_id<>p.owner_id;
@@ -101,11 +114,12 @@ begin
    when 'transfer_owner' then
     target:=(p_args->>'user_id')::uuid;
     if not exists(select 1 from public.forge_party_members where party_id=p_id and user_id=target) then raise exception 'Choose a party member';end if;
-    update public.forge_parties set owner_id=target,dm_invite_code=null where id=p_id;
+    if exists(select 1 from auth.users where id=target and is_anonymous) then raise exception 'Choose a registered account as organizer';end if;
+    update public.forge_parties set owner_id=target,dm_join_code=null where id=p_id;
     update public.forge_party_members set is_admin=true where party_id=p_id and user_id=u;
    when 'assign_dm' then
+ if nullif(p_args->>'user_id','') is not null then raise exception 'Invite a separate DM through DM Tools';end if;
     target:=(p_args->>'user_id')::uuid;
-    if (select count(*) from public.forge_party_members where party_id=p_id and user_id is distinct from target)>10 then raise exception 'Party would exceed the 10-player limit';end if;
     if target is not null and not exists(select 1 from public.forge_party_members where party_id=p_id and user_id=target) then raise exception 'Choose a party member as DM';end if;
     update public.forge_parties set dm_id=target where id=p_id;
    when 'save_dm_notes' then
@@ -164,7 +178,8 @@ begin
  -- Keep the turn cursor valid when combatants or members leave.
  update public.forge_parties set version=version+1,current_id=case when exists(select 1 from public.forge_combatants where id=public.forge_parties.current_id and party_id=p_id) then current_id else null end where id=p_id;
  return jsonb_build_object('ok',true);
-end $$;
+end $function$
+;
 
 create table public.forge_party_messages(
  id bigint generated always as identity primary key,
@@ -220,7 +235,7 @@ begin
  perform 1 from public.characters where id in (src.id,dst.id) order by id for update;
  select * into src from public.characters where id=src.id;
  select * into dst from public.characters where id=dst.id;
- if src.revision<>p_revision or dst.revision<>p_target_revision then return jsonb_build_object('conflict',true);end if;
+ if p_revision is null or p_target_revision is null or src.revision<>p_revision or dst.revision<>p_target_revision then return jsonb_build_object('conflict',true);end if;
  sc:=src.data->'character';dc:=dst.data->'character';
  if p_kind='gold' then
   if p_amount is null or p_amount<=0 or p_amount>100000 or p_amount*100<>trunc(p_amount*100) then raise exception 'Enter gold to the nearest copper (0.01 gp)';end if;

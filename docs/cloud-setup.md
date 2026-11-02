@@ -1,6 +1,4 @@
-Release 0.23.0: the stable and GitHub application origins are being configured for sign-in. The delete-account function origin update is prepared in source but its production deployment was blocked by automatic approval review, pending explicit approval. Do not retry that deployment without approval.
-
-# Character Forge Google login and cloud saves — setup
+Account-deletion origin update deployed November 1, 2026 (function version 3): Sites, stable characterforge5e.com and GitHub origins are accepted. Preflight and unauthenticated rejection verified; no real account was deleted.
 
 Status as of November 1, 2026: connected to Supabase project `vrjwaejlqupmkqrhmzra` (character-forge). Private tables and portrait bucket deployed; delete-account and purge-trash functions active; daily Trash cleanup scheduled for 08:17 UTC. Live PostgreSQL owner-save, conflict and cross-account isolation checks passed using rolled-back synthetic accounts. Google provider is enabled and its authorize endpoint redirects successfully to accounts.google.com with the correct Supabase callback. Frontend cloud saves are enabled on Sites beta; first real-account OAuth completion and cross-device portrait checks remain pending. Guest characters continue to work.
 

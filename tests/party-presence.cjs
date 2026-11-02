@@ -4,7 +4,7 @@ const fs=require('fs'),assert=require('assert');
 const uidA='11111111-1111-4111-8111-111111111111',uidB='22222222-2222-4222-8222-222222222222',id='33333333-3333-4333-8333-333333333333';
 (async()=>{
 const db=new PGlite();await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;
-create schema auth;create schema storage;create table auth.users(id uuid primary key,raw_user_meta_data jsonb default '{}');
+create schema auth;create schema storage;create table auth.users(id uuid primary key,raw_user_meta_data jsonb default '{}',is_anonymous boolean default false);
 create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
 grant usage on schema auth,storage,public to anon,authenticated,service_role;grant execute on function auth.uid() to anon,authenticated;
 create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
@@ -14,7 +14,7 @@ create function storage.foldername(text) returns text[] language sql immutable a
 insert into auth.users values('${uidA}'),('${uidB}');`);
 await db.exec(fs.readFileSync(__dirname+'/../supabase/schema.sql','utf8'));
 await db.exec(fs.readFileSync(__dirname+'/../supabase/parties.sql','utf8'));
-await db.exec('alter table auth.users add column is_anonymous boolean default false');
+await db.exec('alter table auth.users add column if not exists is_anonymous boolean default false');
 await db.exec(fs.readFileSync(__dirname+'/../supabase/party-presence.sql','utf8'));
 
 async function as(uid){await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid||'']);await db.exec('set role '+(uid?'authenticated':'anon'))}

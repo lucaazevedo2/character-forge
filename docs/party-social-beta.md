@@ -1,17 +1,19 @@
-# Party social beta rollout
+# Party social features — active
 
-The source includes all ten November 1 requests. The Sites interface can ship safely with the existing backend. The social features activate only when the server returns `social_ready: true`.
+Luca authorized the live backend rollout on November 1, 2026. Applied `activate_party_social_preserving_dm_invites` to project `vrjwaejlqupmkqrhmzra`. The backend now returns `social_ready: true`, enabling the already-published social controls on stable/GitHub and Sites. The existing separate `forge_party_dm_invite` / `forge_party_join_dm` flow is preserved, including consumed single-use codes and no player character for DMs.
 
-## Pending explicit backend approval
+## Permissions and behavior
 
-Apply `supabase/party-social.sql` to project `vrjwaejlqupmkqrhmzra`. Automatic approval review rejected the first attempt; no schema mutation occurred. Do not retry until Luca explicitly approves the live database change.
+- Organizers grant/revoke party admin and transfer ownership to another registered member. The former organizer remains an admin. Admins invite players, reset the player code and remove ordinary members; organizers retain admin, ownership, DM and disband controls.
+- Party chat and shared sheet rolls are available. Whispers and transfer receipts are returned only to their sender/recipient; DM/organizer roles do not override that filter. Raw table access is denied.
+- Transfers lock both saved characters in stable order, require both current revisions, validate inventory identity, reject equipped items, repair equipment indices and use a retry identifier to prevent duplicate transfers. Gold is accounted for to the copper.
+- New player joins enforce ten players excluding the separately assigned DM. Existing parties are not truncated. Registered-account creation, guest joins, presence and death/portrait fields are preserved.
+- Sites beta also provides visible Whisper/Give actions on ordinary member-portrait clicks, in-page ownership confirmation and optional shared DM quick rolls. Private DM quick rolls remain the default.
 
-The migration adds an admin membership flag, unique DM invitation code, private message table, checked chat and transfer RPCs, and updates existing party command/state/list RPCs. It preserves existing characters, memberships and sessions. Existing parties are not forcibly reduced; new player joins enforce ten players excluding the DM. DM invite codes are consumed on use. Admins can invite players and remove ordinary members; ownership, admin grants, DM invitations and disbanding remain organizer-only.
+## Verification
 
-Raw message access is revoked, RLS is enabled, and the chat RPC filters private conversations to their sender/recipient without a DM override. Transfers lock both saved characters, validate current revisions and inventory identity, move one unequipped item or gold, repair equipment indices and record a private receipt. Sender currency converts to equivalent gp/sp/cp change; recipient can receive fractional gp as supported by the wallet. All pending features stay hidden before migration.
+Local SQL and UI tests pass. Rollback-only live tests pass for separate DM invites, admin boundaries, ownership handoff, shared rolls, whispers hidden from DM/organizer, duplicate-safe gold, stale/missing revisions, equipped item rejection, item/gold conservation, ten-player capacity and denied outsider/raw/anonymous access. Synthetic data was rolled back.
 
-## Validation
+Account-deletion function version 3 accepts the Sites, stable and GitHub origins, retains server-side user validation and DELETE confirmation, denies other origins, and rejects unauthenticated deletion. Preflight and unauthenticated-request checks passed; no real account was deleted.
 
-`tests/party-social.cjs` uses PGlite for role/permission boundaries, DM invitations, whispers invisible to DM/organizer, idempotent messages, item/gold conservation, conflict checks and capacity. `tests/party-social-ui.cjs` uses LinkeDOM for rendering/gating. Dependencies are test-only and not shipped. Existing party regression tests pass with the new migration.
-
-After approval: apply migration, run read-only live schema/advisor checks and rollback-only SQL verification, then verify signed-in multi-account behavior. The current environment has no signed-in test accounts; browser QA checked guest quick dice/help. Phone-width browser QA confirmed the logo/account placement and hamburger open, navigate and close behavior.
+Advisors report the intentional checked authenticated SECURITY DEFINER RPCs and deny-all raw tables; the message table has RLS enabled and no client grants. Full signed-in multi-account browser testing remains unverified.

@@ -2,36 +2,68 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest release: 0.24.0 — November 1, 2026.**
+**Latest stable release: 0.25.0 — November 1, 2026.**
 
-## 0.24.0 — November 1, 2026 (GitHub main and stable release)
+## 0.25.0 — November 1, 2026
 
-Consolidates completed Sites beta changes since 0.23.0:
+- Release all accumulated party social updates: admins and ownership transfer, shared rolls/chat, private whispers, safe item/gold transfers, and ten-player capacity excluding the DM.
+- Add NPC chat speakers and portraits, whisper autocomplete, animated speech/typing bubbles, notification audio, and confirmed DM/organizer chat clearing.
+- Scope sheet party settings to the open character; add confirmed home-party leave/disband actions without deleting characters.
+- Restyle and reorder inventory with drag handles; add six bio fields and custom note sections.
+- Add character-only feature text editing and custom features with a centered editor.
+- Include backend migration sources and account-deletion origin support already applied to the shared backend. Preserve existing DM invitations and character data.
+- UI, dice, combat, cloud-save, inventory and feature-edit checks pass; live authorization/privacy checks used rollback-only test data. Full signed-in multi-account browser testing remains unverified.
 
-- Add a separate, automatically saved Character backstory field in Notes & Bio, using the existing printable PDF backstory support while preserving character notes.
-- Add browser-bound guest party joining with a display name and invite code, optional copying of one local character, local backup mirroring and guest-session recovery tools.
-- Update party portraits with damage/death overlays and condition artwork, including the exhausted figure, incapacitated face and purple concentration brain. Add full condition descriptions.
-- Replace native confirmation prompts for character burial and party departure with accessible in-page dialogs.
-- Preserve the existing stable magic-item catalog, character features, party permissions and exports. Social features remain gated by backend availability; no database migration is part of this release.
-- Synchronize the footer and release metadata for GitHub main and stable Cloudflare production.
+## 0.25.0-beta.4 — November 1, 2026 (Sites beta)
 
-## 0.23.0 — November 1, 2026 (GitHub main and stable release)
+- Center the feature editor in the viewport with a scrollable field list, fixed header/footer controls, phone sizing and a close button.
+- Add small purple underlined edit links to class, subclass, racial, background and feat sections. Edit feature names/text or add new entries for that character only; catalog rules and game calculations remain unchanged. Save/cancel and character isolation checks pass.
+- Restyle inventory stacks as compact cards with drag handles, mouse/touch sorting and keyboard arrows. Reordering preserves equipment indices and quantities. Add Personality traits, Ideals, Bonds, Flaws, Allies & organizations, Treasure and editable custom note sections, saved on the character.
+- Verified browser drag ordering, equipped indices, duplicate quantities, journal persistence and existing-note preservation. Combat and cloud-save regression checks pass.
 
-Navigation polish: keep every desktop/tablet destination, including DM Tools, aligned on one row. At intermediate widths, navigation moves as a complete centered row beneath the logo/account instead of wrapping individual links. Mobile drawer layout is preserved.
+## 0.25.0-beta.3 — November 1, 2026 (Sites beta; shared backend live)
 
-Consolidates completed Sites beta work since stable 0.19.0:
+- Character-sheet party settings show only the open character’s party, or join/create instructions. Remove the account party dropdown and DM Tools shortcut from this dialog.
+- Replace the redundant DM chat shortcut with an NPC manager. Add names and resized uploaded portraits; choose party NPCs in the chat speaker selector. Only the assigned DM can manage or speak as them; message portraits are retained.
+- Add clickable whisper name suggestions with arrow, Tab and Enter selection.
+- Allow the assigned DM or organizer to clear party chat history after confirmation, including rolls and whispers. Characters, NPCs and transfer retry protection remain intact; other members/admins cannot clear it.
+- Add confirmed Disband & remove (organizer) and Leave & remove (member/DM) actions to every home party heading, including empty parties. Characters remain saved and regroup under Not in a party.
+- The DM party portrait follows the selected NPC chat speaker for every member; selecting DM restores the Google avatar. Only the assigned DM can select a speaker from that party.
+- Smooth speech bubbles by preserving DOM nodes and typing-dot animations across polling, skipping unchanged portrait redraws, and expiring each message independently.
+- Show temporary clickable portrait speech bubbles, animated typing dots, fade transitions and the supplied new-message notification sound. Initial history does not trigger notifications; audio starts after browser interaction. Whisper typing and message previews are restricted to participants.
+- Verify shared chat UI and dice regressions, plus rollback-only live NPC authorization and private typing checks. Full signed-in multi-account browser QA remains outstanding.
 
-- Google sign-in, separate account workspaces, private cloud character/portrait saves, offline retry, revision-conflict handling, guest import, Trash, recovery and account tools.
-- Organizer-led parties, optional assigned DMs, live HP/condition/initiative summaries, sessions, combat order, manual NPC tracking, private DM prep notes and read-only character overviews.
-- Favorites remain in Favorites and party groups. DM quick dice includes the complete expression reference.
-- CSS mobile navigation with an unboxed left hamburger, centered branding and an animated left drawer. Compact party portraits have no surrounding cards; damage tint clips to the portrait.
-- A separate DM portrait area between the character and party, account/default avatar fallbacks, and green dots only for the DM Tools page or assigned character sheet. Stale activity expires after 45 seconds.
-- Preserve the existing Item Explorer, complete magic-item catalog, source descriptions, performance fixes, printable PDF/JSON exports and all stable character content.
-- **Not enabled:** one-use DM invitations, party admins/ownership transfer, private whispers, shared chat/rolls, ten-player enforcement and item/gold transfers. Their prepared source and tests are included, but the separate social database migration remains pending approval and the client hides its controls.
-- Release metadata and account redirect paths cover the published stable/GitHub app addresses. Database role/isolation tests and app regression checks passed; real multi-account OAuth/browser checks remain a verification limit.
-- The account-deletion function origin update is included as source but was not deployed: automatic approval review requires explicit approval for replacing that production function. Account deletion from the new domains remains a known limitation until approved.
+## 0.25.0-beta.2 — November 1, 2026 (Sites beta; shared backend live)
+
+- Remove the party character picker and sharing explanation entirely for the assigned DM, rather than relying on a hidden attribute overridden by layout styles.
+- Add the same **Rolls & chat** panel to DM Tools and character sheets: public messages, shared rolls with dice breakdowns, and the caller’s own whispers in one feed. The DM never receives whispers between other members.
+- Support `/r`, `/roll`, `/w DM`, `/w "Character name"`, `/me` and `/em`, a recipient selector, and speaking as your own character or account. Server-side speaker names come from the caller’s membership; DM messages are identified as GM.
+- Let the assigned DM copy the player invite code from DM Tools or party settings. Organizer/admin reset and ownership permissions remain unchanged; ten-player capacity still excludes the DM.
+- Preserve unsent drafts during polling, avoid jumping the feed while reading earlier messages, and clear party content/composer recipients when changing parties or accounts.
+- Verified with shared sheet/DM UI tests, social SQL regressions, dice checks and rollback-only live permissions/privacy tests. Browser layout QA uses representative fixtures; full multi-account browser testing remains unverified.
+- Frontend published to Sites beta only. The invitation and speaker RPC update is shared by all connected clients.
+
+## 0.25.0-beta.1 — November 1, 2026 (Sites beta; shared backend live)
+
+- Activate party admins and organizer transfer, public party chat and shared dice, participant-only whispers, retry/revision-safe item and gold transfers, and a ten-player cap excluding the DM.
+- Preserve the existing separate DM invitation flow, guest restrictions and portrait/death behavior while applying the social backend migration. Existing parties are not reduced.
+- Add visible Whisper/Give actions to member portrait dialogs, in-page ownership confirmation, and an opt-in sharing control for DM quick rolls on Sites beta.
+- Deploy the account-deletion origin update for Sites, stable and GitHub addresses. Require authenticated user validation and typed DELETE confirmation as before.
+- Local SQL/UI and rollback-only live backend tests pass. Origin preflight/unauthenticated deletion checks pass. No real account was deleted; full signed-in multi-account browser QA remains unverified.
+- Backend activation applies to already-published clients; these latest frontend refinements are Sites beta only until the next explicit main release.
+
+## 0.24.0-beta.1 — November 1, 2026 (Sites beta)
+
+- Guests can join a party with a display name and invite code, without Google sign-in. Joining explicitly starts a browser-bound anonymous session; ordinary solo guests are not automatically registered.
+- Choose one local character to copy for party play, or join without a character. Unselected characters stay local. Guest-session edits are mirrored back to local character storage, and the existing cloud revision/portrait checks remain in place.
+- Guest session tools explain browser-only recovery and offer backup export, ending the session, and switching to a separate Google workspace. No automatic Google-account merge or membership transfer is claimed.
+- Registered accounts create parties; guests can join, select their own character and use permitted party features. Existing invite/member/DM authorization still applies. Anonymous sign-ins are enabled and the create-party RPC checks the server-side anonymous account flag.
+- Validated guest snapshots/backups, observer joins, registered-account isolation, invite membership, organizer/DM escalation denial, private notes and leave/revocation with adapter and SQL tests.
+- Beta only; no GitHub or stable Cloudflare source publication.
 
 ## 0.23.0-beta.2 — November 1, 2026 (Sites beta)
+
+Navigation polish: desktop/tablet links stay in one aligned row; intermediate widths move navigation together below the logo/account instead of stranding DM Tools.
 
 Layout refinement: the DM now has a separate portrait area between the character identity and the party on desktop, with a distinct responsive placement on smaller screens. Avatar, activity indicator and portrait actions remain available.
 
@@ -41,7 +73,6 @@ Layout refinement: the DM now has a separate portrait area between the character
 - Add a membership-checked presence RPC and transient activity table. No change to party ownership, DM permissions, chat or transfers. Raw presence rows are inaccessible to anonymous and signed-in clients.
 - Replace the party settings gear emoji with a consistently sized SVG for mobile.
 - Verified page-mode UI logic, avatar fallback, DM ordering, activity expiry, role/membership isolation, multiple tabs, live grants and unauthenticated rejection. Existing dice, cloud-save and sheet-combat checks pass. Browser visual QA uses representative party fixtures; multi-account signed-in browser QA remains outstanding.
-
 
 ## 0.23.0-beta.1 — November 1, 2026 (Sites beta)
 
@@ -57,6 +88,13 @@ Interface refinements: unboxed top-left hamburger, larger centered mobile brandi
 - Verified with party and social database tests, UI fixtures, dice, combat, cloud-save and condition regression checks. Phone-width browser QA confirmed the header and hamburger behavior. Signed-in browser testing across multiple accounts remains outstanding.
 - GitHub and stable Cloudflare publication are separate from this Sites beta.
 
+## How to read this history
+
+- Versions were introduced on October 30, 2026. Versions 0.1.0–0.14.0 below are **retrospective milestone labels**, not previously published tags or exact historical build identifiers.
+- Dates use **America/New_York**. Older entries group related changes from accessible project conversations and source/GitHub commit history. Date ranges mean the work spanned multiple updates. This is a reconstruction, not a verbatim export of every chat.
+- **Sites beta** and **GitHub beta** can differ. Documenting a Sites feature here does not mean the repository's app or stable website contains it yet. Before 0.15.0, GitHub app source was last synced on October 29 (`da9d6f7`). Release 0.15.0 compiles subsequent Sites beta work for GitHub and stable Cloudflare production.
+- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its release is managed separately; 0.15.0 is the consolidated stable-production release.
+- Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and the future magic-item catalog are not described as completed.
 
 ## 0.22.0-beta.1 — 2026-11-01
 
@@ -71,7 +109,6 @@ Interface refinements: unboxed top-left hamburger, larger centered mobile brandi
 - Validated organizer/DM separation, optional sessions, role revocation, overview/notes privacy, upgrade preservation and existing cloud/combat behavior. Browser QA exercised grouped ledger settings, optional DM activation, sessions/combat, manual NPC entry and read-only PC inspection with a disposable fixture.
 - Sites beta only; no GitHub push or stable Cloudflare deployment.
 
-
 ## 0.21.0-beta.1 — 2026-11-01
 
 ### Shared parties, live sessions and DM combat — Sites beta
@@ -84,7 +121,6 @@ Interface refinements: unboxed top-left hamburger, larger centered mobile brandi
 - Status refreshes every three seconds while visible; offline updates pause. This release uses near-live polling rather than persistent Realtime subscriptions.
 - Validated database authorization and conflict behavior locally and with rolled-back synthetic accounts in Supabase; visually checked the strip, party manager and DM controls with a disposable browser fixture. A multi-player session with real Google accounts remains to be tested.
 - Sites beta only; no GitHub push or stable Cloudflare publication. Details and limits: docs/shared-parties.md.
-
 
 ## 0.20.0-beta.1 — 2026-11-01
 
@@ -103,62 +139,6 @@ Interface refinements: unboxed top-left hamburger, larger centered mobile brandi
 - **Google sign-in enabled on Sites beta:** verified Google provider availability and the authorization redirect to accounts.google.com with the correct Supabase callback. Supabase project character-forge is now connected with private tables/portraits, deployed account-deletion and Trash functions, and daily cleanup. Live PostgreSQL isolation/conflict checks passed. Google OAuth provider is configured and cloud saves are enabled. A first real-account sign-in and cross-device portrait/save check remains pending.
 - Validated sync behavior with a simulated backend and executed the SQL schema/access policies under local PostgreSQL (PGlite). Real OAuth, Storage API, server functions and scheduled maintenance still require the connected project.
 - Sites beta only; no GitHub push or stable Cloudflare deployment in this release.
-
-## How to read this history
-
-- Versions were introduced on October 30, 2026. Versions 0.1.0–0.14.0 below are **retrospective milestone labels**, not previously published tags or exact historical build identifiers.
-- Dates use **America/New_York**. Older entries group related changes from accessible project conversations and source/GitHub commit history. Date ranges mean the work spanned multiple updates. This is a reconstruction, not a verbatim export of every chat.
-- **Sites beta** and **GitHub beta** can differ. Documenting a Sites feature here does not mean the repository's app or stable website contains it yet. Before 0.15.0, GitHub app source was last synced on October 29 (`da9d6f7`). Release 0.15.0 compiles subsequent Sites beta work for GitHub and stable Cloudflare production.
-- Stable production is [characterforge5e.com](https://characterforge5e.com/). Its latest stable release is 0.23.0.
-- Repeated visual experiments and small follow-up fixes are consolidated into their final behavior. Planned companion tools, form managers, and future item-effect automation are not described as completed.
-
-## 0.19.0 — 2026-10-31
-
-### Item Explorer and magic items
-
-- Added a full-page Item Explorer with alphabetical sorting, compact rows, 50 items per page, search, rarity/source filters, and setting-specific items hidden until explicitly enabled.
-- Added 912 magic-item rarity records, with 830 supplied descriptions covering rarity variants, expandable rules, tables, and source links. Added supplied equipment descriptions for 71 mundane entries.
-- Magic items have no purchase price and bypass the cart through a rarity-confirmed Add to sheet action; ownership does not automate bonuses, charges, or attunement. Stack increases also require confirmation.
-- Applied distinct rarity colors throughout the catalog and inventory, animated teal/magenta Artifact and red/orange Unique gradients with reduced-motion support, and darker gray mundane names.
-- Browse Equipment lists purchasable gear only, with standard Potion of Healing at 50 gp as its sole magic-item exception. Added an Item Explorer shortcut.
-- Named healing potions Healing, Greater Healing, Superior Healing, and Supreme Healing; legacy names continue to resolve without changing quantities.
-
-### Performance
-
-- Cache the combined item catalog, indexed name/legacy lookups, spell catalog, and spell ID lookups; homebrew imports refresh the caches.
-- Render item and spell descriptions only when expanded; reuse sorted item lists while filtering.
-- Skip eligibility scans for the closed Add Spell picker when opening or updating a character sheet.
-- Controlled benchmarks reduced 2,000 item lookups from approximately 447 ms to 2 ms and level-12 cleric spell-panel generation from approximately 17 ms to 3 ms. These are component benchmarks, not end-to-end load guarantees.
-- Verified catalog protections, legacy healing names, homebrew cache invalidation, spell grants, class choices, combat, Wild Shape, and browser character-opening/description/picker flows.
-
-## 0.18.2 — 2026-10-31
-
-### Performance — stable production
-
-- Cache equipment catalogs and name/alias lookups instead of rebuilding the list repeatedly during sheet calculations.
-- Cache spell catalogs and ID lookups; homebrew library replacement and added records refresh both caches.
-- Skip the full eligibility scan for the closed Add Spell picker when opening or updating a character.
-- Generate owned and picker spell descriptions only when expanded; preserve currently open descriptions on updates.
-- This release includes performance changes only. Item Explorer and magic-item features remain on Sites beta.
-
-## 0.18.1 — 2026-10-30
-
-### Stable production polish
-
-- Metamagic choices use compact left-aligned checkboxes beside names, costs, and descriptions in creation, editing, and level-up views; selected cards are highlighted.
-- Recommended heavy-armor builds keep base Dexterity at 8 and spend the full 27-point budget on other abilities. Racial bonuses remain separate.
-- Heavy-armor proficiency from classes, supported cleric domains, and Armorer artificers informs recommendations.
-- Clerics can explicitly select Medium armor without the dropdown snapping back to Heavy; medium builds can invest in Dexterity.
-- Verified heavy-armor allocations and explicit cleric preset switching. Promoted the tested Sites beta changes to production.
-
-## 0.18.0 — 2026-10-30
-
-### Stable production — characterforge5e.com
-
-- Promoted the accumulated 0.15.1-beta.1 through 0.18.0-beta.1 features to stable production: editable weapon damage, inline selections, anvil icon, death-save tracking, roll history and dice commands, interactive Wild Shape, and racial-aware recommended ability scores.
-- Restored the complete verified Sites HTML after a corrupted GitHub upload caused an empty homepage; verified the production homepage renders correctly.
-- Connected Cloudflare Pages to GitHub main and corrected watched paths so pushes trigger deployments.
-- Production footer and version.json now identify version 0.18.0 and the production channel. Historical beta entries below retain their original release labels.
 
 ## 0.18.0-beta.1 — 2026-10-30
 
@@ -424,3 +404,33 @@ Earliest retained source commit: `5f254bb` (Sites source, September 15 in Americ
 ## Maintenance policy
 
 Use `major.minor.patch` for future documented versions, with `-beta.N` for beta builds. Accumulate small edits until a substantial feature set or a requested GitHub/Cloudflare release. Automatically compile one changelog entry at that milestone; increase the patch for a collected fix release and the minor version for a feature release. Keep the displayed footer version and `dist/version.json` synchronized. Retrospective entries above are historical groupings, not a promise that every channel contains every feature. Do not publish private chat excerpts, account identifiers, feedback keys, or user contact details in this file.
+
+- Beta guest recovery: leaving/disbanding parties and burying characters use in-page confirmation dialogs so embedded browsers cannot silently suppress the action. Existing characterless memberships can still leave.
+
+- Party portal access now requires opening a saved character sheet. Removed home-screen party controls and automatically selects that sheet when an existing account joins.
+
+- Burying a selected party character now removes its owner from that party; restoration does not rejoin. Repairs memberships linked to previously buried characters. Organizer removal transfers ownership to the oldest remaining member, or removes an empty party.
+
+- Own sheet portrait now fills with damage, clipped to the portrait. Dead characters (zero HP and three failed death saves) show greyscale portraits and a red X on the sheet and party strip.
+
+- Other party members now show an explicit Dead label alongside the red X and greyscale portrait in both compact and full party views. Party assets refresh to load the death indicators.
+
+- Zero HP automatically applies incapacitated and prone and ends concentration, including DM edits. Healing removes only automatically added incapacitated; prone remains until stood up. Shared party death state includes failed-save count and refreshed assets.
+
+- Party death portraits use an explicit SVG cross and image filter. New asset filenames force refreshed party rendering in browsers retaining earlier scripts.
+
+- DM Tools now accepts an organizer-issued DM-only invite code, with characterless Google or guest joining. Players cannot be assigned as DM; DM members cannot select a character. Codes are single-use and existing player memberships must leave first.
+
+## 0.24.0-beta.2 — 2026-11-01
+
+Separate DM joining from character sheets: organizer-issued DM codes, characterless guest or Google DM sessions, and server enforcement of player/DM separation. Legacy DM character selections are detached without deleting characters.
+
+- DM Tools layout follows the party-first reference: full-width roster with persistent compact/full toggle, circular portraits with clipped damage/death overlays and condition icons, encounter below, notes and dice at the bottom.
+
+- DM roster stretches across the workspace and centers members in equal columns. Cards and portraits scale to available column width and wrap for larger parties or smaller screens. Fixes flex alignment collapsing the roster into a narrow stack.
+
+- Custom transparent PNG condition icons replace party/DM abbreviations and decorate sheet condition controls. Includes all conditions, exhaustion, concentration, bloodied and dying status artwork, with 32px/64px UI exports and 1024px masters.
+
+- Revised Exhaustion to a slumped figure, Incapacitated to a slack drooling face, and Concentrating to a purple brain. Refreshed PNG masters, UI exports and download pack.
+
+- Condition explanations now use the exact supplied descriptions, bullet lists and Roll20 links, including the full six-level exhaustion table.
