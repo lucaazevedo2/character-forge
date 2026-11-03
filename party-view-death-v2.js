@@ -32,20 +32,34 @@ function badges(m){return [...(m.dead?['Dead']:[]),...activeConditions(m).map(co
 const defaultPortrait='assets/avatars/default-avatar.svg';
 const gearIcon='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 3-.6 2.2-1.8 1L5 5.6 2.5 9.9l1.6 1.6v2L2.5 15 5 19.4l2.1-.6 1.8 1 .6 2.2h5l.6-2.2 1.8-1 2.1.6 2.5-4.3-1.6-1.6v-2l1.6-1.6L19 5.6l-2.1.6-1.8-1L14.5 3Z"/><circle cx="12" cy="12.5" r="3"/></svg>';
 let presenceMembers=new Map(),presenceReadAt=0,presenceUnavailable=false,presenceParty=null,presenceBusy=false,presenceQueued=false;
-let presenceTab=null;
+let presenceTab=null,presenceClosing=false,presenceToken=null;
 function avatarURL(value){try{const u=new URL(value);return u.protocol==='https:'&&/(^|\.)googleusercontent\.com$/.test(u.hostname)?u.href:null}catch{return null}}
 function portrait(m,useSpeaker=true){const profile=presenceMembers.get(m.user_id),url=m.is_dm?(useSpeaker&&profile?.speaker_npc_id?(/^data:image\/(webp|png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(profile.speaker_image||'')?profile.speaker_image:defaultPortrait):(!profile?.guest_account&&avatarURL(profile?.account_avatar))):portraits.get(m.portrait_path);return `<span class="party-avatar ${m.is_dm?'party-dm-avatar':''}"><img src="${escText(url||defaultPortrait)}" alt="" width="40" height="40" referrerpolicy="no-referrer" data-party-avatar></span>`}
 function bindAvatarFallback(root){root.querySelectorAll('[data-party-avatar]').forEach(img=>img.addEventListener('error',()=>{if(img.getAttribute('src')!==defaultPortrait)img.src=defaultPortrait},{once:true}))}
-function activityFor(snapshot=state){if(document.hidden||navigator.onLine===false||!snapshot)return {mode:'away',character_id:null};if(view==='dmtools'&&snapshot.is_dm)return {mode:'dmtools',character_id:null};const ref=window.ForgeCloud.characterRef(draft?.id);if(view==='sheet'&&ref&&snapshot.members.some(m=>m.user_id===accountId&&m.character_id===ref.id))return {mode:'sheet',character_id:ref.id};return {mode:'away',character_id:null}}
+function activityFor(snapshot=state){if(navigator.onLine===false||!snapshot)return {mode:'away',character_id:null};const idle=document.hidden||(typeof document.hasFocus==='function'&&!document.hasFocus());if(view==='dmtools'&&snapshot.is_dm)return {mode:idle?'dmtools-idle':'dmtools',character_id:null};const ref=window.ForgeCloud.characterRef(draft?.id);if(view==='sheet'&&ref&&snapshot.members.some(m=>m.user_id===accountId&&m.character_id===ref.id))return {mode:idle?'sheet-idle':'sheet',character_id:ref.id};return {mode:'away',character_id:null}}
 function memberOnline(m){if(error||Date.now()-presenceReadAt>45000)return false;const row=presenceMembers.get(m.user_id);return !!(m.is_dm?row?.dm_online:row?.character_online)}
-function onlineDot(m){return memberOnline(m)?`<span class="party-online-dot" role="img" aria-label="${m.is_dm?'Active in DM Tools':'Character sheet open'}" title="${m.is_dm?'Active in DM Tools':'Character sheet open'}"></span>`:''}
+function memberStatus(m){if(memberOnline(m))return 'active';if(error||Date.now()-presenceReadAt>90000)return 'offline';const row=presenceMembers.get(m.user_id);return (m.is_dm?row?.dm_open:row?.character_open)?'idle':'offline'}
+function onlineDot(m){const status=memberStatus(m),label=status==='active'?(m.is_dm?'Active in DM Tools':'Character sheet active'):status==='idle'?'Tab open · inactive':'Offline';return `<span class="party-online-dot is-${status}" role="img" aria-label="${label}" title="${label}"></span>`}
+let betaPresenceAvailable=null;
+async function presenceRPC(args){if(betaPresenceAvailable!==false){try{const data=await rpc('forge_party_presence_beta',args);betaPresenceAvailable=true;return data}catch(e){if(!/could not find|does not exist|schema cache/i.test(e.message))throw e;betaPresenceAvailable=false}}return rpc('forge_party_presence',{...args,p_mode:args.p_mode.endsWith('-idle')?'away':args.p_mode})}
+// Cache the current user's token in memory while the page is alive; never wait for auth during unload.
+async function cachePresenceToken(){const {client,user}=connection();if(!client?.auth?.getSession||user?.id!==accountId){presenceToken=null;return}const {data}=await client.auth.getSession();if(connection().user?.id===accountId&&data?.session?.user?.id===accountId)presenceToken=data.session.access_token;else presenceToken=null}
+function closePresence(){
+ if(!presenceParty||!presenceTab)return;
+ const args={p_id:presenceParty,p_tab:presenceTab,p_mode:'away'},config=window.FORGE_CLOUD_CONFIG;
+ if(presenceToken&&config?.supabaseUrl&&config?.publishableKey){
+  const name=betaPresenceAvailable===false?'forge_party_presence':'forge_party_presence_beta';
+  fetch(config.supabaseUrl+'/rest/v1/rpc/'+name,{method:'POST',keepalive:true,headers:{apikey:config.publishableKey,Authorization:'Bearer '+presenceToken,'Content-Type':'application/json'},body:JSON.stringify(args)}).catch(()=>{});
+ }else presenceRPC(args).catch(()=>{});
+}
 async function updatePresence(){
- if(presenceUnavailable||!accountId||!selected||!state)return;if(presenceBusy){presenceQueued=true;return}presenceBusy=true;
+ if(presenceClosing||presenceUnavailable||!accountId||!selected||!state)return;if(presenceBusy){presenceQueued=true;return}presenceBusy=true;
  const epoch=generation,id=selected,user=accountId;try{
+  await cachePresenceToken();if(presenceClosing)return;
   presenceTab||=crypto.randomUUID();
-  if(presenceParty&&presenceParty!==id)await rpc('forge_party_presence',{p_id:presenceParty,p_tab:presenceTab,p_mode:'away'}).catch(()=>{});
-  presenceParty=id;const active=activityFor(),result=await rpc('forge_party_presence',{p_id:id,p_tab:presenceTab,p_mode:active.mode,p_character_id:active.character_id});
-  if(epoch!==generation||id!==selected||user!==accountId)return;presenceMembers=new Map((result.members||[]).map(m=>[m.user_id,m]));presenceReadAt=Date.now();renderStrip();paintDM();
+  if(presenceParty&&presenceParty!==id)await presenceRPC({p_id:presenceParty,p_tab:presenceTab,p_mode:'away'}).catch(()=>{});
+  presenceParty=id;const active=activityFor(),result=await presenceRPC({p_id:id,p_tab:presenceTab,p_mode:active.mode,p_character_id:active.character_id});
+  if(presenceClosing){closePresence();return}if(epoch!==generation||id!==selected||user!==accountId)return;presenceMembers=new Map((result.members||[]).map(m=>[m.user_id,m]));presenceReadAt=Date.now();renderStrip();paintDM();
  }catch(e){if(epoch!==generation)return;if(/could not find|does not exist|schema cache/i.test(e.message))presenceUnavailable=true;presenceMembers.clear();presenceReadAt=0;renderStrip();}
  finally{presenceBusy=false;if(presenceQueued){presenceQueued=false;updatePresence()}}
 }
@@ -62,7 +76,7 @@ async function loadPortraits(snapshot){
 }
 function accountChanged(){
  const next=connection().user?.id||null;if(next!==accountId){messages=[];seenParty=null;bubbleMessages.clear();npcs=[];document.getElementById('partyChatDialog')?.close();dmDrafts.clear();ledgerStamp='';dmStamp=''}if(next===accountId){mountNav();return}
- accountId=next;presenceMembers.clear();presenceReadAt=0;presenceUnavailable=false;presenceParty=null;presenceTab=null;generation++;state=null;parties=[];lastOwnRevision=null;changed='';lastList=0;error='';
+ accountId=next;presenceMembers.clear();presenceReadAt=0;presenceUnavailable=false;presenceParty=null;presenceTab=null;presenceToken=null;presenceClosing=false;generation++;state=null;parties=[];lastOwnRevision=null;changed='';lastList=0;error='';
  if(document.getElementById('forgeRollChat')&&draft)forgeRefreshChat(draft);
  for(const url of portraits.values())URL.revokeObjectURL(url);portraits.clear();portraitLoads.clear();
  try{selected=next?localStorage.getItem('forge-active-party:'+next):null}catch{selected=null}
@@ -310,7 +324,7 @@ function bindPeople(root){
  root.querySelectorAll('[data-person-menu]').forEach(b=>b.onclick=()=>personMenu(b.dataset.personMenu));
 }
 function personMenu(uid){const m=state?.members.find(x=>x.user_id===uid);if(!m||uid===accountId||!state?.social_ready)return;
- const box=dialog('partyPersonMenu',m.account_name||m.name,`<div class="party-dialog-body"><button class="btn ghost" data-whisper>Whisper</button>${m.character_id?'<fieldset><legend>Give</legend><button class="btn ghost" data-gold>Gold</button><button class="btn ghost" data-item>Item</button></fieldset>':''}</div>`);
+ const box=dialog('partyPersonMenu',m.account_name||m.name,`<div class="party-dialog-body"><div class="party-person-identity">${portrait(m,false)}<div><strong>${escText(memberName(m))}</strong><p>Party member actions</p></div></div><div class="party-action-grid"><button type="button" data-whisper><span class="party-action-icon" aria-hidden="true">✉</span><span><b>Whisper</b><small>Start a private conversation</small></span></button>${m.character_id?'<button type="button" data-gold><span class="party-action-icon" aria-hidden="true">◉</span><span><b>Give Gold</b><small>Transfer coins to this character</small></span></button><button type="button" data-item><span class="party-action-icon" aria-hidden="true">◇</span><span><b>Give Item</b><small>Choose something from your inventory</small></span></button>':''}</div></div>`);
  box.querySelector('[data-whisper]').onclick=()=>{box.close();chatDialog(uid)};
  box.querySelector('[data-gold]')?.addEventListener('click',()=>{box.close();giveDialog(uid,'gold')});box.querySelector('[data-item]')?.addEventListener('click',()=>{box.close();giveDialog(uid,'item')});
 }
@@ -321,7 +335,7 @@ function memberName(m){return m?.is_dm?'DM':m?.character_id?m.name:m?.account_na
 function messageHTML(rows){return rows.map(m=>{
  const sender=state?.members.find(x=>x.user_id===m.sender_id),recipient=state?.members.find(x=>x.user_id===m.recipient_id),emote=m.kind!=='roll'&&/^\/(?:me|em)(?:\s|$)/i.test(m.command||'');
  const privateLabel=m.recipient_id?(m.sender_id===accountId?'To '+memberName(recipient):'Whisper to you'):'';
- return `<article class="roll-chat-entry ${m.recipient_id?'roll-chat-whisper':''} ${emote?'roll-chat-emote':''}" data-message-id="${escText(m.id)}"><div class="chat-message-avatar">${m.speaker_image&&/^data:image\/(webp|png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(m.speaker_image)?`<img class="chat-npc-image" src="${escText(m.speaker_image)}" alt="">`:sender?portrait(sender,false):''}</div><div class="chat-message-content"><header><b>${escText(m.label)}</b><time>${escText(new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}))}</time></header>${privateLabel?`<span class="chat-private-label">${escText(privateLabel)} · Private</span>`:''}${m.kind==='roll'?`<code>${escText(m.command||m.label)}</code><p class="chat-dice-detail">${escText(m.body)}</p><strong class="roll-chat-total">${escText(m.total)}</strong>`:`<p>${escText(m.body)}</p>`}</div></article>`;
+ return `<article class="roll-chat-entry ${m.recipient_id?'roll-chat-whisper':''} ${emote?'roll-chat-emote':''}" data-message-id="${escText(m.id)}"><div class="chat-message-avatar">${m.speaker_image&&/^data:image\/(webp|png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(m.speaker_image)?`<img class="chat-npc-image" src="${escText(m.speaker_image)}" alt="">`:sender?portrait(sender,false):'<img src="assets/avatars/default-avatar.svg" alt="" width="36" height="36">'}</div><div class="chat-message-content"><header><b>${escText(m.label)}</b><time>${escText(new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}))}</time></header>${privateLabel?`<span class="chat-private-label">${escText(privateLabel)} · Private</span>`:''}${m.kind==='roll'?`<code>${escText(m.command||m.label)}</code><p class="chat-dice-detail">${escText(m.body)}</p><strong class="roll-chat-total">${escText(m.total)}</strong>`:`<p>${escText(m.body)}</p>`}</div></article>`;
  }).join('')||'<p class="roll-chat-empty">No messages yet. Say hello or roll <code>/r d20+5</code>.</p>'}
 async function sendMessage(data,id=selected){const nonce=crypto.randomUUID();await rpc('forge_party_chat',{p_id:id,p_message:{...data,nonce}});if(id===selected)await refreshMessages()}
 function parseChat(value,recipient_id=null){
@@ -427,6 +441,6 @@ function paintBubbles(){
 }
 
 window.ForgeParty={record:shareRoll,chatFor:chatFor,summary,accountChanged,open:openHub,refresh,ledgerGroups,renderDMTools};
-window.addEventListener('pagehide',()=>{if(presenceParty&&presenceTab)rpc('forge_party_presence',{p_id:presenceParty,p_tab:presenceTab,p_mode:'away'}).catch(()=>{})});window.addEventListener('online',()=>refresh(true));document.addEventListener('visibilitychange',()=>{updatePresence();if(!document.hidden)refresh(true)});
+window.addEventListener('pagehide',()=>{presenceClosing=true;presenceQueued=false;closePresence()});window.addEventListener('online',()=>refresh(true));window.addEventListener('focus',()=>updatePresence());window.addEventListener('blur',()=>updatePresence());window.addEventListener('pageshow',()=>{presenceClosing=false;updatePresence()});setInterval(()=>{if(accountId&&selected)updatePresence()},20000);document.addEventListener('visibilitychange',()=>{updatePresence();if(!document.hidden)refresh(true)});
 setInterval(()=>{accountChanged();if(accountId&&!document.hidden&&(selected||document.getElementById('partyDialog')))refresh()},3000);
 })();

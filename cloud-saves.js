@@ -18,7 +18,7 @@ function pending(){return Object.values(records).some(r=>r.dirty)}
 function report(text){message=text;paint()}
 function persist(){if(!user)return;const bundle={records,chars:read(key('forge-chars'),[]),custom:read(key('forge-custom'),{})};write(stateKey(),bundle);write(cacheKey(),bundle)}
 function library(){return typeof CUSTOM==='object'?copy(CUSTOM):{}}
-function envelope(c){if(typeof sheetConditionState==='function')sheetConditionState(c);return {schema_version:1,character:copy({...c,schema_version:1}),homebrew:library(),_party:window.ForgeParty?.summary(c)||{}}}
+function envelope(c){if(typeof equipmentEnsure==='function')equipmentEnsure(c);if(typeof sheetConditionState==='function')sheetConditionState(c);return {schema_version:1,character:copy({...c,schema_version:1}),homebrew:library(),_party:window.ForgeParty?.summary(c)||{}}}
 function isGuest(){return user?.is_anonymous===true}
 function mirrorGuest(list){
  if(!isGuest())return;
@@ -83,7 +83,7 @@ async function portraitOut(data,cloudId){
 async function portraitIn(row){
  const data=copy(row.data);
  if(data.schema_version!==1||!data.character)throw Error('This save needs a newer Character Forge version.');
- const c=data.character;
+ const c=data.character;if(typeof equipmentEnsure==='function')equipmentEnsure(c);
  if(data.portrait_path){
   if(!data.portrait_path.startsWith(user.id+'/'+row.id+'/'))throw Error('Invalid portrait location.');
   const {data:blob,error}=await client.storage.from(bucket).download(data.portrait_path);if(error)throw error;

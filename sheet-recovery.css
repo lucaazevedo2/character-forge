@@ -1,0 +1,5 @@
+#editAC .sheet-correction-link{display:block;width:auto!important;min-height:24px!important;margin:5px auto 0;padding:0 5px!important;background:transparent!important;border:0!important;border-radius:3px;color:var(--gold)!important;text-decoration:underline;text-underline-offset:3px;font:inherit;font-size:11px!important;font-weight:500;cursor:pointer}
+#editAC .sheet-correction-link:hover{color:var(--parchment)!important}
+#undoLevel{font-size:12px}#undoLevel:disabled{opacity:.45;cursor:not-allowed}
+
+.level-removal-dialog [hidden]{display:none!important}

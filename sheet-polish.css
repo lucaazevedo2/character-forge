@@ -169,3 +169,14 @@ body.sheet-view .condition-panel{margin:0 0 24px;padding:18px!important}
 .metamagic-options .metamagic-option small{display:block;font-size:13px;line-height:1.6;color:var(--faded)}
 .metamagic-options .metamagic-option:has(input:checked){border-color:var(--gold)!important;background:color-mix(in srgb,var(--gold) 8%,var(--panel))!important}
 .metamagic-options .metamagic-option:focus-within{outline:2px solid var(--gold);outline-offset:2px}
+
+/* Give reaction triggers readable space instead of a fixed 65–80px time column. */
+@media(min-width:800px){
+ body.sheet-view .sheet-main .spell-table-row,
+ body.sheet-view .sheet-main .spell-table-head{grid-template-columns:minmax(100px,1.1fr) minmax(140px,1.5fr) 60px minmax(130px,1.2fr)}
+ body.sheet-view .sheet-main .spell-time{min-width:0;white-space:normal;overflow-wrap:break-word;line-height:1.6}
+}
+@media(min-width:1500px){
+ body.sheet-view .sheet-main .spell-table-row,
+ body.sheet-view .sheet-main .spell-table-head{grid-template-columns:minmax(120px,1.2fr) minmax(180px,1.6fr) 65px 45px minmax(180px,1.5fr)}
+}

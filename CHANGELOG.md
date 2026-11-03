@@ -2,7 +2,115 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 0.27.0 — November 2, 2026.**
+**Latest stable release: 1.0.0 — November 2, 2026.**
+
+## 1.0.0 — November 2, 2026 (Stable production)
+
+First 1.0 release, promoting the current approved beta build to GitHub main and characterforge5e.com.
+
+- Ship automatic magic-item properties, equipped/attuned bonuses, base weapon/armor variants, charge tracking, recharge rules, and saved per-item edits.
+- Improve spell-search responsiveness and remaining-selection counters, retain wizard spellbook additions after creation, and provide a manual spell-selection limit override.
+- Add dedicated URLs for references, characters, creation, custom content, DM Tools, licensing, and the graveyard, with browser history and direct-link support.
+- Add a searchable Feats explorer with prerequisites and ability-increase filters. Add, configure, edit, and remove feats for a selected character while preserving lineage locks.
+- Simplify level-up to ASI — Recommended or Feat. Keep ability selections unset; choose level-up feats through the explorer, stage changes until confirmation, and highlight/scroll to unfinished choices.
+- Polish all 87 full feat descriptions while preserving their wording. Add racial/background help icons and preserve character-local feature text edits.
+- Add chat/roll portraits, redesigned member actions, and verified active/idle/offline presence with multiple-tab aggregation, authenticated tab-close keepalive requests, and a 90-second force-kill timeout.
+- Preserve deceased characters in the Graveyard through the existing Bury action. Add a glowing Resurrect action with named confirmation, and move deleted memorials to recoverable 30-day Trash.
+- Preserve Google/cloud saves, party administration, conditions, class choices, printable PDF/JSON exports, recovery snapshots, and existing artwork/licensing.
+- Synchronize the footer and version metadata at 1.0.0 and publish all accumulated beta changes together.
+
+## 0.30.0-beta.2 — 2026-11-02 (Sites beta)
+
+- Reflow full feat descriptions into readable paragraphs, named benefit headings, and benefit lists without altering wording. Remove nested description scrolling and correct disclosure spacing.
+- Simplify level-up to ASI — Recommended (the default) or Feat, leaving individual ASI abilities unset. Choose eligible level-up feats through the shared explorer, then configure their choices in the level-up dialog. Keep all changes staged until Apply level. On unfinished choices, shake and briefly redden Apply level, highlight/shake the missing dropdowns, show a red error beside the choices, and scroll/focus the first missing choice. Respect reduced-motion preferences.
+- Rename the graveyard restore action to Resurrect, style it with ivory/gold/sky-blue radiance, and require a named confirmation with matching divine emphasis. Remove the duplicate top Back to ledger button.
+- Open the Feats explorer from the sheet’s feat edit action instead of the large feat dropdown modal, with the current character already selected.
+- Add feats directly to a selected saved character from the explorer. Reuse ability, skill, proficiency, and spell choice validation; prevent duplicates and preserve lineage locks. Allow editing and removing non-lineage feats and returning to the character sheet.
+- Filter feats by Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, any ability increase, or no ability increase. Combine these with search and prerequisite filters.
+
+## 0.30.0-beta.1 — 2026-11-02 (Sites beta)
+
+- Keep spell search input mounted while updating results after a short typing pause. Cache spell eligibility/grants per render and filter names before expensive character checks.
+- Show remaining cantrip and spell selections inside Add a spell, distinguish wizard spellbook entries from prepared spells, preserve post-creation wizard additions, and add an explicit unlimited-selection switch in Sheet settings → Spellcasting.
+- Add left-aligned portraits to local rolls and notes, and normalize party chat/roll portrait layout.
+- Add path-based navigation for spells, items, feats, custom content, characters, creation, DM Tools, licensing, and the graveyard, with history navigation and single-page hosting fallback.
+- Add feature help icons to racial and background features and a dedicated searchable Feats explorer with prerequisite filters.
+- Redesign member actions with a portrait header and separate Whisper, Give Gold, and Give Item action rows.
+- Change the existing Bury action to preserve characters in a Character Graveyard. Keep sheets viewable, allow returning to the ledger, and move deleted memorials through the existing 30-day cloud Trash. Guest characters get a local recoverable Trash.
+- Require explicit ability selections for both level-up ASI increases instead of defaulting to Strength.
+- Send authenticated keepalive departure requests when a tab closes, suppress closing-page heartbeats, and re-clear a late in-flight heartbeat. Resume presence after back/forward-cache restoration. Mobile force-kills fall back to the 90-second heartbeat expiry.
+- Enable isolated beta-only active/idle/offline presence tracking with multiple-tab aggregation, heartbeats, and grey offline indicators. The approved `supabase/beta-presence.sql` setup is installed and verified for active, idle, offline, multiple-tab precedence, and access restrictions. Stable presence data and RPC stay unchanged.
+
+## 0.29.0-beta.1 — 2026-11-02 (Sites beta)
+
+- Automatically populate magic-item equipment defaults from the supplied property and charge mappings. Preserve existing inventory edits.
+- Add base-equipment and variant selection, equipped/attuned stat bonuses, capped abilities, level-scaled HP, movement modifiers, and situational-effect switches.
+- Fill charge pools and retain recharge instructions; Recharge rolls dice instead of refilling every pool. Figurine duration hours remain notes.
+- Keep permanent manuals/tomes as one-time-use instructions rather than equipped bonuses. Complex nonnumeric effects remain rules notes.
+
+## 0.28.0-beta.5 — November 2, 2026 (Sites beta)
+
+- Ask for a base weapon or armor when acquiring generic +1/+2/+3 magic equipment. Derive the enhancement from the selected catalog rarity, preserve base properties, and save a distinct inventory item with its configured effects.
+- Apply weapon enhancements to both attack and damage rolls while equipped; armor and shields gain their enhancement through AC modifiers. Verify all nine enhancement/type combinations and save round trips.
+- Give long spell casting times a flexible, wider desktop column so reaction triggers remain readable.
+
+## 0.28.0-beta.4 — November 2, 2026 (Sites beta)
+
+- Fix Artificer attunement limits: 4 items at class level 10, 5 at 14, and 6 at 18. Use the same limit for the counter, editor validation, warnings, item modifiers and linked attacks.
+- Recalculate active equipment when crossing a threshold in either direction, preserving saved items and attunement choices. Multiclass characters use Artificer levels rather than total level.
+
+## 0.28.0-beta.3 — November 2, 2026 (Sites beta)
+
+- Add a small reset link beneath Armor Class that clears manual AC adjustments and restores automatic tracking, preserving equipped armor, shields and item modifiers.
+- Add Undo level beside Level up. New level-ups retain up to 20 compact, persisted undo records for the fields they changed, including ASI, feat, subclass, HP-roll and Metamagic choices. Undo preserves inventory, notes and XP and adjusts HP to the restored maximum.
+- Older levels without undo records use Remove level with a review dialog and explicit feat/ASI reversal choices when applicable. Save a recovery snapshot before reductions; level 1 cannot be reduced. The controls affect the main class, matching the existing Level up control.
+- Invalidate cached derived stats when total level changes so HP and other level-based values recalculate during a level-up transaction.
+- Verify AC reset scope, retained item effects, serialized undo, ASI/feat/Metamagic restoration, unrelated-state preservation and existing equipment regressions. Browser checks cover AC reset, level 3→4→3 with STR/HP restoration, and older-level removal with HP recalculation.
+- Sites beta only.
+
+## 0.28.0-beta.2 — November 2, 2026 (Sites beta)
+
+- Repair duplicate plain gear in both old and already-upgraded equipment saves: 20 identical crossbow bolts now appear as one row with quantity 20. Keep equipped/attuned items, weapons, resources, modifiers, infusion references and different metadata separate.
+- Avoid rendering the discarded legacy inventory and build rich detail forms only when expanded. Reuse cached stats before inventory comparisons and skip weapon-bonus calculations for inactive weapons and ordinary gear. Invalidate stats on creation-screen renders as well as sheet renders.
+- Verify legacy/v1 stack repair, quantities and distinct notes, cached stat reads, 100 collapsed rows with zero eagerly created detail inputs, on-demand detail opening, and existing equipment/combat regressions. Browser fixture confirms one 20-bolt row and working lazy details.
+- Sites beta only.
+
+## 0.28.0-beta.1 — November 2, 2026 (Sites beta)
+
+- Redesign Equipment as compact carried/quantity/name/per-item-weight rows with expandable item details, custom items, confirmed deletion, weight totals and STR-based capacity. Keep the existing wallet and shop.
+- Add stable equipment IDs, equipment-format v1 and a lossless legacy migration/compatibility projection. Preserve guest/cloud envelopes, unknown character fields, old weapon overrides and infusion links across sorting.
+- Add equipped/attunement-gated modifiers, armor/shield fields, structured and quick-entry modifiers, live derived stats and source tooltips. Preserve manual bases, class AC and inactive merged Wild Shape equipment. Block fourth-item attunement; warn about multiple armors/shields.
+- Add inventory-linked attacks with stable IDs, editable combat fields, property-aware logic and printable export support. Resource trackers support short/long/dawn/manual recovery or quantity consumption.
+- Lift dragged rows under the cursor, animate neighboring rows and show an insertion gap. Support pointer cancellation, reduced motion and keyboard ordering.
+- All five requested acceptance cases pass, plus rendered linked attacks, stat purity, class AC, Wild Shape, infusion remapping, save round trips, shared checks/saves, exact attack bonuses and animated-drop DOM checks. Browser checks confirm live shield AC, source breakdowns, linked attack removal, pointer sorting and keyboard sorting. Compact and expanded controls fit a 375px phone viewport without horizontal overflow.
+- Live signed-in multi-account cloud browser QA remains unverified. Existing party transfers retain their name-based item protocol; rich metadata sharing is outside this release. Details and testing guide: docs/equipment.md.
+- Sites beta only; no GitHub or stable Cloudflare publication.
+
+## 0.27.0-beta.1 — November 2, 2026 (Sites beta)
+
+- Remove the redundant underlined Feats text-edit link while preserving existing character overrides and the feat manager. Selecting a feat in Add or edit a feat now shows its summary and expandable full description before applying it.
+
+- Add full supplied class/subclass rules behind the existing question-mark controls while preserving current subclass summaries and all mechanical data. Support named variants, future-feature previews, spell-list wording and invocation references.
+- Add full reference text for all 87 enabled published feats, with question-mark controls on the sheet and expandable full descriptions in feat previews. Preserve the existing feat selection and source exclusions.
+- Keep character-local feature edits authoritative. Supplied text is escaped and stored separately from summaries; plain-text table lines remain intact.
+- Verify all indexed subclass references, feat coverage, summary/mechanics preservation, aliases, text escaping, and combat/spell/class regressions. Browser fixture confirms the original subclass summary and independently expandable full wording.
+- Sites beta only; GitHub and stable Cloudflare production remain separate releases.
+
+## 0.26.0-beta.1 — November 2, 2026 (Sites beta)
+
+- Import the supplied full text for all 574 existing spell records, filling 255 previously empty descriptions. Spell Explorer and character spell details now show the supplied effects, higher-level rules, material requirements and source books.
+- Refresh casting details, ritual/concentration flags and class lists from the upload. Preserve stable spell IDs, attack/damage metadata and subclass grants so saved characters keep their spell references.
+- Keep Unearthed Arcana excluded from normal spell choices and Spell Explorer. No GitHub or stable Cloudflare publication in this release.
+
+## Unreleased — Sites beta
+
+- Add the 2014 paladin Divine Smite resource from paladin level 2. Select and expend a real spell slot, including multiclass shared or pact slots, with depleted-slot protection and damage-dice previews for undead/fiends and critical hits. Existing rest/slot trackers remain authoritative.
+
+## 0.25.1 — November 1, 2026 (Sites beta; stable release prepared)
+
+- Preserve login sessions when token renewal temporarily hits HTTP 429 rate limits. Back off renewal requests using Retry-After (one minute by default) without weakening invalid-token or explicit sign-out handling.
+- Publish the fix to Sites beta; the identical stable fix is prepared pending GitHub release authorization. Existing cleared sessions require signing in again.
+- Verified against the pinned Supabase SDK: rate limits retain session storage without SIGNED_OUT, cooldown suppresses repeat requests, and invalid refresh tokens still remove the session. Cloud-save regressions pass.
 
 ## 0.27.0 — November 2, 2026
 
@@ -32,6 +140,7 @@ A history of the D&D 5e **2014 rules** character builder and sheet.
 - Preserve login sessions when token renewal temporarily hits HTTP 429 rate limits. Back off renewal requests using Retry-After (one minute by default) without weakening invalid-token or explicit sign-out handling.
 - Apply the same fix to stable and Sites beta. Existing cleared sessions require signing in again.
 - Verified against the pinned Supabase SDK: rate limits retain session storage without SIGNED_OUT, cooldown suppresses repeat requests, and invalid refresh tokens still remove the session. Cloud-save regressions pass.
+
 
 ## 0.25.0 — November 1, 2026
 

@@ -8,7 +8,7 @@ for(const file of ['provided-feature-rules-data.js','provided-feature-rules.js']
 assert.strictEqual(vm.runInContext('JSON.stringify({feats:FEATS,features:FEATURES,subFeatures:SUBCLASS_FEATURE_INDEX})',ctx),before,'summaries and mechanics changed');
 vm.runInContext(`
 if(Object.keys(PROVIDED_FEATURE_RULES.feats).length!==87)throw Error('missing feat text');
-for(const f of FEATS){if(!providedFeatRules(f)||!featPickerPreview(f).includes('Full feat description')||!subclassRulesHelpHTML(f,f.source,'feat').includes(esc(providedFeatRules(f))))throw Error('missing feat reference '+f.id)}
+for(const f of FEATS){if(!providedFeatRules(f)||!featPickerPreview(f).includes('Full feat description')||!subclassRulesHelpHTML(f,f.source,'feat').includes(providedFeatRulesHTML(providedFeatRules(f))))throw Error('missing feat reference '+f.id)}
 const protector={name:'Ancestral Protectors',desc:['Keep this summary.']};
 const p=subclassRulesContent(protector,'https://dnd5e.wikidot.com/barbarian:ancestral-guardian');
 if(!p.html.includes('disadvantage')||!p.html.includes('resistance')||p.html.includes('Spirit Shield'))throw Error('feature boundaries');
@@ -23,3 +23,6 @@ const missing=[];for(const [key,rows] of Object.entries(SUBCLASS_FEATURE_INDEX))
 if(missing.length)throw Error('subclass reference gaps: '+missing.join('; '));
 console.log('PASS subclass full rules and boundaries, all 87 feat references, summary/mechanics preservation, aliases, custom isolation and escaping');
 `,ctx);
+
+for(const [id,text] of Object.entries(vm.runInContext('PROVIDED_FEATURE_RULES.feats',ctx))){ctx.formatText=text;const formatted=vm.runInContext('providedFeatRulesHTML(formatText)',ctx);const flat=formatted.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();assert.equal(flat,vm.runInContext('esc(formatText)',ctx).replace(/\s+/g,' ').trim(),'rules text changed: '+id)}
+const cart=vm.runInContext("providedFeatRulesHTML(PROVIDED_FEATURE_RULES.feats.cartomancer)",ctx);assert(cart.includes('You learn the Prestidigitation cantrip'));assert(cart.includes('<h4 class="feat-benefit-heading">Card Tricks.</h4>'));assert(vm.runInContext("providedFeatRulesHTML(PROVIDED_FEATURE_RULES.feats.actor)",ctx).includes('<ul class="feat-benefits">'));assert(!vm.runInContext("providedFeatRulesHTML('<img src=x onerror=alert(1)>')",ctx).includes('<img'));console.log('PASS all feat wording preserved, inline spell names reflowed, benefit headings/lists and escaped source text');

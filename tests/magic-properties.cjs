@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert'),{webcrypto}=require('crypto');
+const c=vm.createContext({crypto:webcrypto,console,itemData:()=>null,renderNav:()=>{},renderSheet:()=>{},allItems:()=>[{index:'longsword',name:'Longsword',damage:{damage_dice:'1d8',damage_type:{name:'Slashing'}}},{index:'shield',name:'Shield',armor_category:'Shield',armor_class:{base:2}},{index:'plate',name:'Plate',armor_category:'Heavy',armor_class:{base:18}}]});
+for(const f of ['equipment-model.js','magic-items-data.js','magic-item-properties-data.js','magic-item-properties.js','magic-items.js'])vm.runInContext(fs.readFileSync(''+f,'utf8'),c);
+const run=s=>vm.runInContext(s,c);
+run(`function pick(n){return MAGIC_ITEMS.find(i=>i.name===n||i.displayName===n)};const base={abilities:{str:12,dex:14,con:19,int:12,wis:12,cha:12},level:12,pb:4,values:{speed:30,maxHP:80,magicAttack:5,spellDC:13},skillAbilities:{}};function active(i){i.equipped=true;i.attuned=true;return i}`);
+for(const [name,key,value] of [['Cloak of Protection','ac',13],['Gauntlets of Ogre Power','str',19],['Belt of Dwarvenkind','con',20]])assert.equal(run(`computeStats(base,[active(magicPopulateEquipment(pick(${JSON.stringify(name)})))]).values.${key}`),value);
+assert.equal(run("computeStats(base,[active(magicPopulateEquipment(pick('Dwarven Plate'),allItems()[2]))]).values.ac"),20);
+run("const boots=active(magicPopulateEquipment(pick('Boots of Speed')))");assert.equal(run('computeStats(base,[boots]).values.speed'),30);run('boots.conditions[boots.magicEffects[0].id]=true');assert.equal(run('computeStats(base,[boots]).values.speed'),60);
+run("const wand=magicPopulateEquipment(pick('Wand of Magic Missiles'))");assert.equal(run('wand.resource.max'),7);assert.equal(run('magicRechargeAmount(wand.resource,()=>3)'),3);
+assert.equal(run("magicPopulateEquipment(pick('Belt of Giant Strength (Legendary)'),null,'29').modifiers.find(m=>m.target==='str').value"),29);
+const missing=run("MAGIC_PROPERTY_DATA.modifiers.filter(r=>!MAGIC_ITEMS.some(i=>i.name.toLowerCase()===r.name.toLowerCase()||i.displayName.toLowerCase()===r.name.toLowerCase())).map(r=>r.name)");assert.deepEqual(Array.from(missing),[]);
+run("for(const it of MAGIC_ITEMS){const s=magicPropertySpec(it);const i=magicPopulateEquipment(it,s.bases[0],s.variants[0]?.[1]);if(!i.id||!i.resource||!i.modifiers)throw Error(it.name);JSON.parse(JSON.stringify(i))}");
+console.log('PASS all 214 mappings match catalog; all catalog acquisitions serialize; AC, ability caps, activation, variants and dice recharge');
