@@ -6,6 +6,9 @@ A history of the D&D 5e **2014 rules** character builder and sheet.
 
 ## 1.0.2 — November 2, 2026 (Stable production)
 
+- November 3 update: apply only the selected Ioun Stone variant, include Luck Blade’s saving throw bonus, enable class/held spell-item bonuses by default with off toggles, and populate magic weapon extra damage with situational toggles. Apply only one equipped body armor’s base AC and enhancement, retaining the equipment warning.
+- Add regression coverage for these effects and refresh recommended-score stubs and separate-DM party invite tests. Preserve catalog IDs and existing saved equipment.
+
 - Keep account loading and cloud sync working when browser storage is full. Reclaim only matching clean account-tab caches; preserve unsynced edits, conflicts, recovery snapshots and cloud records.
 - Fall back to session-memory storage if the browser cache still cannot be written. Use the same fallback for startup reads so successfully downloaded characters cannot be replaced by an empty stale cache.
 - Show a storage-pressure status and retain normal pending-edit protections; verify cloud loading, editing, and sync under forced quota failures.

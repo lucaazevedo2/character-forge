@@ -20,14 +20,15 @@ function magicPopulateEquipment(it,base,variant){
  item.magicCatalogId=it.index;item.magicPropertiesVersion=1;item.requiresAttunement=!!it.attunement;item.magicEffects=[];item.conditions={};
  item.notes=[item.notes,'Magic item: '+it.name,it.source?'Rules: '+it.source:'',...spec.rows.map(r=>r.props)].filter(Boolean).join('\n');
  const add=(target,value,operation='add',condition=null,extra={})=>{if(!item.modifiers.some(m=>m.target===target&&m.value===value&&m.operation===operation&&m.condition===condition))item.modifiers.push({target,value,operation,...(condition?{condition}:{}),...extra});};
- const condition=(label)=>{const key='effect'+item.magicEffects.length;item.magicEffects.push({id:key,label});item.conditions[key]=false;return key;};
+ const condition=(label,enabled=false)=>{const key='effect'+item.magicEffects.length;item.magicEffects.push({id:key,label});item.conditions[key]=enabled;return key;};
  for(const row of spec.rows){
+  if(row.variantOnly||/^Variant picker:/i.test(row.props))continue;
   if(row.cat.startsWith('Permanent')){item.permanentAbility=({Bodily:'con',Gainful:'str',Quickness:'dex',Clear:'int',Leadership:'cha',Understanding:'wis'})[Object.keys({Bodily:1,Gainful:1,Quickness:1,Clear:1,Leadership:1,Understanding:1}).find(k=>row.name.includes(k))];continue;}
   const text=row.props;
   for(const raw of text.split(';')){
    const t=raw.trim();if(!t)continue;
    const conditional=/conditional|activated|while held|only for|only while|while not|while in|vs constructs|unarmed strikes|longbow\/shortbow|wizard spells|sorcerer spells|bard spell|warlock spells|druid\/ranger|cleric\/paladin|CHA-based/i.test(t);
-   const cond=conditional?condition(t):null;
+   const cond=conditional?condition(t,!!row.enabledByDefault):null;
    const bonus=Number(t.match(/\+(\d+)\s+(?:attack\s*(?:and|\/)\s*damage|attack\/damage)/i)?.[1]||t.match(/^\+(\d+) attack and damage/i)?.[1]||0);
    if(bonus&&item.attack.enabled&&!magicEnhancement(it)){
     if(cond){item.magicAttackEffects||=[];item.magicAttackEffects.push({condition:cond,bonus})}else item.attack.magicBonus=bonus;
@@ -35,7 +36,7 @@ function magicPopulateEquipment(it,base,variant){
    const ac=t.match(/\bAC\s*\+(\d+)/i);if(ac&&!/base AC/i.test(t)&&!magicEnhancement(it))add('ac',+ac[1],'add',cond);
    const set=t.match(/\b(STR|DEX|CON|INT|WIS|CHA) set to (?:at least )?(\d+)/i);if(set)add(set[1].toLowerCase(),+set[2],'minimum',cond);
    const ability=t.match(/\b(STR|DEX|CON|INT|WIS|CHA)\s*\+(\d+)/i);if(ability)add(ability[1].toLowerCase(),+ability[2],'add',cond,/max 20/i.test(t)?{cap:20}:{});
-   const saves=t.match(/(?:all saving throws|saving throws|saves)\s*\+(\d+)/i);if(saves)add('saveAll',+saves[1],'add',cond);
+   const saves=t.match(/(?:all saving throws|saving throws|saves)\s*\+(\d+)|\+(\d+)\s+to\s+(?:all\s+)?saving throws/i);if(saves)add('saveAll',+(saves[1]||saves[2]),'add',cond);
    const checks=t.match(/ability checks\s*\+(\d+)/i);if(checks)add('checkAll',+checks[1],'add',cond);
    const spell=t.match(/spell attack(?: and DC)?\s*\+(\d+)/i);if(spell)add('magicAttack',+spell[1],'add',cond);if(spell&&/spell attack and DC/i.test(t))add('spellDC',+spell[1],'add',cond);
    const dc=t.match(/(?:spell save DC|save DC|DC)\s*\+(\d+)/i);if(dc)add('spellDC',+dc[1],'add',cond);
@@ -47,11 +48,12 @@ function magicPopulateEquipment(it,base,variant){
    if(/walking speed at least 30/i.test(t))add('speed',30,'minimum',cond);
    if(/walking speed x2/i.test(t))add('speed',2,'multiply',cond);
    const movement=t.match(/(Flying|Swimming|Climbing|Burrowing) speed (?:= walking speed|(\d+) ft)/i);if(movement)add(movement[1].toLowerCase()+'Speed',+(movement[2]||0),'minimum',cond,movement[2]?{}:{scale:'walking'});
-   const extra=t.match(/(?:extra damage mentioned:|extra)\s*(\d+d\d+)\s+(\w+)/i);if(extra&&item.attack.enabled){const key=cond||(/may be conditional|on crit|against/i.test(t)?condition(t):null);item.magicDamageEffects||=[];item.magicDamageEffects.push({condition:key,dice:extra[1],type:extra[2]})}
+   const extra=t.match(/(?:extra damage mentioned:|extra)\s*(\d+d\d+)\s+(\w+)/i);if(extra&&item.attack.enabled&&!row.extraDamage){const key=cond||(/may be conditional|on crit|against/i.test(t)?condition(t):null);item.magicDamageEffects||=[];item.magicDamageEffects.push({condition:key,dice:extra[1],type:extra[2]})}
   }
+  if(row.extraDamage&&item.attack.enabled){const e=row.extraDamage;if(e.toggle){const key=condition(e.label);item.magicDamageEffects||=[];item.magicDamageEffects.push({condition:key,dice:e.dice,type:e.type})}else{item.attack.extraDamage=e.dice;item.attack.extraDamageType=e.type}}
  }
  if(/belt of giant strength/i.test(it.name)){item.modifiers=item.modifiers.filter(m=>m.target!=='str');add('str',Number(variant||21),'minimum')}
- if(/ioun stone/i.test(it.name)&&variant)add(variant,variant==='ac'||variant==='pb'?1:2,'add',null,variant==='ac'||variant==='pb'?{}:{cap:20});
+ if(/ioun stone/i.test(it.name)&&spec.variants.some(v=>v[1]===variant))add(variant,variant==='ac'||variant==='pb'?1:2,'add',null,variant==='ac'||variant==='pb'?{}:{cap:20});
  if(/gambler.s blade/i.test(it.name))item.attack.magicBonus=Number(variant||1);
  if(/mithral/i.test(it.name)){item.armor.strength=0;item.armor.stealthDisadvantage=false}
  if(/serpent scale/i.test(it.name)){item.armor.dexCap=99;item.armor.stealthDisadvantage=false}

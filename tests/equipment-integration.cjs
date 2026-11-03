@@ -69,3 +69,18 @@ for(const kind of ['weapon','armor','shield'])for(const bonus of [1,2,3]){
 }
 console.log('PASS +1/+2/+3 weapon attack and damage, armor/shield AC, base choices and save persistence');
 `,ctx);
+for(const file of ['magic-item-properties-data.js','magic-item-properties.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'..',file),'utf8'),ctx);
+vm.runInContext(`
+for(const [name,dice,type,toggle] of [['Frost Brand','1d6','cold',false],['Sun Blade','1d8','radiant',false],['Flame Tongue','2d6','fire',true],['Holy Avenger','2d10','radiant',true]]){
+ const catalog=MAGIC_ITEMS.find(i=>i.name===name),item=magicPopulateEquipment(catalog,itemData('Longsword'));
+ item.equipped=true;item.attuned=true;hero.equipmentItems=[item];equipmentProject(hero);
+ let attack=equipmentAttackRecord(hero,item);
+ if(toggle){
+  if(attack.damage2Enabled)throw Error(name+' should require its situational toggle');
+  const effect=item.magicDamageEffects.find(e=>e.dice===dice);item.conditions[effect.condition]=true;equipmentInvalidate();attack=equipmentAttackRecord(hero,item);
+ }
+ if(!attack.damage2Enabled||attack.damage2Dice!==dice||attack.damage2Type!==type)throw Error(name+' linked attack damage');
+ if(toggle){item.conditions[item.magicDamageEffects[0].condition]=false;equipmentInvalidate();if(equipmentAttackRecord(hero,item).damage2Enabled)throw Error(name+' off toggle');}
+}
+console.log('PASS four magic weapon linked attacks and situational damage toggles');
+`,ctx);

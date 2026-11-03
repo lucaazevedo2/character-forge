@@ -33,7 +33,7 @@ function equipmentLinkedAttacks(items){return items.filter(i=>i.quantity>0&&i.at
 /* Pure: neither base stats nor inventory is mutated. Exact/minimum set the base;
    additive modifiers follow. Stable item order breaks competing exact ties. */
 function computeStats(base,items=[]){
- const attunementLimit=base.attunementLimit??3,active=activeEquipment(items,attunementLimit),entries=active.flatMap(i=>(i.modifiers||[]).filter(m=>Number.isFinite(Number(m.value))&&(!m.condition||i.conditions?.[m.condition])&&(!m.requiresUnarmored||!active.some(x=>x.type==='armor'))&&(!m.requiresNoShield||!active.some(x=>x.type==='shield'))).map(m=>({...m,value:m.abilityValue?eqModifier(base.abilities?.[m.abilityValue]||10):m.scale==='level'?Number(m.value)*(base.level||1):m.scale==='plusLevel'?Number(m.value)+(base.level||1):Number(m.value),source:i.name,itemId:i.id})));
+ const attunementLimit=base.attunementLimit??3,active=activeEquipment(items,attunementLimit),bodyArmor=active.find(i=>i.type==='armor'),entries=active.flatMap(i=>(i.modifiers||[]).filter(m=>Number.isFinite(Number(m.value))&&!(i.type==='armor'&&i!==bodyArmor&&m.target==='ac')&&(!m.condition||i.conditions?.[m.condition])&&(!m.requiresUnarmored||!active.some(x=>x.type==='armor'))&&(!m.requiresNoShield||!active.some(x=>x.type==='shield'))).map(m=>({...m,value:m.abilityValue?eqModifier(base.abilities?.[m.abilityValue]||10):m.scale==='level'?Number(m.value)*(base.level||1):m.scale==='plusLevel'?Number(m.value)+(base.level||1):Number(m.value),source:i.name,itemId:i.id})));
  const values={},breakdown={};let currentAttack=null;
  function apply(key,value,initial=[{source:'Base / class / manual',value}],target=key){
   let n=eqNumber(value);const sources=[...initial];
