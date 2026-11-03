@@ -2,7 +2,13 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 1.0.1 — November 2, 2026.**
+**Latest stable release: 1.0.2 — November 2, 2026.**
+
+## 1.0.2 — November 2, 2026 (Stable production)
+
+- Keep account loading and cloud sync working when browser storage is full. Reclaim only matching clean account-tab caches; preserve unsynced edits, conflicts, recovery snapshots and cloud records.
+- Fall back to session-memory storage if the browser cache still cannot be written. Use the same fallback for startup reads so successfully downloaded characters cannot be replaced by an empty stale cache.
+- Show a storage-pressure status and retain normal pending-edit protections; verify cloud loading, editing, and sync under forced quota failures.
 
 ## 1.0.1 — November 2, 2026 (Stable production)
 

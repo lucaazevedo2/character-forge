@@ -7,6 +7,7 @@ function harness(db,uid,local=storage(),tabId){
  if(tabId)ctx.sessionStorage.setItem('forge-cloud-tab',tabId);
  ctx.window=ctx;ctx.addEventListener=(type,fn)=>ctx.events[type]=fn;ctx.setTimeout=fn=>{ctx.timers.push(fn);return ctx.timers.length};ctx.clearTimeout=()=>{};
  ctx.chars=[];ctx.CUSTOM={races:[],classes:[],subs:[],bgs:[],spells:[],items:[]};ctx.draft=null;ctx.view='home';ctx.activeId=null;ctx.editingCreation=false;ctx.editSnapshot=null;ctx.render=()=>{};ctx.renderHome=()=>{};ctx.applyCustom=()=>{};ctx.validCharacterAvatar=()=>false;ctx.downloadJSON=()=>{};
+ ctx.storeGet=async k=>JSON.parse(local.getItem(ctx.ForgeCloud?.storageKey(k)||k)||'null');
  ctx.storeSet=async(k,v)=>local.setItem(ctx.ForgeCloud?.storageKey(k)||k,JSON.stringify(v));
  const client={auth:{getSession:async()=>({data:{session:uid?{user:{id:uid,email:uid+'@test'}}:null}}),onAuthStateChange:fn=>{ctx.authEvent=fn},signOut:async()=>({}),signInAnonymously:async({options})=>{uid='guest-session';return {data:{user:{id:uid,is_anonymous:true,user_metadata:options.data}}}}},
  from:()=>({select:()=>({order:async()=>db.fail?{error:{}}:{data:[...db.rows.values()].filter(r=>r.owner_id===uid).map(r=>structuredClone(r))}})}),
@@ -48,5 +49,10 @@ const hero=(name='Hero')=>({id:'local-one',name,base:{str:10},notes:'',schema_ve
  guest.chars[0].notes='Guest session edits';await guest.storeSet('forge-chars',guest.chars);await guest.ForgeCloud.sync();assert.equal(JSON.parse(guestLocal.getItem('forge-chars')).find(c=>c.id===first.id).notes,'Guest session edits');assert.equal(JSON.parse(guestLocal.getItem('forge-chars')).find(c=>c.id===other.id).name,'Unshared hero');
  const emptyDB=makeBackend(),empty=harness(emptyDB,null);await empty.ForgeCloud.initialize();await assert.rejects(()=>empty.ForgeCloud.startGuestSession('Observer'),/Choose a character/);assert.equal(emptyDB.rows.size,0,'joining without a character is rejected');
  await assert.rejects(()=>b.ForgeCloud.startGuestSession('Wrong account')); // An existing Google workspace cannot be replaced by guest joining.
+ // Exhausted browser storage must not hide cloud data or prevent syncing edits.
+ const fullDB=makeBackend();fullDB.rows.set('quota-cloud',{id:'quota-cloud',owner_id:'quota-user',local_id:'local-one',revision:1,data:{schema_version:1,character:hero('Cloud hero')},updated_at:new Date().toISOString(),deleted_at:null});
+ const full={getItem:()=>null,setItem(){const error=new Error('Storage quota exceeded');error.name='QuotaExceededError';throw error},removeItem(){}};
+ const quota=harness(fullDB,'quota-user',full);await quota.ForgeCloud.initialize();assert.equal(quota.chars.length,1);assert.equal(quota.chars[0].name,'Cloud hero');assert.equal((await quota.storeGet('forge-chars'))[0].name,'Cloud hero');quota.chars[0].notes='Safe edit with full cache';await quota.storeSet('forge-chars',quota.chars);await quota.ForgeCloud.sync();assert.equal(fullDB.rows.get('quota-cloud').data.character.notes,'Safe edit with full cache');assert(!quota.ForgeCloud.diagnostics().pending);
+ console.log('PASS quota exhaustion preserves cloud loading, boot reads, in-memory edits and successful cloud sync');
  console.log('PASS cloud saves: guest isolation, account isolation, successful writes, conflicts, offline reload/retry, soft deletes, in-flight edits, duplicate IDs, session sign-out');
 })().catch(e=>{console.error(e);process.exitCode=1});

@@ -12,8 +12,22 @@ const prefix=uid=>'forge-account:'+uid+':';
 const stateKey=()=>prefix(user.id)+tab+':state';
 const cacheKey=()=>prefix(user.id)+'latest';
 const key=k=>user&&['forge-chars','forge-custom','forge-recovery-v1'].includes(k)?prefix(user.id)+tab+':'+k:k;
-const read=(k,fallback)=>{try{return JSON.parse(localStorage.getItem(k))??fallback}catch{return fallback}};
-function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
+const volatileStorage=new Map();let storagePressure=false;
+const read=(k,fallback)=>{try{return JSON.parse(volatileStorage.has(k)?volatileStorage.get(k):localStorage.getItem(k))??fallback}catch{return fallback}};
+function reclaimCleanAccountCaches(){
+ if(!user)return;
+ for(const name of Object.keys(localStorage)){
+  if(!name.startsWith(prefix(user.id))||!name.endsWith(':state')||name===stateKey())continue;
+  try{const bundle=JSON.parse(localStorage.getItem(name)),rows=Object.values(bundle?.records||{}),charsKey=name.slice(0,-5)+'forge-chars',cached=localStorage.getItem(charsKey);
+   if(!rows.length||rows.some(r=>r.dirty||r.conflict)||cached&&cached!==JSON.stringify(bundle.chars||[]))continue;
+   // Only discard matching, clean tab caches; cloud records, snapshots and unsynced edits are untouched.
+   localStorage.removeItem(charsKey);localStorage.removeItem(name);
+  }catch{/* Unrecognized or incomplete caches are preserved. */}
+ }
+}
+function write(k,v){const encoded=JSON.stringify(v);try{localStorage.setItem(k,encoded);volatileStorage.delete(k);return}catch(error){if(!/quota|storage|disk/i.test(error.name+' '+error.message))throw error}
+ reclaimCleanAccountCaches();try{localStorage.setItem(k,encoded);volatileStorage.delete(k)}catch{volatileStorage.set(k,encoded);storagePressure=true}
+}
 function pending(){return Object.values(records).some(r=>r.dirty)}
 function report(text){message=text;paint()}
 function persist(){if(!user)return;const bundle={records,chars:read(key('forge-chars'),[]),custom:read(key('forge-custom'),{})};write(stateKey(),bundle);write(cacheKey(),bundle)}
@@ -177,7 +191,7 @@ async function initialize(){
 }
 function mount(){ready=true;paint();window.ForgeParty?.accountChanged()}
 const googleMark=`<svg class="google-mark" viewBox="0 0 48 48" width="20" height="20" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6C44.4 38.03 46.98 31.87 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.87 23.87 0 0 0 0 24c0 3.87.93 7.53 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
-function cloudStatus(){return message||(isGuest()?'Guest party session · this browser':null)||(busy?'Syncing…':pending()?'Saved on this device · cloud changes pending':user?'Saved to cloud':'Guest · saved in this browser')}
+function cloudStatus(){return message||(storagePressure?'Browser storage full · cloud characters loaded; sync or export before closing':null)||(isGuest()?'Guest party session · this browser':null)||(busy?'Syncing…':pending()?'Saved on this device · cloud changes pending':user?'Saved to cloud':'Guest · saved in this browser')}
 function profileName(){return String(user?.user_metadata?.full_name||user?.user_metadata?.name||user?.email?.split('@')[0]||'Adventurer')}
 function profileAvatar(){
  if(isGuest())return null;
@@ -267,8 +281,9 @@ async function act(action){try{
  if(action==='sync'){message='';await sync();await refresh()}
  }catch{report('That action could not finish. Your local characters are safe. Please try again.')}
 }
-const originalStore=storeSet;
-storeSet=async function(k,v){await originalStore(k,v);if(k==='forge-chars')capture(v);if(k==='forge-custom'&&user)capture(chars)};
+const originalStore=storeSet,originalGet=typeof storeGet==='function'?storeGet:async()=>null;
+storeGet=async function(k){return user&&['forge-chars','forge-custom','forge-recovery-v1'].includes(k)?read(key(k),null):originalGet(k)};
+storeSet=async function(k,v){if(user&&['forge-chars','forge-custom','forge-recovery-v1'].includes(k))write(key(k),v);else await originalStore(k,v);if(k==='forge-chars')capture(v);if(k==='forge-custom'&&user)capture(chars)};
 const originalHome=renderHome;renderHome=function(){originalHome();paint()};
 window.addEventListener('online',()=>queue(100));
 window.addEventListener('focus',()=>{if(user){if(pending())queue(100);else if(Date.now()-lastRefresh>15000)refresh()}});
