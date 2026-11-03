@@ -2,7 +2,12 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 1.0.0 — November 2, 2026.**
+**Latest stable release: 1.0.1 — November 2, 2026.**
+
+## 1.0.1 — November 2, 2026 (Stable production)
+
+- Stop the Add a spell popup from automatically focusing search when opening or adding spells. Keep keyboard focus on a non-text control after button actions, preserve popup scroll, and retain search focus only when the user is actively using it.
+- Clear search focus on touch button taps before rebuilding the picker, preventing the mobile keyboard from reopening after each selection. Apply to character creation and sheet spell management.
 
 ## 1.0.0 — November 2, 2026 (Stable production)
 
