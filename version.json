@@ -1,7 +1,7 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "channel": "production",
-  "date": "2026-11-02",
+  "date": "2026-11-09",
   "timezone": "America/New_York",
   "changelog": "https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md"
 }

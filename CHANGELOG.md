@@ -2,7 +2,32 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 1.0.2 — November 2, 2026.**
+**Latest stable release: 1.0.3 — November 9, 2026.**
+
+
+## 1.0.3 — November 9, 2026 (Stable production)
+
+- Release DM-created parties with the creator as both organizer and DM, immediate player invites, and no required DM character. Player-created parties still work without a DM.
+- Retain party memberships when a selected character is cleared or deleted; keep single-member organizer parties. Explicit leave, removal, disbanding and account deletion still apply. Parties do not expire from inactivity.
+- Award gold and catalog items directly as DM, with base/variant selection and rarity colors. Player gifts still transfer from their character, preserving one equipment unit and its properties.
+- Add public/private transaction receipts and a styled two-second notification only on the receiving character’s sheet. Keep private receipts between sender and recipient, including when other members are DM or organizer.
+- Preserve revision checks, duplicate protection after clearing chat, and equipment/attunement safeguards.
+- Add space above Rolls & chat and preserve Google OAuth callback parameters during initial routing. Use the main domain as the default auth return URL.
+
+## 1.0.3-beta.2 — November 9, 2026 (Sites beta)
+
+- Give the DM dedicated gold and catalog-loot award actions, without a DM character or source inventory. Include magic item base/variant selection and catalog rarity colors.
+- Add public/private receipts to DM awards and player gifts. Private transactions stay between the sender and recipient, including when another member is DM or organizer.
+- Show the receiving character a styled, two-second notification on their sheet; retain a colored transaction receipt in chat. Avoid replaying old or duplicate receipts.
+- Move one inventory unit with equipment properties intact; preserve equipped item indexes and reject equipped, attuned or class-assigned gifts until released. Keep revision checks and duplicate protection after chat clearing.
+- Add spacing between the party toolbar and Rolls & chat.
+
+## 1.0.3-beta.1 — November 9, 2026 (Sites beta)
+
+- Create a lasting party directly from DM Tools. The creator is both organizer and DM, without selecting a player character, and can immediately invite up to ten players.
+- Keep player-created parties with an optional, separately invited DM.
+- Retain account memberships when selected characters are cleared or deleted, including single-member organizer parties. Explicit leave, member removal, disbanding and account deletion still apply; there is no inactivity expiry.
+- Let existing members manage their party from DM Tools even when they have no selected character. Preserve Google sign-in callback routing.
 
 ## 1.0.2 — November 2, 2026 (Stable production)
 
