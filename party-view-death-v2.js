@@ -233,7 +233,7 @@ function bindLedger(){
  const groups=ledgerGroups(chars)||[];
  root.querySelectorAll('.ledger-party-group').forEach((section,index)=>{
   const group=groups[index],party=parties.find(p=>p.id===group?.id);if(!party)return;
-  if(party.is_dm){let open=section.querySelector('[data-open-dm-party]');if(!open){open=document.createElement('button');open.type='button';open.className='btn primary ledger-open-dm';open.dataset.openDmParty=party.id;open.textContent='Open DM Tools';section.querySelector('header').append(open)}open.onclick=()=>{if(selected!==party.id){generation++;selected=party.id;state=null;messages=[];lastOwnRevision=null;dmStamp='';saveSelection()}navigateSite('dmtools');refresh(true)};}
+  if(party.is_dm){let open=section.querySelector('[data-open-dm-party]');if(!open){open=document.createElement('button');open.type='button';open.className='ledger-open-dm';open.dataset.openDmParty=party.id;open.textContent='DM Tools ↗';open.setAttribute('aria-label','Open DM Tools for '+party.name);section.querySelector('header').append(open)}open.onclick=()=>{if(selected!==party.id){generation++;selected=party.id;state=null;messages=[];lastOwnRevision=null;dmStamp='';saveSelection()}navigateSite('dmtools');refresh(true)};}
   let button=section.querySelector('[data-remove-party]');if(!button){button=document.createElement('button');button.type='button';button.className='ledger-remove-party';button.dataset.removeParty=party.id;section.querySelector('header').append(button)}
   button.textContent=party.is_organizer?'Disband & remove':'Leave & remove';button.setAttribute('aria-label',button.textContent+' '+party.name);
   button.onclick=()=>removeLedgerParty(party.id,section,button);

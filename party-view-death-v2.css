@@ -121,4 +121,13 @@ body.dm-tools-view .app{max-width:1540px}.dm-workspace{padding:8px 0 20px;color:
 .party-condition-icons::-webkit-scrollbar{display:none}
 .dm-roster-compact .party-condition-icons{overflow:visible}
 
-.ledger-dm-badge{display:inline-flex;align-items:center;margin-left:10px;padding:5px 10px;border:1px solid #b89cdd66;border-radius:999px;background:#9f78cf1c;color:#d9c3fa;font:600 11px system-ui;vertical-align:middle}.ledger-dm-description{color:#b8b1c8;margin:8px 0 18px;line-height:1.5}.ledger-party-group header{flex-wrap:wrap;gap:12px}.ledger-open-dm{margin-left:auto}.ledger-open-dm+.ledger-remove-party{margin-left:0}@media(max-width:600px){.ledger-dm-badge{margin-left:0;margin-top:6px}.ledger-party-group h3{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.ledger-open-dm{margin-left:0}}
+/* Quiet campaign heading with a compact DM shortcut. */
+.ledger-party-group>header{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px}
+.ledger-party-group>header h3{display:flex;align-items:center;flex-wrap:wrap;gap:10px;flex:0 1 auto;margin:0}
+.ledger-dm-badge{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid #b89cdd40;border-radius:999px;background:#9f78cf0c;color:#c7b0e3;font:500 10px system-ui;white-space:nowrap}
+.ledger-party-group>header .ledger-open-dm{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:auto;min-width:0;min-height:30px;height:auto;margin:0;padding:5px 9px;border:1px solid transparent;border-radius:7px;background:transparent;color:#cbb5eb;font:600 12px system-ui;line-height:1.4;box-shadow:none;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s}
+.ledger-party-group>header .ledger-open-dm:hover{background:#ad8ee917;border-color:#ad8ee933;color:#e5d7fa}
+.ledger-party-group>header .ledger-open-dm:focus-visible{outline:2px solid #b4a7ff;outline-offset:3px}
+.ledger-party-group>header .ledger-open-dm+.ledger-remove-party{margin-left:auto}
+.ledger-dm-description{color:#9d97af;margin:10px 0 20px;font-size:12px;line-height:1.5}
+@media(max-width:600px){.ledger-party-group>header{gap:8px}.ledger-party-group>header h3{flex-basis:100%}.ledger-party-group>header .ledger-open-dm+.ledger-remove-party{margin-left:auto}}
