@@ -120,3 +120,5 @@ body.dm-tools-view .app{max-width:1540px}.dm-workspace{padding:8px 0 20px;color:
 .party-condition-icons{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;min-height:36px;padding:2px}
 .party-condition-icons::-webkit-scrollbar{display:none}
 .dm-roster-compact .party-condition-icons{overflow:visible}
+
+.ledger-dm-badge{display:inline-flex;align-items:center;margin-left:10px;padding:5px 10px;border:1px solid #b89cdd66;border-radius:999px;background:#9f78cf1c;color:#d9c3fa;font:600 11px system-ui;vertical-align:middle}.ledger-dm-description{color:#b8b1c8;margin:8px 0 18px;line-height:1.5}.ledger-party-group header{flex-wrap:wrap;gap:12px}.ledger-open-dm{margin-left:auto}.ledger-open-dm+.ledger-remove-party{margin-left:0}@media(max-width:600px){.ledger-dm-badge{margin-left:0;margin-top:6px}.ledger-party-group h3{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.ledger-open-dm{margin-left:0}}

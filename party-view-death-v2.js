@@ -221,7 +221,7 @@ function optionalDMHTML(){return (state.is_organizer&&state.has_dm?'<button type
 function ledgerGroups(list){
  if(!accountId)return null;
  const sort=items=>items.slice().sort((a,b)=>Number(b.favorite===true)-Number(a.favorite===true));
- const groups=parties.map(p=>({id:p.id,name:p.name,characters:sort(list.filter(c=>window.ForgeCloud.characterRef(c.id)?.id===p.character_id))}));
+ const groups=parties.map(p=>({id:p.id,name:p.name,isDM:!!p.is_dm,characters:sort(list.filter(c=>window.ForgeCloud.characterRef(c.id)?.id===p.character_id))}));
  const unassigned=list.filter(c=>!parties.some(p=>p.character_id&&p.character_id===window.ForgeCloud.characterRef(c.id)?.id));
  if(list.some(c=>c.favorite===true))groups.unshift({id:'favorites',name:'Favorites',characters:list.filter(c=>c.favorite===true)});
  if(unassigned.length)groups.push({id:null,name:'Not in a party',characters:sort(unassigned)});
@@ -233,6 +233,7 @@ function bindLedger(){
  const groups=ledgerGroups(chars)||[];
  root.querySelectorAll('.ledger-party-group').forEach((section,index)=>{
   const group=groups[index],party=parties.find(p=>p.id===group?.id);if(!party)return;
+  if(party.is_dm){let open=section.querySelector('[data-open-dm-party]');if(!open){open=document.createElement('button');open.type='button';open.className='btn primary ledger-open-dm';open.dataset.openDmParty=party.id;open.textContent='Open DM Tools';section.querySelector('header').append(open)}open.onclick=()=>{if(selected!==party.id){generation++;selected=party.id;state=null;messages=[];lastOwnRevision=null;dmStamp='';saveSelection()}navigateSite('dmtools');refresh(true)};}
   let button=section.querySelector('[data-remove-party]');if(!button){button=document.createElement('button');button.type='button';button.className='ledger-remove-party';button.dataset.removeParty=party.id;section.querySelector('header').append(button)}
   button.textContent=party.is_organizer?'Disband & remove':'Leave & remove';button.setAttribute('aria-label',button.textContent+' '+party.name);
   button.onclick=()=>removeLedgerParty(party.id,section,button);
@@ -254,7 +255,7 @@ async function removeLedgerParty(id,section,button){
  }catch(e){status.textContent=e.message}finally{button.disabled=false}
 }
 function paintLedger(){
- if(view!=='home')return;const stamp=signature({accountId,groups:ledgerGroups(chars)?.map(g=>[g.id,g.name,g.characters.map(c=>[c.id,c.favorite])])});
+ if(view!=='home')return;const stamp=signature({accountId,groups:ledgerGroups(chars)?.map(g=>[g.id,g.name,g.isDM,g.characters.map(c=>[c.id,c.favorite])])});
  if(stamp!==ledgerStamp){ledgerStamp=stamp;renderHome()}else bindLedger();
 }
 async function showDMInvite(box){await run(box,async()=>{const result=await rpc('forge_party_dm_invite',{p_id:selected});const invite=dialog('partyDMInvite','Invite a DM','<div class="party-dialog-body"><p>Share this DM-only code. The DM enters it in DM Tools and joins without a character. This code is consumed when they join.</p><code data-code></code></div>');invite.querySelector('[data-code]').textContent=result.code})}

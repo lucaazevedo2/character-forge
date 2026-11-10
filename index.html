@@ -508,7 +508,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 
   <footer id="foot">
     Core game content from the <b>System Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. Supplemental options are linked to Wikidot. No 2024 rules. Unofficial fan tool.
-    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 1.1.0 · Changelog ↗</a><span>Updated November 9, 2026</span></div>
+    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 1.1.1 · Changelog ↗</a><span>Updated November 9, 2026</span></div>
   </footer>
 </div>
 
@@ -984,7 +984,7 @@ function renderHome(){
   const grid=items=>`<div class="character-library">${items.map(characterCardHTML).join('')}</div>`;
   const originalList=favorites.length?`<section class="ledger-group" aria-labelledby="favoritesTitle"><h3 id="favoritesTitle">Favorites <span>${favorites.length}</span></h3>${grid(favorites)}</section>${others.length?`<section class="ledger-group" aria-labelledby="otherCharactersTitle"><h3 id="otherCharactersTitle">Other characters</h3>${grid(others)}</section>`:''}`:grid(living);
   const partyGroups=window.ForgeParty?.ledgerGroups(living);
-  const list=partyGroups?partyGroups.map(g=>`<section class="ledger-party-group"><header><h3>${esc(g.name)} <small>${g.characters.length}</small></h3><button type="button" class="ledger-party-gear" data-party-settings="${esc(g.id||'')}" ${g.id==='favorites'?'hidden':''} aria-label="Party settings for ${esc(g.name)}">⚙</button></header>${g.characters.length?grid(g.characters):'<p class="hint">No character selected for this party yet.</p>'}</section>`).join(''):originalList;
+  const list=partyGroups?partyGroups.map(g=>`<section class="ledger-party-group"><header><h3>${esc(g.name)} ${g.isDM?'<span class="ledger-dm-badge">You are the DM</span>':`<small>${g.characters.length}</small>`}</h3><button type="button" class="ledger-party-gear" data-party-settings="${esc(g.id||'')}" ${g.id==='favorites'?'hidden':''} aria-label="Party settings for ${esc(g.name)}">⚙</button></header>${g.isDM?'<p class="ledger-dm-description">You run this campaign as Dungeon Master. No player character is needed.</p>':g.characters.length?grid(g.characters):'<p class="hint">No character selected for this party yet.</p>'}</section>`).join(''):originalList;
   el.innerHTML = `
     <div class="home-hero">
       <div class="home-eyebrow">Your next adventure starts here</div>
@@ -3629,8 +3629,8 @@ function wireSpellSearch(el,c){const input=el.querySelector('#spellAddSearch');i
 <script src="cloud-config.js"></script>
 <script src="vendor/supabase-2.76.1.js"></script>
 <script src="cloud-saves.js?v=storage-quota-1.0.2"></script>
-<link rel="stylesheet" href="party-view-death-v2.css?v=1.1.0">
-<script src="party-view-death-v2.js?v=1.1.0"></script>
+<link rel="stylesheet" href="party-view-death-v2.css?v=1.1.1">
+<script src="party-view-death-v2.js?v=1.1.1"></script>
 <script>
 (async function(){
   try { await window.ForgeCloud.initialize(); } catch { /* Guest saves remain available if auth cannot load. */ }

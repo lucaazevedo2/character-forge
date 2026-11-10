@@ -2,8 +2,14 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 1.1.0 — November 9, 2026.**
+**Latest stable release: 1.1.1 — November 9, 2026.**
 
+
+## 1.1.1 — November 9, 2026 (Stable production)
+
+- Clearly label home-screen DM parties with “You are the DM,” replacing the misleading zero-character count and no-character-selected message.
+- Add an Open DM Tools shortcut that selects the corresponding party before opening the workspace.
+- Style the DM badge and actions for desktop and mobile while preserving player-party and character grouping.
 
 ## 1.1.0 — November 9, 2026 (Stable production)
 
