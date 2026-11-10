@@ -2,8 +2,15 @@
 
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 1.0.3 — November 9, 2026.**
+**Latest stable release: 1.1.0 — November 9, 2026.**
 
+
+## 1.1.0 — November 9, 2026 (Stable production)
+
+- Let the assigned DM click a party character to deal damage, heal, set HP, and add or remove conditions without starting a session.
+- Apply damage to temporary HP first and cap healing at maximum HP. Preserve character revision checks and duplicate protection.
+- Show the receiving character a styled two-second combat notification and record the change in party chat.
+- Correct DM award wording in the character panel and remove tiny scroll arrows beside condition icons.
 
 ## 1.0.3 — November 9, 2026 (Stable production)
 
