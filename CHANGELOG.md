@@ -1,5 +1,13 @@
 # Character Forge — Changelog
 
+## 2.0.3 — Open campaigns with unavailable images (November 13, 2026)
+
+- A map or portrait in Trash, missing from storage, or temporarily offline no longer prevents a cloud campaign from opening on a fresh device. Available images still load; unavailable images show a notice with **Retry images**.
+- Saving other edits preserves unavailable map and portrait references. Restoring a file from Campaign tools → Trash and retrying loads it again. Deleted files stay private and in Trash until restored; no storage permissions changed.
+- Authentication failures still require sign-in. Normal image replacement and explicitly clearing loaded images retain their existing behavior.
+
+Validation: simulated mobile cold load with 403/404 and network failures, mixed healthy images, reference-safe saves, restored-image retry, explicit clearing, expired authentication, retry UI and existing cloud/gateway regressions.
+
 ## 2.0.2 — Reliable scene reordering (November 12, 2026)
 
 - Scene dragging now uses pointer capture with a visual transform preview, avoiding native browser drag cancellation. Releasing the card commits its order once; cancelling preserves the previous order. Mouse, pen and touch share this path, with ordinary clicks retaining scene selection.
