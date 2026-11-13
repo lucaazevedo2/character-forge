@@ -1,5 +1,12 @@
 # Character Forge — Changelog
 
+## 2.0.2 — Reliable scene reordering (November 12, 2026)
+
+- Scene dragging now uses pointer capture with a visual transform preview, avoiding native browser drag cancellation. Releasing the card commits its order once; cancelling preserves the previous order. Mouse, pen and touch share this path, with ordinary clicks retaining scene selection.
+- Drops onto the moving card and gaps no longer discard the preview. Reduced-motion preferences and the open scene panel remain supported.
+
+Validation: real browser drag changed the order and retained it across scene switches/redraws; pointer preview/drop/cancel/click and native fallback regressions; server snapshot ordering after save.
+
 ## 2.0.1 — Campaign workspace fixes (November 12, 2026)
 
 - Members & Invites opens and creates invitation links while edits are pending. Membership changes still wait for saves to finish.
