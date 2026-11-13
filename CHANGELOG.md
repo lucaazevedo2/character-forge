@@ -1,5 +1,14 @@
 # Character Forge — Changelog
 
+## 2.0.5 — Mobile tabletop and consistent speed settings (November 13, 2026)
+
+- Released the phone tabletop layout: compact header, floating tool dock, complete Tools sheet, layer picker, overlay warnings and chat, with right-side sheets and a vertical dock on landscape phones.
+- Unified walking speed with the equipment-derived calculation used by the final character sheet and PDF. Automatic speed includes Barbarian level-5 Fast Movement unless wearing active heavy armor; custom speed overrides the final total, including equipment bonuses.
+- Preserved custom speeds saved with either beta or stable setting names. Settings reopen in Custom mode for both formats.
+- Desktop tabletop styling and main-site mobile navigation retain their existing layout. Existing pinch zoom remains; two-finger pan was not added.
+
+Validation: targeted speed regressions, zero/custom persistence, multiclass and armor checks; mobile viewport checks at 375×812, 390×844, 844×390 and 667×375. No pixel-by-pixel desktop comparison performed.
+
 ## 2.0.4 — Editable walking speed and Barbarian Fast Movement (November 13, 2026)
 
 - Added an Automatic / Custom total walking-speed setting under character sheet → Settings → Attributes & HP. Custom speeds are saved per character, support 0 ft., and override the final on-sheet and PDF movement speed without permanently changing race/class rules.

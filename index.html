@@ -511,7 +511,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 
   <footer id="foot">
     Core game content from the <b>System Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. Supplemental options are linked to Wikidot. No 2024 rules. Unofficial fan tool.
-    <div class="site-version"><a href="/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 2.0.4 · Changelog ↗</a><span>Updated November 13, 2026</span></div>
+    <div class="site-version"><a href="/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 2.0.5 · Changelog ↗</a><span>Updated November 13, 2026</span></div>
   </footer>
 </div>
 
@@ -2076,6 +2076,7 @@ const classXPState=xpState;
 xpState=function(c){return classXPState({...c,level:totalLevel(c)})};
 /* ================= GEAR EDITOR ================= */
 function showSheetSettings(c){const m=JSON.parse(JSON.stringify(manual(c))),box=document.createElement('dialog');box.className='settings-dialog';box.setAttribute('aria-labelledby','settingsTitle');
+ if(m.speedMode==='custom')m.speedMode='manual';
  const num=(key,label,value=0)=>`<label>${label}<input type="number" step="1" name="${key}" value="${esc(m[key]??value)}"></label>`;
  const check=(key,label)=>`<label class="setting-check"><input type="checkbox" name="${key}" ${m[key]?'checked':''}>${label}</label>`;
  const select=(key,label,opts,value)=>`<label>${label}<select name="${key}">${opts.map(([v,t])=>`<option value="${v}" ${String(m[key]??value)===String(v)?'selected':''}>${t}</option>`).join('')}</select></label>`;
@@ -3761,12 +3762,15 @@ button.class-choices-unfinished:focus-visible{outline:3px solid #fff4b0!importan
 <script src="divine-smite.js"></script>
 <link rel="stylesheet" href="equipment-editor.css?v=0.28.0-beta.2">
 <script src="equipment-model.js?v=1.0.2-fix1"></script>
-<script src="equipment-editor.js?v=magic-properties-0.28.0-beta.4"></script>
+<script src="equipment-editor.js?v=2.0.5"></script>
 <link rel="stylesheet" href="sheet-recovery.css?v=0.28.0-beta.4">
 <script src="sheet-recovery.js?v=0.28.0-beta.4"></script>
 <link rel="stylesheet" href="beta-improvements.css?v=1.0.0-feat-typography">
 <script src="beta-improvements.js?v=1.0.2-auth-callback"></script>
 <link rel="stylesheet" href="tabletop.css?v=2.0.3">
 <script src="vtt/loader.js?v=2.0.3"></script>
+<!-- Phone-only tabletop presentation. -->
+<link rel="stylesheet" href="vtt/mobile-layout.css?v=2.0.5">
+<script src="vtt/mobile-layout.js?v=2.0.5" defer></script>
 </body>
 </html>

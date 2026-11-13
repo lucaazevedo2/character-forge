@@ -1,0 +1,84 @@
+/* PHONE TABLETOP ONLY: desktop rules and the main-site mobile navigation are untouched.
+   The landscape exception includes the explicitly requested 844 x 390 phone viewport. */
+@media (max-width: 768px), (orientation: landscape) and (max-height: 500px) {
+ body.vtt-page #scr-step {padding:0!important;overflow:hidden;height:100dvh}
+ body.vtt-page .vtt-refined {height:100dvh!important;width:100%;border:0;border-radius:0;box-shadow:none;--phone-top:calc(48px + env(safe-area-inset-top,0px));--phone-sheet-width: min(320px,45vw)}
+ body.vtt-page .vtt-refined .vtt-bar {height:var(--phone-top);min-height:var(--phone-top);box-sizing:border-box;padding:env(safe-area-inset-top,0px) max(8px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));gap:4px;flex-wrap:nowrap;z-index:50}
+ body.vtt-page .vtt-refined .vtt-title {flex:1 1 0!important;min-width:0;max-width:none;order:0;margin:0;overflow:hidden}
+ .vtt-phone .vtt-name {display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:left;padding:0;min-height:22px!important}
+ .vtt-phone .vtt-title>small:not(.vtt-phone-status),.vtt-phone .vtt-title>.vtt-connection {display:none!important}
+ .vtt-phone .vtt-phone-status {display:block;font-size:10px;color:#a6abc9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:14px}
+ .vtt-phone-status:before {content:'●';color:#59d3ab;margin-right:4px;font-size:8px}
+ body.vtt-page .vtt-phone .vtt-bar .vtt-phone-layer-chip {order:1;min-width:90px;min-height:44px;padding:6px 9px;font-size:12px;border:1px solid #8070ed;border-radius:12px;background:#202238}
+ .vtt-phone .vtt-more {order:2;position:static;margin:0}
+ body.vtt-page .vtt-phone .vtt-more>summary {width:44px;min-width:44px;height:44px;min-height:44px;padding:0;border-radius:12px;font-size:23px}
+ body.vtt-page .vtt-phone .vtt-layout {display:block;position:relative;flex:1;min-height:0}
+ body.vtt-page .vtt-phone .vtt-center {height:100%;width:100%;display:flex;flex-direction:column;min-width:0}
+ body.vtt-page .vtt-phone .vtt-viewport {height:100%;min-height:0;flex:1;touch-action:none;scrollbar-width:none}
+ .vtt-phone .vtt-viewport::-webkit-scrollbar {display:none}
+ .vtt-phone .vtt-stage-canvas {touch-action:none}
+ .vtt-phone .vtt-toolbar {position:absolute!important;height:0!important;min-height:0!important;padding:0!important;border:0!important;overflow:visible!important;z-index:28}
+ .vtt-phone .vtt-stage-tools:empty,.vtt-phone .vtt-status,.vtt-phone [data-inspector-toggle] {display:none!important}
+ .vtt-phone .vtt-phone-dock {position:fixed;z-index:40;left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));bottom:calc(8px + env(safe-area-inset-bottom));height:56px;display:flex;gap:2px;padding:4px;box-sizing:border-box;background:#1a1d30f5;border:1px solid #494263;border-radius:16px;box-shadow:0 8px 30px #0006}
+ .vtt-phone .vtt-phone-dock button {flex:1;min-width:44px;min-height:44px;border:0;border-radius:11px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;padding:3px;color:#bcb5ee;background:transparent}
+ .vtt-phone-dock button>span {font-size:21px;line-height:22px}.vtt-phone-dock small {font-size:10px;line-height:12px}
+ .vtt-phone .vtt-phone-dock .chosen {background:#8070ed40;color:#e9e0ff;box-shadow:inset 0 0 0 1px #9985ef66}
+ .vtt-phone .vtt-zoom {position:fixed;right:max(8px,env(safe-area-inset-right));top:calc(var(--phone-top) + 10px);display:flex;flex-direction:column-reverse;gap:0;width:44px;margin:0;padding:0;border:1px solid #524775;border-radius:15px;background:#191b2ef2;overflow:hidden}
+ .vtt-phone .vtt-zoom button {min-width:44px;min-height:44px;padding:0;border:0!important;background:transparent!important}.vtt-phone .vtt-zoom output {font-size:10px;text-align:center;min-width:0;padding:5px 0}
+ .vtt-phone .vtt-play-toggle {position:fixed;z-index:39;right:max(8px,env(safe-area-inset-right));bottom:calc(74px + env(safe-area-inset-bottom));min-height:44px;border-radius:24px;background:#282343ef;border:1px solid #8070ed;font-size:12px;padding:8px 14px}
+ body.vtt-page .vtt-phone .vtt-phone-backdrop,body.vtt-page .vtt-phone .vtt-phone-backdrop:hover {position:fixed;inset:var(--phone-top) 0 0;z-index:49;width:100%;height:auto;border:0;border-radius:0;background:#060811a8;font-size:0;padding:0}
+ .vtt-phone [hidden] {display:none!important}
+ body.vtt-page .vtt-phone :is(.vtt-more-menu,.vtt-phone-layer,.vtt-inspector,.vtt-scenes,.vtt-play-drawer) {position:fixed!important;z-index:50;inset:auto 0 0!important;transform:none!important;width:100%!important;max-width:100%!important;height:auto;max-height:85dvh!important;min-height:0;box-sizing:border-box;overflow:auto;overscroll-behavior:contain;border:1px solid #494365;border-bottom:0;border-radius:22px 22px 0 0;background:#191c2e;padding:18px 14px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -15px 55px #0005}
+ body.vtt-page .vtt-phone :is(.vtt-more-menu,.vtt-phone-layer,.vtt-inspector,.vtt-scenes,.vtt-play-drawer):before {content:'';display:block;width:36px;height:4px;border-radius:4px;background:#575070;margin:0 auto 12px;grid-column:1/-1;flex-shrink:0}
+ .vtt-phone .vtt-more:not([open]) .vtt-more-menu {display:none!important}
+ body.vtt-page .vtt-phone .vtt-more[open] .vtt-more-menu {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .vtt-phone .vtt-phone-sheet-header {grid-column:1/-1;display:flex;gap:6px;align-items:center;margin-bottom:4px}.vtt-phone-sheet-header strong {flex:1}.vtt-phone-sheet-header button {min-width:44px;min-height:44px}
+ body.vtt-page .vtt-phone .vtt-more-menu>button {width:100%;min-width:0;min-height:76px;font-size:11px;white-space:normal;line-height:1.35;margin:0;padding:10px 5px;border:1px solid #393653;border-radius:13px;background:#22243b;display:flex;flex-direction:column;justify-content:center;gap:7px}
+ .vtt-phone .vtt-more-menu>button:before {content:'◇';font-size:22px;line-height:24px;color:#b9a8ff}
+ .vtt-phone .vtt-more-menu>[data-back]:before {content:'↗'}.vtt-phone .vtt-more-menu>[data-library]:before {content:'♙'}
+ .vtt-phone .vtt-presence {grid-column:1/-1}.vtt-phone .vtt-presence .vtt-connection {position:static!important}.vtt-phone .vtt-people-list {position:static;width:auto;max-width:100%}
+ body.vtt-page .vtt-phone .vtt-inspector {display:none!important}.vtt-phone.inspector-open .vtt-inspector {display:flex!important}
+ body.vtt-page .vtt-phone.inspector-open .vtt-inspector {display:flex!important;flex-direction:column;height:85dvh}
+ body.vtt-page .vtt-phone .vtt-scenes {display:none!important}body.vtt-page .vtt-phone.scenes-open .vtt-scenes {display:block!important}
+ .vtt-phone .vtt-scenes .vtt-scene {width:100%;min-width:0;margin:6px 0}.vtt-phone .vtt-sidebar-body {min-height:0;overflow:auto}.vtt-phone .vtt-sidebar-scroll {overflow:visible}
+ .vtt-phone .vtt-phone-layer .vtt-header-layer {display:block;padding:12px;font-size:0;border:0;background:transparent}.vtt-phone-layer .vtt-layer-icon {display:none}.vtt-phone-layer .vtt-layer-value {display:block;width:100%}.vtt-phone-layer select {width:100%;height:auto!important;font-size:16px!important;appearance:auto!important;background:#22243b!important}.vtt-phone-layer option {padding:12px;min-height:44px}
+ body.vtt-page .vtt-phone .vtt-play-drawer {height:85dvh;display:flex;flex-direction:column}.vtt-phone .vtt-play-content {min-height:0;overflow:auto}
+ .vtt-phone .vtt-asset-warning {position:fixed;z-index:42;top:calc(var(--phone-top) + 8px);left:8px;right:60px;padding:4px 8px;border:1px solid #8a7350;border-radius:10px;font-size:11px;max-height:100px;overflow:auto;box-shadow:0 4px 20px #0005}.vtt-phone .vtt-asset-warning>span {display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.vtt-phone .vtt-asset-warning .btn {min-width:44px;padding:4px;font-size:10px}
+ .vtt-phone .vtt-draw-options {position:fixed;top:calc(var(--phone-top) + 4px);left:8px;right:60px;max-height:30dvh;overflow:auto;z-index:30}
+ .vtt-phone .vtt-macro-hotbar {grid-column:1/-1;position:static;max-width:none;flex-wrap:wrap}.vtt-phone .vtt-token-macros {top:4px;right:60px}
+ body.vtt-page dialog[class*="vtt-"] {position:fixed;inset:auto 0 0!important;margin:0!important;width:100%!important;max-width:100%!important;max-height:85dvh!important;box-sizing:border-box;border-radius:22px 22px 0 0!important;overflow:auto;padding-bottom:env(safe-area-inset-bottom)}
+ body.vtt-page dialog[class*="vtt-"]:before {content:'';display:block;width:36px;height:4px;margin:10px auto;background:#575070;border-radius:4px}
+ body.vtt-page dialog[class*="vtt-"]::backdrop {background:#060811a8}
+ body.vtt-page :is(.vtt-phone,dialog[class*="vtt-"]) :is(button,summary,input:not([type=checkbox]),select) {min-height:44px;box-sizing:border-box}
+ body.vtt-page :is(.vtt-phone,dialog[class*="vtt-"]) button {min-width:44px}
+ body.vtt-page :is(.vtt-phone,dialog[class*="vtt-"]) :is(input,select,textarea) {max-width:100%;box-sizing:border-box}
+ .vtt-phone .vtt-token-menu {position:fixed!important;inset:auto 0 0!important;width:100%!important;max-height:70dvh!important;overflow:auto;z-index:51;border-radius:20px 20px 0 0}
+ /* Override the legacy More menu's !important desktop button rules locally. */
+ body.vtt-page .vtt-phone .vtt-more-menu>button.btn {min-width:0!important;min-height:76px!important;width:100%!important;display:flex!important;justify-content:center!important;align-items:center!important;text-align:center;border:1px solid #393653!important;background:#22243b!important;border-radius:13px!important;font-size:11px!important;order:0!important}
+ body.vtt-page .vtt-phone .vtt-phone-sheet-header {min-width:0;width:100%;height:44px}
+ body.vtt-page .vtt-phone .vtt-phone-sheet-header strong {flex:1 1 0;min-width:0}
+ body.vtt-page .vtt-phone .vtt-phone-sheet-header .btn {width:44px!important;min-width:44px!important;min-height:44px!important;flex:0 0 44px;justify-content:center!important;padding:0!important}
+ .vtt-phone .vtt-more-menu [data-back] svg {display:none}
+ .vtt-phone .vtt-more-menu {overflow-x:hidden!important}
+ .vtt-phone .vtt-more-menu>button:before {display:none}
+ .vtt-phone .vtt-more-menu .vtt-phone-icon {display:block!important;flex-shrink:0;color:#b9a8ff}
+ .vtt-phone .vtt-draw-options {margin:0!important}
+ body.vtt-page .vtt-phone .vtt-phone-layer .vtt-header-layer {font-size:0!important}
+ body.vtt-page .vtt-phone .vtt-phone-layer select {width:100%!important;max-width:none;padding:0!important;border:0!important}
+ body.vtt-page .vtt-phone .vtt-phone-layer .vtt-layer-value {display:block!important;width:100%!important}
+
+
+}
+/* LANDSCAPE PHONES: CSS alone changes placement, retaining live DOM, zoom and pan. */
+@media (orientation: landscape) and (max-height: 500px) {
+ body.vtt-page .vtt-refined {--phone-top:calc(40px + env(safe-area-inset-top,0px))}
+ body.vtt-page .vtt-phone .vtt-title {display:flex;align-items:center;gap:8px}.vtt-phone .vtt-name {width:auto;max-width:45%;flex:0 1 auto}.vtt-phone .vtt-phone-status {flex:1;min-width:0}
+ body.vtt-page .vtt-phone .vtt-bar {height:var(--phone-top);min-height:var(--phone-top)}
+ body.vtt-page .vtt-phone .vtt-phone-dock {left:max(8px,env(safe-area-inset-left));right:auto;bottom:auto;top:calc(var(--phone-top) + 8px);width:52px;height:auto;flex-direction:column;gap:2px}
+ .vtt-phone .vtt-phone-dock button {width:44px;flex:none;height:44px}.vtt-phone-dock small {display:none}
+ body.vtt-page .vtt-phone :is(.vtt-more-menu,.vtt-phone-layer,.vtt-inspector,.vtt-scenes,.vtt-play-drawer),body.vtt-page dialog[class*="vtt-"] {inset:var(--phone-top,40px) 0 0 auto!important;width:min(320px,45vw)!important;max-width:45vw!important;height:calc(100dvh - var(--phone-top,40px))!important;max-height:calc(100dvh - var(--phone-top,40px))!important;border-radius:16px 0 0 0!important;padding:10px max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) 10px}
+ body.vtt-page .vtt-phone .vtt-more[open] .vtt-more-menu {grid-template-columns:repeat(2,minmax(0,1fr))}.vtt-phone .vtt-more-menu>button {min-height:64px!important}
+ .vtt-phone .vtt-play-toggle {bottom:max(8px,env(safe-area-inset-bottom))}
+ .vtt-phone.vtt-phone-sheet-open :is(.vtt-zoom,.vtt-play-toggle) {right:calc(var(--phone-sheet-width) + 8px)}
+ .vtt-phone .vtt-asset-warning {left:68px;max-height:48px}
+}

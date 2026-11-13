@@ -47,7 +47,7 @@ function equipmentVanillaAC(c,abilities,items){
 /* Walking speed is a calculated stat, unless a character explicitly overrides it. */
 function sheetMovementSpeed(c,activeItems=[]){
  const root=c._root||c,setting=manual(root),custom=Number(setting.speedValue);
- if(setting.speedMode==='manual'&&Number.isFinite(custom)&&custom>=0)return {value:Math.floor(custom),manual:true};
+ if(['manual','custom'].includes(setting.speedMode)&&Number.isFinite(custom)&&custom>=0)return {value:Math.floor(custom),manual:true};
  const heavyArmor=activeItems.some(item=>item.type==='armor'&&String(item.armor?.category||'').toLowerCase()==='heavy');
  // The 2014 Fast Movement feature uses Barbarian class level, not total character level.
  const fastMovement=classContexts(root).some(ctx=>ctx.klass==='barbarian'&&Number(ctx.level)>=5)&&!heavyArmor;
