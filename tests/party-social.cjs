@@ -21,6 +21,7 @@ await db.exec(fs.readFileSync(__dirname+'/../supabase/party-zero-hp.sql','utf8')
 await db.exec(fs.readFileSync(__dirname+'/../supabase/separate-dm-join.sql','utf8'));
 await db.exec(fs.readFileSync(__dirname+'/../supabase/party-social.sql','utf8'));
 await db.exec(fs.readFileSync(__dirname+'/../supabase/dm-rolls-chat.sql','utf8'));
+await db.exec(fs.readFileSync(__dirname+'/../supabase/migrations/20261112024535_dm_player_invite_rotation.sql','utf8'));
 
 async function as(uid){await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid||'']);await db.exec('set role '+(uid?'authenticated':'anon'))}
 async function command(action,party=null,args={}){return (await db.query('select public.forge_party_command($1,$2,$3) result',[action,party,JSON.stringify(args)])).rows[0].result}
@@ -32,6 +33,11 @@ await as(uidA);const party=(await command('create',null,{name:'Social test'})).i
 const dmCode=(await db.query('select public.forge_party_dm_invite($1) result',[party])).rows[0].result.code;assert(dmCode&&dmCode!==code);
 await as(uidB);await command('join',null,{code});assert.equal((await state(party)).invite_code,null,'ordinary players cannot invite');assert.equal((await state(party)).dm_invite_code,undefined);await assert.rejects(()=>db.query('select public.forge_party_dm_invite($1)',[party]));await assert.rejects(()=>act('set_admin',{user_id:uidB,enabled:true}));
 await as(C);await db.query('select public.forge_party_join_dm($1)',[dmCode]);assert.equal((await state(party)).is_dm,true);assert.equal((await state(party)).invite_code,code,'DM can invite players');await as(D);assert((await db.query('select public.forge_party_join_dm($1) result',[dmCode])).rows[0].result.error);await command('join',null,{code});
+// An assigned, non-admin DM can replace invitations, but cannot acquire admin/removal powers.
+await as(C);const dmBefore=await state(party);await command('rotate_code',party,{version:dmBefore.version});const replaced=(await state(party)).invite_code;assert.notEqual(replaced,code);assert.equal((await state(party)).members.length,dmBefore.members.length);
+await assert.rejects(()=>act('remove_member',{user_id:uidB}),/organizer|admin/);await as(D);await assert.rejects(()=>act('rotate_code'),/organizer|admin|DM/);
+const E='88888888-8888-4888-8888-888888888888';await db.exec('reset role');await db.query('insert into auth.users(id) values($1)',[E]);await as(E);assert((await command('join',null,{code})).error,'old code must no longer admit a new player');await command('join',null,{code:replaced});await command('leave',party);
+await as(C);const current=await state(party);const stale=await command('rotate_code',party,{version:current.version-1});assert(stale.conflict);assert.equal((await state(party)).invite_code,replaced);
 await as(uidA);assert.equal((await state(party)).social_ready,true);await act('set_admin',{user_id:uidB,enabled:true});await as(uidB);assert.equal((await state(party)).is_admin,true);assert((await state(party)).invite_code);await act('rotate_code');await assert.rejects(()=>act('disband'));await assert.rejects(()=>act('transfer_owner',{user_id:uidB}));await assert.rejects(()=>act('remove_member',{user_id:uidA}));
 const chat=async(msg=null)=>(await db.query('select public.forge_party_chat($1,$2) result',[party,msg&&JSON.stringify(msg)])).rows[0].result;
 const nonce='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';await chat({nonce,recipient_id:D,body:'SECRET'});await chat({nonce,recipient_id:D,body:'SECRET'});assert.equal((await chat()).length,1);

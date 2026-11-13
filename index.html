@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <base href="/">
+<base href="/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="Create and play D&D 5e 2014 characters. Local saves, equipment, spells, leveling, and homebrew."><title>Character Forge — D&amp;D 5e (2014)</title>
@@ -482,7 +483,8 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 </style>
 <style>.death{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding-top:16px;border-top:1px solid var(--stone)}.death p{margin:0}.death-track{display:flex;justify-content:space-between;align-items:center;gap:12px}.death .pip{width:30px;height:30px}.race-catalog-selected{min-width:0;margin:12px 0 24px}</style><link rel="stylesheet" href="dice-chat.css">
 <link rel="stylesheet" href="wild-shape.css">
-<style>.score-recommendation{padding:20px;margin:20px 0;border:1px solid #b4a7ff40;border-radius:14px;background:#b4a7ff08}.score-recommendation h3{margin:0 0 8px;font-size:18px;text-transform:none;letter-spacing:0}.score-recommendation p{font-size:13px;line-height:1.7;margin:8px 0;color:var(--faded)}.score-recommendation-controls{display:flex;align-items:end;gap:16px;flex-wrap:wrap;margin:16px 0}.score-recommendation-controls label{flex:1;min-width:160px;font-size:12px}.score-recommendation-controls select{width:100%}.score-recommendation-controls>.btn{width:auto;min-width:150px;flex:none}.score-build-name{flex:1;font-size:13px;color:var(--parchment)}.score-recommendation .score-applied{font-size:12px;color:#cfc2ff}.pb-ctrl button:disabled{opacity:.35;cursor:default}@media(max-width:540px){.score-recommendation{padding:16px}.score-recommendation-controls{align-items:stretch;flex-direction:column}.score-recommendation-controls>.btn{width:100%}}</style></head>
+<style>.score-recommendation{padding:20px;margin:20px 0;border:1px solid #b4a7ff40;border-radius:14px;background:#b4a7ff08}.score-recommendation h3{margin:0 0 8px;font-size:18px;text-transform:none;letter-spacing:0}.score-recommendation p{font-size:13px;line-height:1.7;margin:8px 0;color:var(--faded)}.score-recommendation-controls{display:flex;align-items:end;gap:16px;flex-wrap:wrap;margin:16px 0}.score-recommendation-controls label{flex:1;min-width:160px;font-size:12px}.score-recommendation-controls select{width:100%}.score-recommendation-controls>.btn{width:auto;min-width:150px;flex:none}.score-build-name{flex:1;font-size:13px;color:var(--parchment)}.score-recommendation .score-applied{font-size:12px;color:#cfc2ff}.pb-ctrl button:disabled{opacity:.35;cursor:default}@media(max-width:540px){.score-recommendation{padding:16px}.score-recommendation-controls{align-items:stretch;flex-direction:column}.score-recommendation-controls>.btn{width:100%}}</style><link rel="stylesheet" href="vtt/resources.css?v=2.0.0">
+</head>
 <body>
 <div class="app">
   <header class="masthead">
@@ -491,6 +493,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
     <button type="button" id="forgeMenuToggle" aria-label="Open navigation" aria-expanded="false" aria-controls="forgeMainNav">☰</button><nav id="forgeMainNav" class="site-navigation" aria-label="Main navigation">
       <button type="button" data-site-view="home" id="siteHome">Home</button>
       <button type="button" data-site-view="explorer" id="openSpellExplorer">Spell Explorer</button>
+      <button type="button" data-site-view="tabletop">Tabletop</button>
       <button type="button" data-site-view="custom" id="btnCustom">Custom Content</button>
       <button type="button" data-site-view="legal" id="btnLegal">Rules &amp; Licensing</button>
     </nav>
@@ -508,7 +511,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 
   <footer id="foot">
     Core game content from the <b>System Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. Supplemental options are linked to Wikidot. No 2024 rules. Unofficial fan tool.
-    <div class="site-version"><a href="https://github.com/lucaazevedo2/character-forge/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 1.1.1 · Changelog ↗</a><span>Updated November 9, 2026</span></div>
+    <div class="site-version"><a href="/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 2.0.0 · Changelog ↗</a><span>Updated November 12, 2026</span></div>
   </footer>
 </div>
 
@@ -941,6 +944,8 @@ function newDraft(){
 /* ════════════════ RENDER SHELL ════════════════ */
 let lastRenderedLocation=null;
 function render(){
+  byId("scr-step").classList.remove("vtt-expanded");
+  if(view!=="tabletop")window.ForgeTabletop?.leave();
   const locationKey=view+":"+(view==="wizard"?step:(view==="sheet"?draft?.id:""));
   const keepPosition=locationKey===lastRenderedLocation;
   const scrollPosition=window.scrollY;
@@ -949,6 +954,7 @@ function render(){
   if(view==="home"){ zig.style.display="none"; cap.style.display="none"; byId("scr-home").classList.add("active"); renderHome(); }
   else if(view==="wizard"){ zig.style.display="flex"; cap.style.display="block"; byId("scr-step").classList.add("active"); renderZig(step); renderStep(); }
   else if(view==="custom"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderCustom(byId("scr-step")); }
+  else if(view==="tabletop"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); window.ForgeTabletop.render(byId("scr-step")); }
   else if(view==="dmtools"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); window.ForgeParty.renderDMTools(byId("scr-step")); }
   else if(view==="feats"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderFeatExplorer(byId("scr-step")); }
   else if(view==="graveyard"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderGraveyard(byId("scr-step")); }
@@ -1036,7 +1042,7 @@ function stepValid(){
 }
 function renderNav(){
   const bar=byId("navbar"), inner=byId("navInner");
-  if(view==="home"){ bar.classList.remove("show"); return; }
+  if(view==="home"||view==="tabletop"){ bar.classList.remove("show"); return; }
   bar.classList.add("show");
   if(view==="custom"||view==="legal"||view==="explorer"||view==="items"||view==="dmtools"||view==="feats"||view==="graveyard"){
     inner.innerHTML=`<button class="btn ghost" id="nvHome">Back to Ledger</button>`;
@@ -3629,8 +3635,8 @@ function wireSpellSearch(el,c){const input=el.querySelector('#spellAddSearch');i
 <script src="cloud-config.js"></script>
 <script src="vendor/supabase-2.76.1.js"></script>
 <script src="cloud-saves.js?v=storage-quota-1.0.2"></script>
-<link rel="stylesheet" href="party-view-death-v2.css?v=1.1.1">
-<script src="party-view-death-v2.js?v=1.1.1"></script>
+<link rel="stylesheet" href="party-view-death-v2.css?v=2.0.0-alpha.4-invites">
+<script src="party-view-death-v2.js?v=2.0.0-alpha.4-invites"></script>
 <script>
 (async function(){
   try { await window.ForgeCloud.initialize(); } catch { /* Guest saves remain available if auth cannot load. */ }
@@ -3760,5 +3766,7 @@ button.class-choices-unfinished:focus-visible{outline:3px solid #fff4b0!importan
 <script src="sheet-recovery.js?v=0.28.0-beta.4"></script>
 <link rel="stylesheet" href="beta-improvements.css?v=1.0.0-feat-typography">
 <script src="beta-improvements.js?v=1.0.2-auth-callback"></script>
+<link rel="stylesheet" href="tabletop.css?v=2.0.0">
+<script src="vtt/loader.js?v=2.0.0"></script>
 </body>
 </html>

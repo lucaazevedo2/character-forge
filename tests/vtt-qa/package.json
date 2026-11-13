@@ -1,0 +1,1 @@
+{"name":"characterforge-vtt-postgres-qa","private":true,"version":"1.0.0","description":"Development-only WASM PostgreSQL isolation tests; never shipped to the browser","dependencies":{"@electric-sql/pglite":"0.3.14"}}

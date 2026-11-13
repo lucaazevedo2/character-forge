@@ -21,7 +21,7 @@
   rows.forEach(row=>{const id=rowKey(row),edit=pending.overrides[id];editor(edit?.name??row.name,edit?.text??textOf(row),(name,text)=>{pending.overrides[id]={name,text}})});
   const addCard=row=>editor(row.name,row.text,(name,text)=>{row.name=name;row.text=text},()=>{pending.added=pending.added.filter(r=>r!==row)});
   pending.added.forEach(addCard);box.querySelector('[data-feature-add]').onclick=()=>{const row={id:crypto.randomUUID(),name:'New feature',text:''};pending.added.push(row);addCard(row).focus()};
-  box.querySelector('[data-feature-close]').onclick=()=>box.close();box.querySelector('[data-feature-cancel]').onclick=()=>box.close();box.querySelector('form').onsubmit=e=>{e.preventDefault();c.featureTextEdits={...(c.featureTextEdits||{}),[key]:pending};scheduleSave();box.close();if(draft===c)renderSheet()};box.addEventListener('close',()=>box.remove());document.body.append(box);box.showModal();
+  box.querySelector('[data-feature-close]').onclick=()=>box.close();box.querySelector('[data-feature-cancel]').onclick=()=>box.close();box.querySelector('form').onsubmit=e=>{e.preventDefault();c.featureTextEdits={...(c.featureTextEdits||{}),[key]:pending};if(typeof view!=='undefined'&&view==='tabletop'){const i=chars.findIndex(x=>x.id===c.id);if(i>=0){chars[i]=c;storeSet('forge-chars',chars).catch(e=>alert(e.message))}box.close();document.dispatchEvent(new CustomEvent('forge-feature-text-saved'))}else{scheduleSave();box.close();if(draft===c)renderSheet()}};box.addEventListener('close',()=>box.remove());document.body.append(box);box.showModal();
  }
  window.ForgeCharacterFeatureText={applyRows,groupKey,rowKey};
 })();

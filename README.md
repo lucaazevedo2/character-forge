@@ -10,7 +10,7 @@ A browser-based D&D 5e (2014) character creator, interactive character sheet, an
 | **Beta — GitHub Pages** | [lucaazevedo2.github.io/character-forge](https://lucaazevedo2.github.io/character-forge/) | Experimental features and testing. |
 | **Beta — ChatGPT Sites** | [lucas-character-forge.lucaazevedo.chatgpt.site](https://lucas-character-forge.lucaazevedo.chatgpt.site/) | Experimental features and testing. |
 
-The beta sites may change more frequently and may contain unfinished features or bugs. The stable site is updated separately after changes have been reviewed and tested. A GitHub push does not automatically release changes to the stable Cloudflare site.
+The beta sites may change more frequently and may contain unfinished features or bugs. The stable site is updated separately after changes have been reviewed and tested. The main branch now deploys to stable Cloudflare production after release verification.
 
 ## Local development
 
@@ -24,7 +24,7 @@ python -m http.server 8000
 
 Then open <http://localhost:8000/>. A local server supports features such as printable PDF export that fetch files from the asset directories.
 
-Changes pushed to `main` publish to the GitHub Pages **beta** site. ChatGPT Sites beta and the stable Cloudflare deployment are published separately.
+Changes pushed to `main` publish the matching GitHub Pages build and the stable Cloudflare Pages site. Ordinary feature work stays on the separate ChatGPT Sites beta until a production release is authorized.
 
 ## Character storage and backups
 
@@ -45,3 +45,7 @@ Core game content uses the D&D SRD 5.1 (2014 rules) under CC BY 4.0. Supplementa
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for dated feature history and version numbers. Older versions are retrospective milestones; each entry identifies its release channel. The latest consolidated release is **1.0.0** (November 2, 2026), promoting the approved current build to GitHub main and stable Cloudflare production. Small edits are batched into meaningful changelog updates at release milestones.
+
+## 2.0.0 virtual tabletop
+
+[Release audit and known limits](docs/vtt-2.0.0-release-audit.md) · [Changelog](CHANGELOG.md). The root index.html and accompanying assets are the canonical static build. SQL migrations and Edge functions are in supabase; acceptance tests are in tests. Apply migrations in timestamp order when provisioning a separate environment.

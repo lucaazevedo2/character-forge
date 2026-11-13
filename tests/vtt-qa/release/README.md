@@ -1,0 +1,3 @@
+Disposable browser stress fixtures, excluded from published static assets.
+
+Copy the HTML/JS files in this directory temporarily into the static app directory and start the managed Sites preview. Open qa-stress-final.html, qa-final-phone.html or qa-final-tablet.html. The fixtures load the actual tabletop modules, generate an 8000px image and synthetic tokens, expose 100/225 token benchmarks, and seed a short native WAV. There is no account connection. Enable audio and Play, switch to Preferences, inspect the native media controls, then Stop. Delete every qa-* fixture from the static app directory before packaging. Cloud-browser frame throttling means Canvas draw timings do not establish sustained FPS.

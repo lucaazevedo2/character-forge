@@ -1,0 +1,377 @@
+[
+  {
+    "test": "tests/action-confirm.cjs",
+    "ok": true,
+    "output": "PASS in-page confirmations: accept, cancel and Escape cleanup\n"
+  },
+  {
+    "test": "tests/auth-refresh-backoff.cjs",
+    "ok": true,
+    "output": "PASS real SDK: 429 retains session, cooldown prevents request storms, invalid token signs out\n"
+  },
+  {
+    "test": "tests/beta-workflows.cjs",
+    "ok": true,
+    "output": "PASS spell counts/creation limits/later wizard additions/manual override, search input identity, explicit ASI choice, graveyard preservation, URLs and feats prerequisites\nPASS ability/no-increase filters, targeted character save, duplicate protection, configured ability effect, cancel and editor-to-explorer routing\n"
+  },
+  {
+    "test": "tests/catalog-performance.cjs",
+    "ok": true,
+    "output": "PASS cached lookups, misses, case/legacy aliases, homebrew replacement/addition, lazy descriptions and no duplicate hydration\n"
+  },
+  {
+    "test": "tests/character-feature-edit.cjs",
+    "ok": true,
+    "output": "PASS character-only feature overrides/additions, original catalog preservation, level-stable keys, escaping, save/cancel and JSON persistence\n"
+  },
+  {
+    "test": "tests/character-opening.cjs",
+    "ok": true,
+    "output": "PASS closed picker avoids catalog scan, lazy/open spell descriptions, homebrew cache invalidation\n"
+  },
+  {
+    "test": "tests/class-choices.cjs",
+    "ok": true,
+    "output": "PASS option limits, prerequisites, shared pools, spell grants, ki spending, optional replacements, multiclass isolation, replacement timing\n"
+  },
+  {
+    "test": "tests/cloud-saves.cjs",
+    "ok": true,
+    "output": "PASS quota exhaustion preserves cloud loading, boot reads, in-memory edits and successful cloud sync\nPASS cloud saves: guest isolation, account isolation, successful writes, conflicts, offline reload/retry, soft deletes, in-flight edits, duplicate IDs, session sign-out\nCharacter Forge cloud save failed NETWORK\n"
+  },
+  {
+    "test": "tests/conditions.cjs",
+    "ok": true,
+    "output": "PASS condition toggles, concentration interruption, 2014 damage DCs, exhaustion and saved state\n"
+  },
+  {
+    "test": "tests/dice-chat.cjs",
+    "ok": true,
+    "output": "PASS dice arithmetic, pools, explosions, rerolls, success/failure counts, functions, rejected commands, execution limits, notes, history persistence and roll hooks\n"
+  },
+  {
+    "test": "tests/divine-smite.cjs",
+    "ok": true,
+    "output": "PASS Smite level gate, real slot expenditure, depletion guard, dice cap/fiend/critical, shared slots and both pact multiclass directions\n"
+  },
+  {
+    "test": "tests/dm-party-creation.cjs",
+    "ok": true,
+    "output": "PASS DM creation UI: trimmed name, atomic role request, player invites and settings without a character; separate-DM join retained\n"
+  },
+  {
+    "test": "tests/dm-rolls-chat.cjs",
+    "ok": true,
+    "output": "PASS shared chat: DM workspace mount, player invites, commands and recipient resolution, escaping, whispers, emotes, polling drafts and party switching\n"
+  },
+  {
+    "test": "tests/dm-vitals-ui.cjs",
+    "ok": true,
+    "output": "PASS gift UI: role-specific menus, DM catalog/no source character, player inventory, privacy controls, rarity colors, recipient/character-only 2-second popups, duplicate suppression and escaped receipt text\n"
+  },
+  {
+    "test": "tests/equipment-acceptance.cjs",
+    "ok": true,
+    "output": "PASS all five equipment acceptance cases; pure/idempotent migration, AC categories, class AC and nonmutating calculations\nPASS shared checks/saves apply once and fourth attuned item is inactive\nPASS exact attack modifiers operate on final bonuses, with source breakdowns\n"
+  },
+  {
+    "test": "tests/equipment-drag.cjs",
+    "ok": true,
+    "output": "PASS grabbed cursor row, animated neighboring rows, insertion gap and stable-ID drop order\n"
+  },
+  {
+    "test": "tests/equipment-integration.cjs",
+    "ok": true,
+    "output": "PASS integrated shield/ability effects, stable linked attacks, infusion remapping, legacy additions/transfers and resource recharge\nPASS linked Attacks UI appears/toggle-off/delete, inventory badge, and rich save round trip\nPASS integrated Monk/Barbarian AC and inactive merged Wild Shape equipment\nPASS Artificer 10/14/18 limits, effects, counter, warnings, multiclass and level reversal\nPASS +1/+2/+3 weapon attack and damage, armor/shield AC, base choices and save persistence\nPASS four magic weapon linked attacks and situational damage toggles\n"
+  },
+  {
+    "test": "tests/equipment-performance.cjs",
+    "ok": true,
+    "output": "PASS 20-bolt stack for legacy/v1 saves, metadata separation, cached stats and lazy collapsed detail forms\n"
+  },
+  {
+    "test": "tests/feat-spells.cjs",
+    "ok": true,
+    "output": "PASS supplied descriptions and formatting, artificer progression, class rules and feat inclusion, noncaster access, rest boundaries, components, advancement\n"
+  },
+  {
+    "test": "tests/guest-parties.cjs",
+    "ok": true,
+    "output": "PASS guest party SQL: registered organizer, guest invite/character, denied DM/organizer escalation, private notes, revocation and unauthenticated isolation\n"
+  },
+  {
+    "test": "tests/heavy-scores.cjs",
+    "ok": true,
+    "output": "Heavy armor cases and explicit medium/heavy cleric switching passed.\n"
+  },
+  {
+    "test": "tests/inventory-notes.cjs",
+    "ok": true,
+    "output": "PASS stack reordering, equipped index preservation, duplicate quantities, journal fields, custom titles/text, JSON persistence, existing notes preserved\n"
+  },
+  {
+    "test": "tests/item-descriptions.cjs",
+    "ok": true,
+    "output": "PASS SRD coverage, variant tables, linked placeholders, attribution, escaping, and disclosure markup\nPASS supplied equipment descriptions, focuses, pack contents, capacities, alias matching, and common-only healing text\nPASS all 912 magic records matched to 830 supplied descriptions, tables, sources, and fallback behavior\n"
+  },
+  {
+    "test": "tests/item-shop.cjs",
+    "ok": true,
+    "output": "PASS shop categories, currency, quantity, purchase limits, free additions, and custom item controls\nPASS cart totals, exact balance, atomic checkout, insufficient funds, unpriced items, and free cart additions\nPASS mixed currencies, legacy fractional gold, electrum rate, automatic change, and wallet preservation\n"
+  },
+  {
+    "test": "tests/items-page.cjs",
+    "ok": true,
+    "output": "Item page: 50 per page, alphabetical sort, setting opt-in and setting filter passed.\n"
+  },
+  {
+    "test": "tests/magic-items.cjs",
+    "ok": true,
+    "output": "Magic catalog rarities/settings, duplicate suppression, no-price and cart protections passed.\nPASS purchasable-only catalog, one standard 50-gp healing potion, no source mutation, purchase and higher-tier protections\nPASS healing potion names, legacy aliases, quantity-preserving inventory migration, and idempotence\n"
+  },
+  {
+    "test": "tests/magic-properties.cjs",
+    "ok": true,
+    "output": "PASS all 214 mappings match catalog; all catalog acquisitions serialize; AC, ability caps, activation, variants and dice recharge\nPASS 24 Ioun variants, Luck Blade saves, all class/held-item rarity defaults and off toggles, four weapon damage presets, and nonstacking body armor\n"
+  },
+  {
+    "test": "tests/party-awards-ui.cjs",
+    "ok": true,
+    "output": "PASS gift UI: role-specific menus, DM catalog/no source character, player inventory, privacy controls, rarity colors, recipient/character-only 2-second popups, duplicate suppression and escaped receipt text\n"
+  },
+  {
+    "test": "tests/party-close-presence.cjs",
+    "ok": true,
+    "output": "PASS keepalive departure, authenticated beta/legacy endpoint selection, closing heartbeat suppression and late-response cleanup\n"
+  },
+  {
+    "test": "tests/party-invite-links.cjs",
+    "ok": true,
+    "output": "PASS player invite links, clipboard, explicit join/character sharing, code normalization, DM replacement UI and player control isolation.\n"
+  },
+  {
+    "test": "tests/party-presence.cjs",
+    "ok": true,
+    "output": "PASS presence SQL: page-specific activity, DM role checks, assigned-sheet checks, member isolation, multi-tab independence, timeout and guest avatars\n"
+  },
+  {
+    "test": "tests/party-social-ui.cjs",
+    "ok": true,
+    "output": "PASS party UI: favorites in both groups, DM icon, condition help, compact HP, DM label, management controls and legacy-backend gating\nPASS home removal controls: empty parties, confirmation cancellation, organizer disband, member leave label, characters preserved and unassigned\n"
+  },
+  {
+    "test": "tests/party-social.cjs",
+    "ok": true,
+    "output": "PASS social SQL: single-use DM invites, admin and ownership boundaries, whisper isolation from DM/organizer, idempotent chat, atomic gold/items, stale revisions, equipped indices, 10-player cap\n"
+  },
+  {
+    "test": "tests/permanent-dm-parties.cjs",
+    "ok": true,
+    "output": "PASS permanent parties: DM+organizer atomic creation, player invite/join, optional DM, character clearing/deletion, last-member preservation, age, guest and access restrictions, explicit leave/disband\n"
+  },
+  {
+    "test": "tests/provided-feature-rules.cjs",
+    "ok": true,
+    "output": "PASS subclass full rules and boundaries, all 87 feat references, summary/mechanics preservation, aliases, custom isolation and escaping\nPASS all feat wording preserved, inline spell names reflowed, benefit headings/lists and escaped source text\n"
+  },
+  {
+    "test": "tests/recommended-scores.cjs",
+    "ok": true,
+    "output": "Human finesse final: { str: 14, dex: 16, con: 14, int: 11, wis: 14, cha: 10 }\nPASS 128 class/build/racial-bonus combinations: budget, modifiers, parity, heavy armor, single racial application, immutable cache, race-change invalidation and preserved state\nPASS Human Barbarian 16/16/16/9/9/9 spends 27 and prioritizes all three physical modifiers\nPASS Human cleric spends all points, including odd-score remainder\n"
+  },
+  {
+    "test": "tests/roll-popup.cjs",
+    "ok": true,
+    "output": "PASS rapid popup replacement, previous-timer cancellation, latest result and stale critical styling\n"
+  },
+  {
+    "test": "tests/sheet-combat.cjs",
+    "ok": true,
+    "output": "PASS inline JavaScript syntax, death save outcomes, natural 1/20, stabilization, weapon defaults and persistent damage overrides\n"
+  },
+  {
+    "test": "tests/sheet-recovery.cjs",
+    "ok": true,
+    "output": "PASS automatic AC reset preserves item/unrelated bonuses; persisted level undo restores ASI/feat/HP-roll/metamagic changes and preserves inventory/notes/XP; level-aware stat cache\n"
+  },
+  {
+    "test": "tests/supplied-spells.cjs",
+    "ok": true,
+    "output": "PASS all supplied descriptions rendered, material/scaling in character sheet, source books, stable aliases and UA exclusions\n"
+  },
+  {
+    "test": "tests/tabletop-navigation.cjs",
+    "ok": true,
+    "output": "Passed tabletop routes, exit cleanup, ruler, right-pan, marquee selection, group move/resize/rotation, Undo and cell dimensions.\n"
+  },
+  {
+    "test": "tests/vtt-chat-portraits.cjs",
+    "ok": true,
+    "output": "PASS character/account portrait separation, local/cloud history, changed portraits, missing/hidden tokens and unsafe URL rejection.\n"
+  },
+  {
+    "test": "tests/vtt-cloud-repository.cjs",
+    "ok": true,
+    "output": "PASS cloud repository: durable offline outbox, in-flight edits, revision acknowledgements, Undo/Redo, conflicts and account isolation.\n"
+  },
+  {
+    "test": "tests/vtt-core.cjs",
+    "ok": true,
+    "output": "PASS versioned/legacy backups, ID remapping, schema rejection, field diffs, revision guards, tombstone restores and in-flight merge.\n"
+  },
+  {
+    "test": "tests/vtt-creatures.cjs",
+    "ok": true,
+    "output": "PASS all 88 compendium imports; complete custom NPC sections, multi-damage, token stats/clamping, validation and backup reference remapping.\n"
+  },
+  {
+    "test": "tests/vtt-diagonals.cjs",
+    "ok": true,
+    "output": "PASS alternating ruler diagonals, mixed/straight/reverse movement and continued diagonal count.\n"
+  },
+  {
+    "test": "tests/vtt-dice.cjs",
+    "ok": true,
+    "output": "PASS dice arithmetic, groups, parentheses, references, advantage/disadvantage, keep/drop, exploding/compound, reroll/once, natural faces and abuse limits.\n"
+  },
+  {
+    "test": "tests/vtt-edge-gates.cjs",
+    "ok": true,
+    "output": "PASS all four VTT gateways: production/beta/GitHub preflight, exact-origin responses, untrusted-origin and missing-auth denial\n(node:398) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "test": "tests/vtt-images.cjs",
+    "ok": true,
+    "output": "PASS image signatures, dimensions, WebP parsing, active SVG and oversized-image rejection.\n"
+  },
+  {
+    "test": "tests/vtt-lighting-editor.cjs",
+    "ok": true,
+    "output": "PASS real DOM editor: one sidebar view, layer isolation, hit selection, wall movement/corner editing, light nudge/delete, marquee multi-delete and player guards.\n"
+  },
+  {
+    "test": "tests/vtt-lighting-render.cjs",
+    "ok": true,
+    "output": "PASS real Canvas rendering: repeated masks/cache, wall occlusion for light and vision, open/closed doors, windows, movement barriers, grayscale darkvision, no vision, manual reveal/hide.\nPASS: animated lighting schedules subsequent frames and reduced-motion mode suppresses animation.\n"
+  },
+  {
+    "test": "tests/vtt-live.cjs",
+    "ok": true,
+    "output": "PASS live notifications, fallback/reconnect, stale-channel cleanup, two replicas, independent-field merge, same-field conflicts and membership revocation.\n"
+  },
+  {
+    "test": "tests/vtt-loader.cjs",
+    "ok": true,
+    "output": "PASS deferred ordered tabletop loading, deep route preservation and retry after a partial network failure\n"
+  },
+  {
+    "test": "tests/vtt-media-edge.cjs",
+    "ok": true,
+    "output": "PASS media gateway: raw upload bytes, audio detection/finalization, authorized no-store download, revoked access, role/origin/auth gates, malformed/oversized bodies.\n(node:455) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "test": "tests/vtt-phase3-core.cjs",
+    "ok": true,
+    "output": "PASS square/hex/offset/half-cell snapping, distance rules, dice limits, rectangular culling, drawing diffs/restores/conflicts, token properties, private map conflicts, backup ID remapping.\n"
+  },
+  {
+    "test": "tests/vtt-phase4-geometry.cjs",
+    "ok": true,
+    "output": "PASS: fog operations, walls, doors, senses, light, polygon clipping, environment commands; 500-wall polygon average 3.2ms\nPASS: 78660 filled-polygon samples remain behind their nearest wall, including angle-wrap, corners, diagonal walls and one-way walls.\n"
+  },
+  {
+    "test": "tests/vtt-picture-upload.cjs",
+    "ok": true,
+    "output": "PASS real DOM drag/drop image upload, local byte persistence, draft retention, handout attachment, thumbnail reuse, removed Journal tab, custom NPC/bonus action/spell-slot saving and map token.\n"
+  },
+  {
+    "test": "tests/vtt-play-core.cjs",
+    "ok": true,
+    "output": "PASS commands, ambiguous whisper names, token speakers, inline stat rolls, macro templates, local delay/round/history/duration and shared dice grammar.\n"
+  },
+  {
+    "test": "tests/vtt-play-edge.cjs",
+    "ok": true,
+    "output": "PASS Edge actual Auth.getUser gates, bounded body/formula, controller lookup, trusted results ignoring forged client totals, template expansion and CORS.\n(node:499) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "test": "tests/vtt-resource-import.cjs",
+    "ok": true,
+    "output": "PASS resource cloud-copy import: raw media bytes, asset IDs, private documents before linked pins, explicit destination campaign.\n"
+  },
+  {
+    "test": "tests/vtt-resources.cjs",
+    "ok": true,
+    "output": "PASS Phase 7 safe rich text, HTTPS links, shared clock/loop, preference bounds, resource backups/remapped IDs, hostile import rejection and media signatures.\n"
+  },
+  {
+    "test": "tests/vtt-room.cjs",
+    "ok": true,
+    "output": "PASS private-room joins, canonical roster expiry, 20 Hz latest-sample throttling, server RPC sends, topic rotation and offline cleanup.\n"
+  },
+  {
+    "test": "tests/vtt-sheets.cjs",
+    "ok": true,
+    "output": "PASS imported catalog identity, item stat cards, bidirectional HP/AC/speed/conditions, idempotent max HP adjustment and sheet/token change detection.\n"
+  },
+  {
+    "test": "tests/vtt-stage-selection.cjs",
+    "ok": true,
+    "output": "PASS canvas token hit targets survive Draw/Select and shortcut transitions while layer visibility/locks remain enforced.\n"
+  },
+  {
+    "test": "tests/vtt-workspace-state.cjs",
+    "ok": true,
+    "output": "PASS rebuilt sidebar/map scroll, expanded details and mobile drawer restoration with scene isolation.\n"
+  },
+  {
+    "test": "tests/vtt-youtube-popout.cjs",
+    "ok": true,
+    "output": "PASS separate visible YouTube window: continued state across main dialogs/tabs, popup-block handling/reuse/close, volume/end events, synchronized clock and strict origin/source/nonce validation.\n"
+  },
+  {
+    "test": "tests/vtt-youtube.cjs",
+    "ok": true,
+    "output": "PASS YouTube URL host/ID validation, visible official embed, shared clock/play/pause/loop/next callback, volume/mute, modal suspension, autoplay/error feedback and stale-player cleanup.\n"
+  },
+  {
+    "test": "tests/wild-shape.cjs",
+    "ok": true,
+    "output": "PASS 2014 form limits, Moon scaling/elementals, seen check, uses/unlimited uses, physical/mental scores, AC/HP/proficiencies, temp HP, overflow, restoration, massive damage, spell components, conditional actions and persistence\n"
+  },
+  {
+    "test": "tests/vtt-creatures-db.cjs",
+    "ok": true,
+    "output": "All VTT migrations compiled on local WASM PostgreSQL\nPASS private creature CRUD, portraits, schema/revision/role guards; isolated 200GB entitlement on both upload paths, normal limits, no client entitlement writes.\n"
+  },
+  {
+    "test": "tests/vtt-database.cjs",
+    "ok": true,
+    "output": "All VTT migrations compiled on local WASM PostgreSQL\nPASS: local PostgreSQL DM/co-DM/player/spectator/outsider RLS, hidden rows and stats, field protection, conflict rollback, idempotency, demotion, invite redemption/revocation/rate limits.\n"
+  },
+  {
+    "test": "tests/vtt-delete-db.cjs",
+    "ok": true,
+    "output": "All VTT migrations compiled on local WASM PostgreSQL\nPASS Phase 7: document/pin/asset privacy and revocation, selected recipients, shared journal revisions, DM mutations, playlist validation, preferences isolation, trash restore, quotas/type gates, service-only finalization.\nPASS campaign/account cleanup cascades across attached media, documents and reference rows\n"
+  },
+  {
+    "test": "tests/vtt-phase3-db.cjs",
+    "ok": true,
+    "output": "All VTT migrations compiled on local WASM PostgreSQL\nPASS: Phase 3 layers, rectangular tokens, GM drawings/notes/maps, private stats, player drawing ownership, layer locks, shared rulers, templates owner RLS, drawing undo restore.\n"
+  },
+  {
+    "test": "tests/vtt-phase4-db.cjs",
+    "ok": true,
+    "output": "All VTT migrations compiled on local WASM PostgreSQL\nPASS: Phase 4 server fog/LOS filtering, direct-table RLS, secret DTO, asset privacy, owned vision permissions, movement barriers/windows, checked doors, darkvision/truesight, no vision, private exploration/reset, shared packet isolation and invalid input.\n"
+  },
+  {
+    "test": "tests/vtt-phase5-db.cjs",
+    "ok": true,
+    "output": "All VTT migrations compiled on local WASM PostgreSQL\nPASS Phase 5 chat/whisper RLS, speaker/reference ownership, forged-roll denial, gateway attestation, combat roles/hidden tokens/HP/AC, duration expiry/previous, concentration logs, private macros.\n"
+  },
+  {
+    "test": "tests/vtt-phase7-db.cjs",
+    "ok": true,
+    "output": "All VTT migrations compiled on local WASM PostgreSQL\nPASS Phase 7: document/pin/asset privacy and revocation, selected recipients, shared journal revisions, DM mutations, playlist validation, preferences isolation, trash restore, quotas/type gates, service-only finalization.\n"
+  }
+]

@@ -1,0 +1,13 @@
+/* Only invalidation counters travel through Realtime; snapshots enforce current permissions. */
+(() => {'use strict';
+function create({client,pull,changed,online=()=>navigator.onLine,visible=()=>!document.hidden,schedule=setTimeout,cancel=clearTimeout,table='forge_vtt_live_events',prefix='vtt-live',pollMs=15000}){let active=null,channel=null,epoch=0,state='idle',refreshTimer,pollTimer,retryTimer,pulling=false,again=false,subscribed=false;const report=s=>{state=s;changed?.(s)};
+function stop(){epoch++;active=null;cancel(refreshTimer);cancel(pollTimer);cancel(retryTimer);const old=channel;channel=null;if(old)Promise.resolve(client.removeChannel(old)).catch(()=>{});pulling=false;again=false;subscribed=false;report('idle')}
+function request(delay=120){if(!active)return;cancel(refreshTimer);refreshTimer=schedule(run,delay);refreshTimer?.unref?.()}
+async function run(){if(!active||!online())return;if(pulling){again=true;return}const id=active,gen=epoch;pulling=true;try{const result=await pull(id);if(gen!==epoch)return;if(result===false)request(300);else if(subscribed&&state!=='live')report('live')}catch{if(gen===epoch&&state==='live')report('reconnecting')}finally{if(gen===epoch){pulling=false;if(again){again=false;request()}}}}
+function poll(){cancel(pollTimer);if(!active)return;pollTimer=schedule(()=>{if(online()&&visible())request(0);poll()},pollMs);pollTimer?.unref?.()}
+function connect(){if(!active||!online()){report(active?'offline':'idle');return}if(typeof client.channel!=='function'){report('reconnecting');return}const id=active,gen=epoch;report('connecting');channel=client.channel(prefix+':'+id+':'+gen).on('postgres_changes',{event:'*',schema:'public',table,filter:'campaign_id=eq.'+id},()=>{if(gen===epoch)request()}).subscribe(status=>{if(gen!==epoch)return;if(status==='SUBSCRIBED'){subscribed=true;report('live');request(0)}else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)){subscribed=false;report(online()?'reconnecting':'offline');cancel(retryTimer);retryTimer=schedule(()=>{if(gen!==epoch)return;const old=channel;channel=null;if(old)Promise.resolve(client.removeChannel(old)).catch(()=>{});epoch++;connect()},3000);retryTimer?.unref?.()}})}
+function watch(id){if(id===active)return;stop();if(!id)return;active=id;connect();poll()}
+function resume(){if(!active)return;if(!online()){report('offline');return}if(state!=='live'){const id=active;stop();watch(id)}request(0)}
+return {watch,stop,request,resume,get state(){return state},get campaignId(){return active}}}
+const api={create};if(typeof module!=='undefined'&&module.exports)module.exports=api;else window.ForgeVTTLive=api;
+})();

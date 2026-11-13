@@ -1,0 +1,27 @@
+const A=require('node:assert/strict'),fs=require('fs'),vm=require('vm'),{parseHTML}=require('linkedom');
+(async()=>{
+ const {document,window}=parseHTML('<html><body><div id="root"><div class="vtt-stage-tools"></div><div class="vtt-viewport"><div class="vtt-world"></div></div></div></body></html>');
+ window.HTMLElement.prototype.showModal=function(){this.setAttribute('open','')};window.HTMLElement.prototype.close=function(){this.removeAttribute('open')};
+ const game={id:crypto.randomUUID(),name:'QA',scenes:[{id:crypto.randomUUID(),grid:64,width:1600,height:1280,tokens:[]}]},state={game,scene:game.scenes[0],root:document.querySelector('#root'),dm:true,zoom:1,selection:new Set()};
+ class Reader{async readAsDataURL(blob){this.result='data:'+blob.type+';base64,'+Buffer.from(await blob.arrayBuffer()).toString('base64');this.onload();}}
+ class FD{constructor(form){this.values=[];form.querySelectorAll('input,textarea,select').forEach(el=>{if(!el.name||['file','submit','button'].includes(el.type)||['checkbox','radio'].includes(el.type)&&!el.checked)return;this.values.push([el.name,el.value]);})}get(k){return this.values.find(x=>x[0]===k)?.[1]||null}getAll(k){return this.values.filter(x=>x[0]===k).map(x=>x[1])}}
+ window.ForgeVTTMonstersCore=require('../vtt/monsters-core');window.ForgeVTTResourcesCore=require('../vtt/resources-core');window.ForgeTabletop={state:()=>state,notify(){},saveVisionMemory(){},zoomAt(){},change(fn){fn()}};
+ const ctx=vm.createContext({window,document,URL,fetch,crypto,console,FileReader:Reader,FormData:FD,Audio:class{pause(){}load(){}removeAttribute(){}},MutationObserver:class{observe(){}},IntersectionObserver:class{observe(){}disconnect(){}},localStorage:{getItem(){return null},setItem(){}},requestAnimationFrame:()=>{},setTimeout,clearTimeout,setInterval,clearInterval,confirm:()=>true});
+ vm.runInContext(fs.readFileSync('vtt/monsters.js','utf8'),ctx);vm.runInContext(fs.readFileSync('vtt/resources.js','utf8'),ctx);
+ window.ForgeVTTResources.open();document.querySelector('[data-resource-action="new-doc"]').click();let form=document.querySelector('[data-resource-form]');form.elements=Object.fromEntries([...form.querySelectorAll('[name]')].map(x=>[x.name,x]));form.elements.title.value='Picture handout';form.elements.text.value='Keep this unsaved draft.';
+ const file=new Blob(['qa-image'],{type:'image/png'});file.name='portrait.png';
+ form.querySelector('[data-picture-drop]').ondrop({preventDefault(){},stopPropagation(){},dataTransfer:{files:[file]}});
+ for(let n=0;n<100&&!form.elements.imageAssetId.value;n++)await new Promise(r=>setImmediate(r));
+ A(form.elements.imageAssetId.value);A.equal(form.elements.text.value,'Keep this unsaved draft.');A.equal(game.resources.assets.length,1);A.equal(game.resources.assets[0].label,'portrait.png');A(form.querySelector('[data-picture-preview]').src.startsWith('data:image/png;'));
+ // Wait for the uploader's finally block before saving.
+ await new Promise(r=>setImmediate(r));await form.onsubmit({preventDefault(){}});
+ A.equal(game.resources.records[0].payload.imageAssetId,game.resources.assets[0].id);A.equal(game.resources.records[0].payload.text,'Keep this unsaved draft.');
+ window.ForgeVTTResources.open();document.querySelector('[data-resource-action="new-doc"]').click();form=document.querySelector('[data-resource-form]');const existing=form.querySelector('[data-picture-existing]');A(existing);existing.click();await new Promise(r=>setImmediate(r));A.equal(form.querySelector('[name=imageAssetId]').value,game.resources.assets[0].id);
+ A(!document.querySelector('[data-tab="journal"]'));A(document.querySelector('[data-tab="creature"]'));
+ document.querySelector('[data-tab="creature"]').click();document.querySelector('[data-creature-new]').click();
+form=document.querySelector('[data-creature-form]');form.elements=Object.fromEntries([...form.querySelectorAll('[name]')].map(x=>[x.name,x]));form.querySelector('[name="name"]').value='Custom NPC';form.querySelector('[name="hp"]').value='99';form.querySelector('[name="spells"]').value='Cantrips: light';form.querySelector('[name="slot-1"]').value='4';
+form.querySelector('[data-ability-add="bonusActions"]').click();form.querySelector('[data-ability="bonusActions"] [name="ability-name"]').value='Quick step';form.querySelector('[data-ability="bonusActions"] [name="ability-description"]').value='Move without provoking.';
+await form.onsubmit({preventDefault(){}});const npc=game.resources.records.find(r=>r.kind==='creature');A(npc);A.equal(npc.payload.statBlock.hp,99);A.equal(npc.payload.statBlock.bonusActions[0].name,'Quick step');A.equal(npc.payload.statBlock.slots[1],4);document.querySelector('[data-creature-token]').click();await new Promise(r=>setImmediate(r));A.equal(state.scene.tokens[0].hp,99);
+window.ForgeVTTResources.open('audio');const add=document.querySelector('[data-audio-add]');add.querySelector('[name="title"]').value='YouTube theme';add.querySelector('[name="url"]').value='https://youtu.be/M7lc1UVf-VE?si=test';await add.onsubmit({preventDefault(){}});const playlist=game.resources.records.find(r=>r.kind==='audio');A.equal(playlist.payload.tracks[0].url,'https://www.youtube.com/watch?v=M7lc1UVf-VE');A(!document.querySelector('[data-resource-action^="sfx:"]'));
+ console.log('PASS real DOM drag/drop image upload, local byte persistence, draft retention, handout attachment, thumbnail reuse, removed Journal tab, custom NPC/bonus action/spell-slot saving and map token.');
+})().catch(e=>{console.error(e);process.exitCode=1});

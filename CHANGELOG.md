@@ -1,24 +1,211 @@
 # Character Forge — Changelog
 
+## 2.0.0 — Virtual tabletop launch (November 12, 2026)
+
+Channel: stable production and matching source release. Consolidates all accumulated 2.0 beta work.
+
+- Added cloud campaigns with roles/invites, live multiplayer maps, private DM content, offline queued edits, conflict recovery and versioned backups.
+- Added Canvas maps, layers, square/hex grids, calibration and snapping, group token controls, drawings, rulers/templates, fog, walls, doors, lighting and owned vision.
+- Added shared chat, whispers, trusted dice, macros, initiative/combat, character-sheet tools and the existing item/spell/creature compendium.
+- Added campaign assets, private/shared handouts and pins, picture drag/drop and file selection, complete custom Monsters & NPCs stat blocks and compendium imports. Creature **Delete** moves it to recoverable Trash.
+- Added shared uploaded/direct audio and YouTube links, personal sound controls and a separate visible YouTube window for continued playback while using the main tabletop settings/tabs.
+- Applied Luca's account-specific storage allowance while preserving other users' quotas and server checks.
+- Release hardening: production-domain gateway access, deferred VTT loading with retry, larger phone/tablet targets, preserved keyboard focus and campaign/account deletion with attached media.
+- Verified real disposable DM/player/outsider sessions, concurrent revision conflicts, reconnect recovery, private media and audio, revocation, backups/restoration and account cleanup. Added regression coverage for the deletion-order bug found during QA.
+
+Validation and boundaries: [release audit](docs/vtt-2.0.0-release-audit.md). The renderer was measured with 100 and 225 tokens on an 8000px map. Physical iOS, audible two-device playback, real Google OAuth navigation and sustained device FPS remain unverified. YouTube's own player must stay visible; mobile background playback is browser-dependent. Fog hides the map visually, while separate DM maps and hidden entities are protected by the server. Sheet sync uses the owner's open client. The imported monster catalog is the existing 88-beast/elemental collection; custom stat blocks support other creatures. Optional random tables and a separate scene/token trash browser remain outside this release.
+
+## 2.0.0-alpha.12 — Separate campaign player (November 12, 2026)
+
+Channel: ChatGPT Sites experimental beta.
+
+- Added **Audio → Open separate player** for the selected YouTube track, and a Separate player button on the map video. Opening this visible window keeps YouTube independent of settings and tabs in the main tabletop window. Blocked pop-ups show instructions to allow them and retry.
+- The separate player follows shared track/play/pause/loop changes, the campaign clock and personal volume/mute. It reuses an existing player window and stops when the tabletop session ends or access is reset. Closing it disables listening on that device.
+- Cross-window messages validate the exact opener/window, origin, nonce and media state. Only playback data crosses the bridge; no account credentials or database tokens are sent.
+- YouTube still pauses if its own window becomes hidden/minimized; it must stay visible. Uploaded/direct audio keeps its normal browser playback behavior. Mobile browsers may open a new tab instead of a separate desktop window and may restrict background playback.
+
+Validation: separate-window opening, strict messaging, clock/volume/end events, blocked-pop-up handling, window reuse/closure and main-page dialog/visibility isolation tests passed, alongside existing YouTube and resource UI/save tests. Real browser QA opened and connected the separate window and showed advancing video captions while a settings modal was open in the parent. Physical iOS and multi-device audible playback remain unverified.
+
+## 2.0.0-alpha.11 — YouTube campaign playback (November 12, 2026)
+
+Channel: ChatGPT Sites experimental beta.
+
+- Audio now accepts YouTube watch, shortened, mobile, Shorts and live-video links. Video links are validated and normalized to the existing playlist URL field; no new database privileges or schema are required. Playlist-only/channel links are rejected.
+- Added the official visible YouTube player beside the map, with DM play/pause/stop/next/loop synchronization and personal volume/mute. Each listener enables playback; blocked autoplay and unavailable or non-embeddable videos show helpful messages.
+- The player closes the campaign-tools modal when starting playback, pauses while the page is hidden or a modal obscures it, and rejoins the shared clock on return. Closing the video stops YouTube on that device. The embedded video remains visible with native YouTube controls and branding.
+- Uploaded/direct audio keeps its existing playback, sound effects and crossfade. YouTube tracks do not use audio-only sound effects or crossfade. Ads, embed restrictions, buffering and browser policies can affect playback and synchronization.
+
+Validation: URL allowlist/ID checks; actual DOM playlist URL normalization; mocked official-player API tests for clock/play/pause/loop/next, volume/mute, modal suspension, autoplay/error feedback and stale-player cleanup; existing resource import and save tests passed. The real embedded player loaded its video metadata and responded to Pause in the browser; its video remained buffering. Audible playback, multiple real listeners and physical iOS remain unverified.
+
+## 2.0.0-alpha.10 — Creature preparation and picture uploads (November 12, 2026)
+
+Channel: ChatGPT Sites experimental beta.
+
+- Added a Delete button directly to saved creature cards. Deleted creatures move to Trash and can be restored for 30 days.
+- Replaced the handout image dropdown with a picture drop area, an accessible Choose image button, preview/removal and an optional thumbnail library. Uploading keeps the current title and text draft intact. The same control is used for creature portraits.
+- Replaced the Journal tab with **Monsters & NPCs**. Existing journal records remain accessible in Handouts, with sharing and editing permissions preserved.
+- Added private campaign creature templates: import editable copies from the existing 88-creature SRD compendium, or create custom monsters and NPCs. Supports identity, portrait, AC, HP/hit dice, six ability scores, movement modes/hover, saves, skills, senses, passive Perception, defenses, languages, CR/XP, proficiency, initiative, traits, actions, bonus actions, reactions, legendary/mythic/lair actions, limited-use/recharge notes, spellcasting/innate spells, slots, equipment, tactics and regional effects.
+- Added map token creation from templates with portrait, HP, AC, movement and ability modifiers; token-sheet links open the campaign stat block. Actions with attack/damage formulas can roll into chat. Multiple damage components and fixed damage survive import.
+- Added resource backup validation and creature-reference remapping. Imported records retain source attribution; catalog records/IDs remain untouched.
+- Added server-owned storage allowances. The explicitly requested owner account alone has a 200 GB allowance for its tabletop media and owned campaigns. Other accounts retain their existing limits. Both legacy image and resource-media upload paths enforce the same limits, and usage UI displays server-reported capacities. Per-file uploads remain 20 MB.
+
+Validation: all 88 compendium creature imports, full custom NPC model/form tests, picture drop/attachment/draft retention/library reuse, creature backup/token links, private-record/revision/portrait tests, elevated/default quota enforcement through both reservation paths, and hosted rollback-only permission/quota tests passed. Live database verification confirmed exactly one elevated account. Desktop browser checks passed compendium import/save/token creation; the editor opened at 390px mobile width. A browser file-chooser test stalled; native file selection and physical iOS are not verified by browser automation. No persistent test accounts were created.
+
+## 2.0.0-alpha.9 — Campaign assets, journal and audio (November 12, 2026)
+
+Channel: ChatGPT Sites experimental beta. Phase 7; final 2.0 remains in development.
+
+- Added **Campaign tools** with searchable image/audio assets, folders, tags, lazy thumbnails, storage usage, map/portrait reuse and drag-to-map tokens. Supports PNG/JPEG/WebP and MP3/Ogg/WAV, up to 20 MB per file.
+- Added formatted handouts, DM notes, shared journals, token links and clickable map pins. Documents default to private; DMs can share with everyone or selected members. Shared journals use revision checks to protect concurrent edits.
+- Added a shared playlist with play/pause/stop/next, looping, crossfades, one-shot sound effects, direct HTTPS links and uploaded audio. Each listener enables playback and controls their own volume/mute.
+- Added account preferences for appearance, interface size, sound, animations, default zoom and token grid snapping; a recoverable trash view; and resource/media backup import/export. Cloud copies import documents before their linked pins and keep imported resources private.
+- Added private resource storage, server-enforced recipient permissions, bounded media uploads with signature detection, quota checks and no-store downloads. Cached media URLs are released when access is removed.
+
+Validation: actual desktop and 390px iframe browser checks for private handout creation, formatting, linked pin placement/opening and audio panel scrolling; local PostgreSQL role, revision, sharing, revocation and quota tests; media gateway upload-byte/download tests; backup and cloud-copy tests; existing save, lighting, selection, sidebar and combat regressions. Hosted rollback-only tests passed audio finalization and private/selected/revoked resource access. Automatic approval review rejected persistent temporary hosted test accounts, so authenticated end-to-end HTTP uploads/playback and physical iOS remain unverified.
+
+## 2.0.0-alpha.8 — Character sheets and imported compendium (November 12, 2026)
+
+Channel: ChatGPT Sites experimental beta. Phase 6 rollout; final 2.0 remains in development.
+
+- The movement ruler now counts diagonal squares 5, 10, 5, 10 feet. Four diagonal squares measure 30 feet. Shared ruler drawings and movement previews use the same calculation; area/grid distance options remain available separately.
+- Added Character sheet tools on the map toolbar and token menu. Link an owned character, edit abilities, HP, portrait, conditions, equipment flags, feature text and notes; roll checks, saves, skills, attacks, spell attacks/damage and initiative into the existing trusted chat roller.
+- Added learned/granted spell lists, casting-level selection, spell/feature-use spending, concentration tracking, slot/resource counters, hit dice and short/long rests using the existing character schema and calculations.
+- Linked HP, maximum HP, temporary HP, AC, speed, conditions and portrait synchronize between the owner's open tabletop and their character save. Derived token modifiers refresh from character calculations. Conflicting copies require an explicit choice in the sheet dialog.
+- Added a searchable Compendium using **the same allItems() catalog as Item Explorer**, including imported mundane, magic and custom items, with existing IDs, descriptions, weapon/armor stats, weight and cost. Share item, spell, condition and rule cards to chat.
+- Reused the existing SRD creature library for DM stat blocks, map tokens, optional rolled hit points, drag-to-map and token action macros. Character-sheet toolbar/menu opens stat blocks for those creatures.
+- Responsive purple character-tool dialogs leave the underlying tabletop controls intact. Character feature overrides save to the character record when edited inside the tabletop.
+
+Scope notes: sync uses the owner's active client and existing account save permissions; it does not grant DMs access to other users' complete character records or run an offline server mirror. The creature catalog is the site's current SRD beast/elemental collection. Advanced character creation choices, adding equipment/custom attacks, per-class multiclass Hit Die pools and multiclass slot-pool editing remain on the main character sheet. Slot spending from a known spell uses its class context. Existing party data and stable publication are unchanged.
+
+Validation: diagonal cost tests; imported catalog object/ID reuse; model tests for HP/AC/speed/conditions and idempotent maximum-HP adjustment; existing routes, group selection, geometry, backup, chat and macro tests; local browser checks for linked-sheet HP saving, resources/features, imported item search and creature creation. An unexpected Google sign-in in one browser navigation was blocked by automatic approval review; subsequent local QA disabled authentication. New cloud account sessions and physical iOS were not exercised in this release.
+
+## 2.0.0-alpha.7 — Chat, dice and combat (November 12, 2026)
+
+Channel: ChatGPT Sites experimental beta. Phase 5; final 2.0 remains in development.
+
+- Chat portrait fix: character messages and rolls use the corresponding token portrait, including existing chat history. Speaking as yourself keeps the account avatar; characters without a portrait show initials.
+
+- Settings keep the sidebar position, expanded sections, focused field and map position after renders and cloud acknowledgements. Token import, Add and editor controls have clear spacing.
+- Ordered the layer picker: **tokens → objects → drawing → lighting → map → gm → all**.
+- Added a collapsible **Chat & combat** drawer with persistent campaign messages, whispers, DM-only rolls, emotes, token speakers, avatars, spell/item cards, images, links, history search/filter and export.
+- Added server-generated, attested dice rolls with keep/drop, rerolls, explosions, advantage/disadvantage, arithmetic, parentheses, numeric token references, labeled hit/damage groups, inline rolls, natural-face highlights, optional animation and sound. Browser-local rolls are clearly unverified.
+- Added personal macros, templates, draggable hotbar slots 1–9 and selected-token actions.
+- Added shared initiative: automatic or manual entry, selected/all-token rolls, advantage/Alert, Dexterity ties, manual ordering, round/turn controls, ready/delay, map turn glow, turn timer and own-turn notifications.
+- Combatants have DM-controlled HP/status, AC and condition visibility. Timed conditions expire by round; previous-turn history restores duration state. Damage, healing, conditions and zero HP create combat log entries, including concentration-save prompts after damage.
+- Cloud permissions keep whispers, private rolls, hidden combatants and private stats isolated. A separate content-free live counter updates play panels; failed sends preserve drafts. Local play history and macros persist in browser saves, with token references remapped on backup restore.
+
+Validation: dice/command/Edge tests; local PostgreSQL permission and combat tests; hosted Auth + Edge rolls, initiative, duration expiry, concentration and macro isolation; rollback-only hosted visibility assertions; existing navigation, selection, lighting and live-sync regressions; desktop and 390px mobile browser checks. Physical iOS Safari was not available. Character-sheet synchronization and the rules/monster compendium remain Phase 6.
+
+## 2.0.0-alpha.6 — Lighting fixes and DM workspace (November 12, 2026)
+
+Channel: ChatGPT Sites experimental beta. Final 2.0 remains in development.
+
+- Fixed vision/light wedges leaking through walls: endpoint angles now share one circular ordering, preventing self-crossing visibility polygons. Added dense filled-polygon checks and real Canvas pixel tests.
+- Added a DM **Lighting** editing layer. Select walls or lights on the map, Shift-click or box-select several, move selections, adjust wall corners, nudge with arrow keys, and delete with Delete/Backspace or the erase tool. Edits use the existing cloud save and Undo/Redo path.
+- Reorganized the right sidebar into **Scene / Tokens / Lighting / Layers**, with a fixed header, one scrolling view, consistent fields/buttons, contextual object properties and collapsible creation tools. The sidebar can close and reopen through Controls.
+- Clear **DM overview / Player preview** states distinguish the DM’s deliberately dim map from actual token visibility. Lighting guides stay on the Lighting layer and out of player views.
+- Mobile creation tools close the drawer to expose the map; tapping a lighting object opens its properties. Player maps retain their compact controls and do not receive DM editing controls.
+- Reused visibility masks across unchanged frames and corrected flicker/pulse scheduling, while respecting reduced-motion preferences.
+
+Validation: 78,660 filled-polygon samples; real Canvas tests for light and vision occlusion, closed/open doors, windows, movement barriers, darkvision and manual fog; DOM interaction tests for wall movement/corners, light editing/deletion, multi-selection and player guards; desktop/mobile browser checks for deletion/Undo, erase, torch settings, drawing and token selection; existing cloud and navigation regression checks. Physical iOS Safari was not available.
+
+## 2.0.0-alpha.5 — Fog, vision and lighting (November 11, 2026)
+
+Channel: ChatGPT Sites experimental beta. Phase 4; final 2.0 remains in development.
+
+- DM-only **Fog & lighting**, available in the sidebar and More menu. Existing scenes start with fog off.
+- Manual reveal/hide brushes, rectangles and polygons; reveal all, cover all, faint map hints and adjustable DM fog opacity.
+- Dynamic line of sight, standard walls, open/closed/locked doors, secret doors, windows, one-way walls and movement-only barriers. Players can toggle visible unlocked doors beside their tokens; DMs can edit door state and blocking properties.
+- Map and token lights with bright/dim radii, color, intensity, flicker/pulse and torch, lantern, candle, Light and Daylight presets. Distances use the scene’s configured units.
+- Controlled-token sight, grayscale darkvision, blindsight, truesight, no-vision tokens and a DM preview. Private explored-map memory persists across devices and can be reset by the DM.
+- Cloud snapshots and raw-table policies filter unseen tokens and portraits. GM-only objects remain private. Movement/cursor previews go only to DMs while fog is enabled because players can have different views; committed positions still update live.
+- Cached visibility polygons, spatial wall buckets and viewport-sized OffscreenCanvas masks. Mobile retains its map-first player view and readable DM drawer; left-click resize/rotation and right-click token actions remain available.
+- Fog, walls and lights save with the campaign, participate in Undo/Redo and travel in backups. Backups omit account-specific explored memory.
+
+Current limits: 500 walls / 2,000 wall vertices, 100 map lights and 500 fog operations per scene. Vision is two-dimensional and uses token centers; explored memory uses a 128 × 128 map mask. Player door toggles are immediate scene interactions, outside Undo/Redo. Automatic character-sheet senses and vertical/elevation-aware occlusion are not included.
+
+## 2.0.0-alpha.4 — Canvas, layers and drawing (November 11, 2026)
+
+Invitation update: DM Tools now offers copyable player links as well as codes, with explicit character selection before joining. Assigned DMs can replace both together; old invitations stop working, existing memberships stay intact, and member-removal/admin permissions are unchanged. The tabletop layer control now includes an inline stacked-layer icon.
+
+Interface refresh: added the reference-inspired dark shell, top-bar layer selector and online status, floating map controls, and collapsible visibility/setup/token panels. Scenes remain available through More → Scenes & maps; mobile keeps the map prominent.
+
+Selection hotfix: drawing tools retain the selected token/object/GM layer, so returning to Select restores left-click selection and right-click actions. In All layers mode, annotation selection no longer intercepts token or transform clicks.
+
+Channel: ChatGPT Sites experimental beta. Phase 3; final 2.0 remains in development.
+
+- Added a viewport-sized Canvas 2D renderer with culling, bounded image caching, DPR scaling, cursor-centered wheel zoom and pinch zoom.
+- Added DM map/object/token/GM/drawing layers with visibility, locks and active-layer selection. GM maps, scene notes and hidden drawings remain server-filtered.
+- Added square, flat/pointy hex and no-grid modes; offsets, calibration, half-cell snapping, Alt bypass, grid styling, distance units and diagonal rules.
+- Expanded tokens with rectangular sizes/shapes, temporary HP, AC, speed, initiative, private notes/stats, conditions and configurable public/private bars. Added damage/healing, grouping, alignment, clipboard shortcuts, portrait reuse and a basic initiative list.
+- Added account-owned token templates, numbered bulk placement with hit-dice HP, image drops, movement trails and speed comparisons.
+- Added shared ruler/cone/circle/square/beam tools, persistent spell areas, pen/line/rectangle/ellipse/polygon/text/arrow/eraser tools, and drawing Undo/Redo.
+- Added separate DM maps, scene folders/reordering/duplication, lighting tints, ambient level, weather overlays and shortcut help. Mobile players retain a map-focused view.
+- Verified 225 tokens on an 8000px test map, mobile player/DM layouts, geometry/backup/outbox regressions, local PostgreSQL permissions, and real cloud saves, shared rulers, private-map denial and template isolation. Disposable accounts were cleaned up.
+- Deployment, changed files, manual acceptance and limitations: `docs/vtt-phase3.md`. Fog/vision, full combat automation and live sheet synchronization remain later phases.
+
+## 2.0.0-alpha.3 — Shared tabletop room (November 11, 2026)
+
+Channel: ChatGPT Sites experimental beta. Completes the remaining Phase 2 room controls; final 2.0 remains in development.
+
+- Added labeled, color-coded shared cursors and a compact online/Away/Reconnecting roster, deduplicated across tabs.
+- Added transient, interpolated movement/resize/rotation previews while dragging, throttled to a 20 Hz target. Saved positions and conflict resolution remain authoritative.
+- Added shared pings with Alt-click or a stationary 650 ms hold. DMs can use More → Pull players to my view on the active published map.
+- Server-check every outgoing event. Private room topics rotate when membership/ownership changes; hidden movement and prep-scene cursors are never sent to players. Browsers cannot forge broadcasts.
+- Verified real private subscriptions, movement previews, hidden-data isolation, pings, DM-only camera pulls, forged-event rejection and revocation of already-joined room subscribers. Temporary test accounts were cleaned up.
+- Source, migrations, manual acceptance steps and known limitations: `docs/vtt-phase2.md`.
+
+## 2.0.0-alpha.2 — Live tabletop synchronization (November 11, 2026)
+
+Channel: ChatGPT Sites experimental beta. Phase 2; final 2.0 remains in development.
+
+- Added live campaign updates after saved token movement, resize/rotation, HP, map and scene changes. Players follow the DM’s active published scene automatically.
+- Added Live, Connecting, Reconnecting and Offline indicators, reconnect resynchronization and periodic permission checks. Manual update is now a fallback under More.
+- Merge independent pending field edits with the latest authorized snapshot. Conflicting edits to the same field, changed/deleted targets and conflicting portraits require review; pending edits remain recoverable.
+- Realtime carries only membership-protected invalidation counters. Hidden objects, private stats and asset bytes continue through current-user permission checks.
+- Preserved guest local tabletops, character imports, cloud backups, roles, invitations and Undo/Redo.
+- Validation and operational limits: `docs/vtt-phase2.md`.
+
+## 2.0.0-alpha.1 — Cloud tabletop foundations (November 11, 2026)
+
+Channel: ChatGPT Sites experimental beta. Phase 1 only; final 2.0 and realtime multiplayer remain in development. GitHub and the stable frontend are unchanged.
+
+- Added account-owned cloud campaigns with owner/co-DM, player and spectator roles, revocable invitation codes/links and explicit local-to-cloud copies.
+- Enforced campaign isolation, token ownership, hidden scenes/tokens and private stats in Postgres; all browser writes go through checked atomic commands.
+- Added IndexedDB offline recovery, revision conflicts, idempotent saves, Undo/Redo, recovery exports and version 2 backups with legacy import.
+- Added private map/portrait uploads, current-user-authorized no-store image downloads, quota reservations, campaign trash and account/maintenance cleanup.
+- Verified local regression/isolation tests, hosted rolled-back SQL tests, and real authenticated HTTP invite/upload/permission/removal flows with temporary accounts; test accounts and files were cleaned up.
+- Fixed a hosted image-access cache issue before publication by removing direct browser bucket downloads and rechecking authorization in the asset gateway on every request.
+- Simplified tabletop controls: click the title to rename, automatic save status, one Update action that saves then downloads changes, and recovery tools shown only for failed saves. Backups and member management live in More.
+- Redesigned campaign cards, invitations, compact toolbar and mobile setup drawer with scoped CSS.
+- Added a player view focused on the active map, hiding scenes, preparation panels and DM-only token actions. Add my character opens a responsive picker that copies name, current/max HP and avatar and assigns player control. Imports are independent copies, not live sheet links.
+- Limited player token creation to self-controlled visible tokens on the active published scene, with a ten-token per-player scene limit. Existing token ownership, scene permissions and spectator restrictions remain enforced.
+- Fixed browser image uploads sending empty bodies through the SDK; upload errors now show the actual reason and preserve pending edits for retry.
+- Use Update for changes from other clients. Phase 2 will add live map synchronization.
+- Full deployment details, tests and manual checks: `docs/vtt-phase1.md`.
+
+## In development — 2.0 tabletop preview (November 11, 2026)
+
+Channel: ChatGPT Sites experimental beta. The 2.0 release is pending.
+
+- Added an experimental Tabletop navigation tab with a local campaign gallery and multiple map scenes.
+- Upload battle maps and token portraits; customize grid size, map dimensions, snapping, token size, ring color and HP.
+- Drag or keyboard-move tokens, pan, zoom, measure distances, duplicate tokens, and undo scene edits.
+- Save tabletops in this browser and export or restore JSON backups.
+- Launched maps now have a dedicated full-window page and top-right exit; exiting restores normal navigation.
+- Added tabletop and scene URLs, grid-snapped 5-foot measurements, temporary right-drag panning and named creature sizes.
+- Ordered navigation: Home, Spells, Items, Feats, Custom Content, Rules & Licensing, DM Tools, Tabletop.
+- Scene width and height now use cell counts with a pixel-size summary; changing cell size keeps the same number of cells.
+- Select tool now supports drag-box and Shift-click selection, moving groups, shared resize/rotation handles, and per-token rotation.
+- Added a token action menu for editing, duplication, rotation, ordering, and deletion, with Undo for group edits.
+- Token actions now open on right-click; left-click shows only selection/transform handles. Right-drag still pans, including over tokens.
+- This first preview is local only. Shared party sessions, player permissions and synchronized state are still pending.
+
+
 A history of the D&D 5e **2014 rules** character builder and sheet.
 
-**Latest stable release: 1.1.1 — November 9, 2026.**
+**Latest stable release: 1.0.3 — November 9, 2026.**
 
-
-## 1.1.1 — November 9, 2026 (Stable production)
-
-- November 10 polish: replace the wide DM Tools button with a compact shortcut beside the party name; soften the DM badge and supporting text, with responsive action spacing.
-
-- Clearly label home-screen DM parties with “You are the DM,” replacing the misleading zero-character count and no-character-selected message.
-- Add an Open DM Tools shortcut that selects the corresponding party before opening the workspace.
-- Style the DM badge and actions for desktop and mobile while preserving player-party and character grouping.
-
-## 1.1.0 — November 9, 2026 (Stable production)
-
-- Let the assigned DM click a party character to deal damage, heal, set HP, and add or remove conditions without starting a session.
-- Apply damage to temporary HP first and cap healing at maximum HP. Preserve character revision checks and duplicate protection.
-- Show the receiving character a styled two-second combat notification and record the change in party chat.
-- Correct DM award wording in the character panel and remove tiny scroll arrows beside condition icons.
 
 ## 1.0.3 — November 9, 2026 (Stable production)
 

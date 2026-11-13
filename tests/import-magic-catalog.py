@@ -24,6 +24,6 @@ names={x['name'] for x in items if sum(y['name']==x['name'] for y in items)>1}
 for x in items:
  x['displayName']=x['name']
  if x['name'] in names:x['name']+=' ('+x['rarity']+')'
-out=Path('dist/magic-items-data.js')
+out=Path('magic-items-data.js')
 out.write_text('/* Wikidot index metadata, retrieved 2026-10-30. Rules remain at linked sources. */\nconst MAGIC_ITEMS='+json.dumps(items,ensure_ascii=False,separators=(',',':'))+';\n')
 print(len(items),'magic item rarity records', {r:sum(x['rarity']==r for x in items) for r in sorted({x['rarity'] for x in items})})

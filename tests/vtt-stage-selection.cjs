@@ -1,0 +1,16 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const listeners={},children=[],scene={id:'scene',width:1600,height:1280,grid:64,showGrid:true,snap:true,settings:{},tokens:[{id:'hero',name:'Hero',x:128,y:128,size:1,rotation:0,hp:10,maxHp:10}]},q={game:{id:'game'},scene,selection:new Set(),zoom:1,tool:'select',dm:true};
+const createButton=()=>({dataset:{},style:{},attrs:{},setAttribute(k,v){this.attrs[k]=v},remove(){children.splice(children.indexOf(this),1)}});
+const viewport={scrollLeft:0,scrollTop:0,clientWidth:1000,clientHeight:800};
+const container={append(n){children.push(n)},querySelector(selector){return children.find(n=>selector==='[data-token="'+n.dataset.token+'"]')||null},querySelectorAll(){return [...children]}};
+q.root={querySelector:s=>s==='.vtt-viewport'?viewport:container};
+const api={state:()=>q,setTool:next=>q.tool=next};
+const ctx=vm.createContext({console,crypto,performance,requestAnimationFrame:()=>1,setTimeout,clearTimeout,window:{ForgeVTTGeometry:require('../vtt/geometry'),ForgeVTTCore:require('../vtt/core'),ForgeTabletop:api,addEventListener(){}},document:{addEventListener:(k,fn)=>listeners[k]=fn,querySelector:()=>null,createElement:createButton}});
+vm.runInContext(fs.readFileSync('vtt/stage.js','utf8'),ctx);const stage=ctx.window.ForgeVTTStage,key=k=>listeners.keydown({key:k,target:{closest:()=>null},preventDefault(){}}),render=()=>stage.tokens(q.root,q.game,scene,q.selection,q.zoom);
+render();assert.equal(children.length,1);assert.equal(stage.selectable(scene.tokens[0]),true);
+key('d');assert.equal(q.tool,'draw');assert.equal(stage.activeLayer,'tokens','Draw must not strand selection on the annotation layer');
+key('v');render();assert.equal(q.tool,'select');assert.equal(children.length,1,'Select must retain the real token hit target after drawing');assert.equal(children[0].dataset.token,'hero');
+key('d');key('h');key('m');key('v');render();assert.equal(children.length,1,'Draw → Pan/Measure → Select must keep token targets');
+scene.settings.layers={tokens:{locked:true}};render();assert.equal(children.length,0,'explicit layer locks must still block selection');scene.settings.layers={tokens:{visible:false}};render();assert.equal(children.length,0,'hidden layers must remain unselectable');
+scene.settings={};q.dm=false;render();assert.equal(children.length,1,'player token selection remains available');
+console.log('PASS canvas token hit targets survive Draw/Select and shortcut transitions while layer visibility/locks remain enforced.');

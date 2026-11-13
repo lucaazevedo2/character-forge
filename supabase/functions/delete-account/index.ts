@@ -14,6 +14,10 @@ Deno.serve(async request=>{
   const body=await request.json();if(body.confirmation!=='DELETE')return new Response('{}',{status:400,headers});
   // Lock writes first; users can still authenticate to retry incomplete deletion.
   const locked=await admin.from('forge_deleting_accounts').upsert({user_id:user.id});if(locked.error)throw locked.error;
+  // Campaign prefixes can include maps uploaded by other members; delete only campaigns this account owns.
+  const {data:campaigns,error:campaignError}=await admin.from('forge_vtt_campaigns').select('id').eq('owner_id',user.id);if(campaignError)throw campaignError;
+  for(const campaign of campaigns||[])await removeFolder(admin,campaign.id,'vtt-assets');
+  const removedCampaigns=await admin.from('forge_vtt_campaigns').delete().eq('owner_id',user.id);if(removedCampaigns.error)throw removedCampaigns.error;
   await removeFolder(admin,user.id);
   const deleted=await admin.auth.admin.deleteUser(user.id);if(deleted.error)throw deleted.error;
   return new Response(JSON.stringify({deleted:true}),{headers});

@@ -1,0 +1,11 @@
+const A=require('node:assert/strict'),C=require('../vtt/play-core');
+const image='data:image/png;base64,aGVsbG8=',account='https://example.invalid/account.png';
+const tokens=[{id:'grog',image},{id:'artus',image:'https://example.invalid/artus.png'},{id:'blank',image:''}];
+A.equal(C.portraitSource({token_id:'grog',avatar:account},tokens),image);
+A.equal(C.portraitSource({token_id:'artus',avatar:account},tokens),tokens[1].image);
+A.equal(C.portraitSource({tokenId:'grog',avatar:account},tokens),image,'local and cloud formats');
+A.equal(C.portraitSource({avatar:account},tokens),account);
+for(const id of ['blank','hidden','deleted'])A.equal(C.portraitSource({token_id:id,avatar:account},tokens),'','Never substitute owner avatar or fetch hidden portraits');
+for(const image of ['javascript:alert(1)','data:image/svg+xml;base64,PHN2Zz4='])A.equal(C.portraitSource({token_id:'unsafe'},[{id:'unsafe',image}]),'');
+A.equal(C.portraitSource({token_id:'grog'},[{id:'grog',image:'https://example.invalid/new.png'}]),'https://example.invalid/new.png','History follows updated character portrait');
+console.log('PASS character/account portrait separation, local/cloud history, changed portraits, missing/hidden tokens and unsafe URL rejection.');

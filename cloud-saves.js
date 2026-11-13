@@ -165,7 +165,7 @@ async function switchUser(next){
   const custom=read(key('forge-custom'),{});CUSTOM={races:[],classes:[],subs:[],bgs:[],spells:[],items:[],...custom};applyCustom();
   chars=read(key('forge-chars'),[])||[];if(ready)render();
  }
- paint();window.ForgeParty?.accountChanged();if(user){await refresh();if(pending())queue(100)}
+ paint();window.ForgeParty?.accountChanged();window.dispatchEvent?.(new CustomEvent('forge:account-changed'));if(user){await refresh();if(pending())queue(100)}
 }
 // Classify only temporary refresh throttling as retryable. Invalid/revoked tokens
 // still reach Supabase unchanged, so real sign-outs remain enforced.

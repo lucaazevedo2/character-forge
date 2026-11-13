@@ -3,3 +3,15 @@
 verify_jwt = false
 [functions.purge-trash]
 verify_jwt = false
+
+# VTT gateways validate the caller with Auth.getUser inside the function.
+[functions.vtt-invites]
+verify_jwt = false
+[functions.vtt-assets]
+verify_jwt = false
+
+[functions.vtt-roll]
+verify_jwt = false
+
+[functions.vtt-media]
+verify_jwt = false

@@ -1,0 +1,28 @@
+const A=require('node:assert/strict'),M=require('../vtt/monsters-core');
+module.exports=async db=>{
+ const [dm,other,player,c,c2,id,asset]=Array.from({length:7},()=>crypto.randomUUID());
+ const as=async u=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[u]);await db.exec('set role authenticated');};
+ const api=async(action,p)=>{return(await db.query('select public.forge_vtt_api($1,$2) v',[action,JSON.stringify(p)])).rows[0].v};
+ const call=async(action,p={})=>(await db.query('select public.forge_vtt_resources_api($1,$2) v',[action,JSON.stringify({campaignId:c,...p})])).rows[0].v;
+ await db.exec('reset role');for(const u of [dm,other,player])await db.query('insert into auth.users(id)values($1)',[u]);
+ await as(dm);await api('create',{campaignId:c,name:'Creature QA',operationId:crypto.randomUUID()});
+ await as(other);await api('create',{campaignId:c2,name:'Normal owner',operationId:crypto.randomUUID()});
+ await db.exec('reset role');await db.query("insert into public.forge_vtt_campaign_members(campaign_id,user_id,role,display_name)values($1,$2,'player','QA')",[c,player]);
+ await db.query("insert into public.forge_vtt_assets(id,campaign_id,uploaded_by,object_path,mime_type,byte_size,width_px,height_px,sha256)values($1,$2,$3,'qa/image','image/png',10,1,1,repeat('a',64))",[asset,c,dm]);
+ await as(dm);const s=M.blank();s.name='QA mage';s.actions=[M.feature({name:'Ray',desc:'Ray',damage:[{damage_dice:'1'},{damage_dice:'2d6'}]})];s.spells='Cantrips: light';s.legendaryBudget=3;
+ const save={id,kind:'creature',title:s.name,expected:0,payload:{statBlock:s,imageAssetId:asset}};await call('save',save);
+ await A.rejects(()=>call('save',{...save,expected:1,audience:'all'}),/Invalid private/);
+ await A.rejects(()=>call('save',{...save,expected:1,payload:{statBlock:{...s,hp:0}}}),/Invalid private/);
+ await A.rejects(()=>call('save',save),/changed/);
+ await as(player);A.equal((await call('list')).records.length,0);A.equal((await db.query('select id from public.forge_vtt_resources')).rows.length,0);A.equal((await db.query('select id from public.forge_vtt_assets')).rows.length,0);await A.rejects(()=>call('save',save),/DM/);
+ await A.rejects(()=>db.query('insert into forge_vtt_private.storage_allowances values($1,214748364800)',[player]),/permission/);
+ await db.exec('reset role');await db.query('insert into forge_vtt_private.storage_allowances values($1,214748364800)',[dm]);
+ await db.query("insert into public.forge_vtt_assets(id,campaign_id,uploaded_by,object_path,mime_type,byte_size,width_px,height_px,sha256) select gen_random_uuid(),$1,$2,'qa/'||n,'image/png',20971520,1,1,repeat('b',64) from generate_series(1,14)n",[c,dm]);
+ await as(dm);const snap=await call('list');A.equal(snap.campaignLimit,214748364800);A.equal(snap.accountLimit,214748364800);
+ await call('reserve',{bytes:100,mime:'image/png'});await api('reserve_upload',{campaignId:c,bytes:100,mime:'image/png',operationId:crypto.randomUUID()});
+ await as(other);const normal=(await db.query("select public.forge_vtt_resources_api('list',$1) v",[JSON.stringify({campaignId:c2})])).rows[0].v;A.equal(normal.campaignLimit,262144000);A.equal(normal.accountLimit,524288000);
+ await db.exec('reset role');await db.query("insert into public.forge_vtt_assets(id,campaign_id,uploaded_by,object_path,mime_type,byte_size,width_px,height_px,sha256) select gen_random_uuid(),$1,$2,'normal/'||n,'image/png',20971520,1,1,repeat('c',64) from generate_series(1,14)n",[c2,other]);
+ await as(other);await A.rejects(()=>api('reserve_upload',{campaignId:c2,bytes:100,mime:'image/png',operationId:crypto.randomUUID()}),/quota/);
+ await A.rejects(()=>db.query("select public.forge_vtt_resources_api('reserve',$1)",[JSON.stringify({campaignId:c2,bytes:100,mime:'audio/wav'})]),/quota/);
+ console.log('PASS private creature CRUD, portraits, schema/revision/role guards; isolated 200GB entitlement on both upload paths, normal limits, no client entitlement writes.');
+};
