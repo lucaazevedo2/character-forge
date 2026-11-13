@@ -44,6 +44,15 @@ function equipmentVanillaAC(c,abilities,items){
  else{if(c.klass==='barbarian')value=Math.max(value,10+m('dex')+m('con'));if(c.klass==='monk'&&!shield)value=Math.max(value,10+m('dex')+m('wis'));if(c.klass==='sorcerer'&&c.subId==='srd')value=Math.max(value,13+m('dex'));if(raceOf(c)?.naturalAC)value=Math.max(value,raceOf(c).naturalAC);}
  return value+(shield?2:0)+(eqNumber(c.acBonus))+(body&&c.fightingStyle==='defense'?1:0);
 }
+/* Walking speed is a calculated stat, unless a character explicitly overrides it. */
+function sheetMovementSpeed(c,activeItems=[]){
+ const root=c._root||c,setting=manual(root),custom=Number(setting.speedValue);
+ if(setting.speedMode==='manual'&&Number.isFinite(custom)&&custom>=0)return {value:Math.floor(custom),manual:true};
+ const heavyArmor=activeItems.some(item=>item.type==='armor'&&String(item.armor?.category||'').toLowerCase()==='heavy');
+ // The 2014 Fast Movement feature uses Barbarian class level, not total character level.
+ const fastMovement=classContexts(root).some(ctx=>ctx.klass==='barbarian'&&Number(ctx.level)>=5)&&!heavyArmor;
+ return {value:(raceOf(root)?.speed??30)+featBonus(root,'speedBonus')+(fastMovement?10:0),manual:false};
+}
 function equipmentStats(c){
  if(equipmentGuard)return null;if(equipmentCache.has(c)&&equipmentCache.get(c).base.level===totalLevel(c)&&equipmentCache.get(c).attunementLimit===equipmentAttunementLimit(c))return equipmentCache.get(c);equipmentEnsure(c);
  equipmentGuard=true;const priorLookup=equipmentLookupContext;equipmentLookupContext=c._root||c;
@@ -51,10 +60,10 @@ function equipmentStats(c){
   const root=c._root||c,abilities=Object.fromEntries(EQ_ABILITIES.map(a=>[a,equipmentOriginal.score(c,a)])),values={},skillAbilities={};
   for(const a of EQ_ABILITIES){values['save_'+a]=equipmentOriginal.save(c,a);values['check_'+a]=eqModifier(abilities[a])+(manual(c).jack?Math.floor(proficiency(c)/2):0);}
   for(const s of SKILLS){skillAbilities[s.id]=s.abl;values['skill_'+s.id]=equipmentOriginal.skill(c,s.id)}
-  values.saveAll=equipmentOriginal.adjustment(c,'saveAll');values.initiative=equipmentOriginal.initiative(c);values.maxHP=equipmentOriginal.hp(c);values.speed=(raceOf(c)?.speed||0)+featBonus(c,'speedBonus');values.passive=10+values.skill_perception+equipmentOriginal.adjustment(c,'passive')+featBonus(c,'passivePerception');
+  values.saveAll=equipmentOriginal.adjustment(c,'saveAll');values.initiative=equipmentOriginal.initiative(c);values.maxHP=equipmentOriginal.hp(c);values.passive=10+values.skill_perception+equipmentOriginal.adjustment(c,'passive')+featBonus(c,'passivePerception');
   const castingAbility=caster(c)?.ability||'int',spellBase=proficiency(c)+eqModifier(abilities[castingAbility]||10);
   values.spellDC=8+spellBase+equipmentOriginal.adjustment(c,'spellDC');values.magicAttack=spellBase+equipmentOriginal.adjustment(c,'magicAttack');
-  const items=root.equipmentItems||[],active=activeEquipment(items,equipmentAttunementLimit(root)),oldItems=(c.equipped||[]).map(n=>{const cat=itemData(c.inventory[n]);return cat?equipmentItem(cat.name,cat,'legacy-'+n):null}).filter(Boolean);
+  const items=root.equipmentItems||[],active=activeEquipment(items,equipmentAttunementLimit(root)),movement=sheetMovementSpeed(c,active);values.speed=movement.value;const oldItems=(c.equipped||[]).map(n=>{const cat=itemData(c.inventory[n]);return cat?equipmentItem(cat.name,cat,'legacy-'+n):null}).filter(Boolean);
   const manualAC=manual(c).acMode==='manual',wild=typeof wsForm==='function'&&!!wsForm(c),ac=equipmentOriginal.ac(c);
   const weaponBonuses={};for(const i of items){if(!i.attack?.enabled||!active.some(a=>a.id===i.id))continue;const index=root.inventoryItemIds.indexOf(i.id),cat=itemData(i.catalogName||i.name);if(cat&&index>=0&&typeof cfWeaponBonuses==='function')weaponBonuses[i.id]=cfWeaponBonuses(c,cat,index)}
   const hpDice=[];const primary=classOf(root);for(let n=1;n<=(root.level||1);n++)hpDice.push(n===1?primary.hitDie:(root.hpRolls?.[n]||Math.floor(primary.hitDie/2)+1));for(const entry of root.multiclass||[]){const k=nativeClassOf(entry);for(let n=0;n<(entry.level||1);n++)hpDice.push(Math.floor((k?.hitDie||6)/2)+1)}
@@ -63,7 +72,7 @@ function equipmentStats(c){
   if(c.klass==='monk')base.unarmored.push({value:10,abilities:['dex','wis'],source:'Monk Unarmored Defense',noShield:true});
   if(c.klass==='sorcerer'&&c.subId==='srd')base.unarmored.push({value:13,abilities:['dex'],source:'Draconic Resilience'});
   if(raceOf(c)?.naturalAC)base.unarmored.push({value:raceOf(c).naturalAC,abilities:[],source:'Natural armor'});
-  const result=computeStats(base,wild?items.map(i=>({...i,equipped:false})):items);result.base=base;equipmentCache.set(c,result);return result;
+  const gear=wild?items.map(i=>({...i,equipped:false})):items;const effectiveGear=movement.manual?gear.map(i=>({...i,modifiers:(i.modifiers||[]).filter(m=>m.target!=='speed')})):gear;const result=computeStats(base,effectiveGear);result.base=base;equipmentCache.set(c,result);return result;
  }finally{equipmentGuard=false;equipmentLookupContext=priorLookup}
 }
 function equipmentReady(c){return !!(c&&nativeClassOf(c)&&c.race)}

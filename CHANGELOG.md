@@ -1,5 +1,13 @@
 # Character Forge — Changelog
 
+## 2.0.4 — Editable walking speed and Barbarian Fast Movement (November 13, 2026)
+
+- Added an Automatic / Custom total walking-speed setting under character sheet → Settings → Attributes & HP. Custom speeds are saved per character, support 0 ft., and override the final on-sheet and PDF movement speed without permanently changing race/class rules.
+- Restored the 2014 Barbarian level 5 **Fast Movement** feature (+10 ft. unless wearing heavy armor). Uses Barbarian class levels for multiclass characters and keeps race, feat, and equipment speed modifiers in automatic mode.
+- Returning to Automatic restores calculated speed, including removal of the Fast Movement bonus when heavy armor is worn.
+
+Validation: 13 isolated regression checks for class thresholds, multiclass level, armor restrictions, racial/feat speed, custom overrides, zero speed, and JSON persistence. Full live-browser regression was not executed before this release.
+
 ## 2.0.3 — Open campaigns with unavailable images (November 13, 2026)
 
 - A map or portrait in Trash, missing from storage, or temporarily offline no longer prevents a cloud campaign from opening on a fresh device. Available images still load; unavailable images show a notice with **Retry images**.
