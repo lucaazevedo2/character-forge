@@ -295,3 +295,7 @@ body.vtt-page .vtt-refined.inspector-collapsed .vtt-layout{grid-template-columns
  .vtt-root .vtt-macro-hotbar{padding-bottom:env(safe-area-inset-bottom,0px)}
 }
 @media(forced-colors:active){.vtt-root button,:is(.vtt-resource-dialog,.vtt-sheet-dialog,.vtt-play-dialog) button{border:1px solid ButtonText}.vtt-root [aria-selected=true],.vtt-root [aria-pressed=true]{outline:2px solid Highlight}.vtt-root [data-token][aria-checked=true]{outline:3px solid Highlight}}
+/* Scene ordering previews move neighbouring cards without saving on every hover. */
+.vtt-scenes .vtt-scene{transition:opacity .16s ease,border-color .16s ease,box-shadow .16s ease}
+.vtt-scenes .vtt-scene-dragging{opacity:.45;border-color:#d6c8ff;box-shadow:0 0 0 2px #b4a7ff55}
+@media(prefers-reduced-motion:reduce){.vtt-scenes .vtt-scene{transition:none}}

@@ -1,5 +1,13 @@
 # Character Forge — Changelog
 
+## 2.0.1 — Campaign workspace fixes (November 12, 2026)
+
+- Members & Invites opens and creates invitation links while edits are pending. Membership changes still wait for saves to finish.
+- Scenes & Maps stays open through scene changes, edits and cloud acknowledgements. Scene reordering previews neighbouring cards with a short animation, saves once on drop and restores the original order when cancelled; reduced-motion preferences are respected.
+- DM character imports no longer assign the DM as a player-only token controller. Previously failed imports are repaired in the local outbox so they can sync without deleting the character or scene. Player imports retain their own controller assignment.
+
+Validation: targeted member/invite, new-scene character import, pending-import recovery, player ownership, scene reorder/cancellation and existing cloud/navigation regressions.
+
 ## 2.0.0 — Virtual tabletop launch (November 12, 2026)
 
 Channel: stable production and matching source release. Consolidates all accumulated 2.0 beta work.

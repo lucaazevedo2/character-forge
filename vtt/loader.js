@@ -11,7 +11,7 @@
       try{
         if(stub.ready)window.ForgeTabletop=stub.ready;
         for(;completed<files.length;completed++){
-          const url=new URL(files[completed],new URL('vtt/',document.baseURI));url.searchParams.set('v','2.0.0');const src=url.href;
+          const url=new URL(files[completed],new URL('vtt/',document.baseURI));url.searchParams.set('v','2.0.1');const src=url.href;
           await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=()=>{script.remove();reject(Error('The tabletop could not load. Check your connection and retry.'))};document.head.append(script)});
         }
         const api=window.ForgeTabletop;
