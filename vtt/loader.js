@@ -3,7 +3,7 @@
   'use strict';
   const files=['strings.js','core.js','dice.js','play-core.js','geometry.js','vision-geometry.js','vision.js','lighting-editor.js','workspace-state.js','stage.js','local-repository.js','live.js','room.js','cloud-repository.js','play.js','../tabletop.js','ui.js','sheets.js','resources-core.js','monsters-core.js','monsters.js','youtube.js','resources.js'];
   let loading=null,completed=0,host=null,route=null;
-  const stub={leave(){},applyRoute(url){route=url},render(el){host=el;el.innerHTML='<p role="status">Loading tabletop…</p>';load()}};
+  const stub={leave(){},path:()=>route||'/tabletop',applyRoute(url){route=url},render(el){host=el;el.innerHTML='<p role="status">Loading tabletop…</p>';load()}};
   window.ForgeTabletop=stub;
   async function load(){
     if(loading)return loading;
