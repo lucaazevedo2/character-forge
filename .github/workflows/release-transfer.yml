@@ -2,7 +2,7 @@ name: Verify and assemble Character Forge release
 on:
   push:
     branches: [release/v2.1.0-20261117]
-    paths: ['.release-transfer/manifest.gz.000']
+    paths: ['.release-transfer/manifest.gz.000', '.github/workflows/release-transfer.yml']
 permissions:
   contents: write
 jobs:
@@ -39,10 +39,17 @@ jobs:
           assert base == '5c938aa18bb8a8b5d5654a77b99bd2416e19b1bc', base
           subprocess.run(['git', 'switch', '--detach', base], check=True)
 
+          presenter = base64.b64decode('PCFkb2N0eXBlIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04Ij48bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLGluaXRpYWwtc2NhbGU9MSI+PHRpdGxlPkNoYXJhY3RlciBGb3JnZSDCtyBUViBwcmVzZW50ZXI8L3RpdGxlPjxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0icHJlc2VudGVyLmNzcyI+PC9oZWFkPjxib2R5PjxjYW52YXMgYXJpYS1sYWJlbD0iUGxheWVyIG1hcCBwcmVzZW50YXRpb24iPjwvY2FudmFzPjxuYXYgYXJpYS1sYWJlbD0iTWFwIHRvb2xzIj48YnV0dG9uIHR5cGU9ImJ1dHRvbiIgZGF0YS1wYW4gYXJpYS1wcmVzc2VkPSJ0cnVlIiB0aXRsZT0iRHJhZyB0byBwYW47IGNsaWNrIFBhbiBhZ2FpbiB0byBmb2xsb3cgdGhlIG1haW4gdGFibGV0b3AiPuKciyBQYW48L2J1dHRvbj48YnV0dG9uIHR5cGU9ImJ1dHRvbiIgZGF0YS1ydWxlciBhcmlhLXByZXNzZWQ9ImZhbHNlIiB0aXRsZT0iRHJhZyB0byBtZWFzdXJlIGRpc3RhbmNlIj7ijIEgUnVsZXI8L2J1dHRvbj48YnV0dG9uIHR5cGU9ImJ1dHRvbiIgZGF0YS10dXJucyBoaWRkZW4gdGl0bGU9IlNob3cgaW5pdGlhdGl2ZSB0dXJuIG9yZGVyIj5UdXJuIG9yZGVyPC9idXR0b24+PGxhYmVsIGRhdGEtY2VudGVyLWxhYmVsIGhpZGRlbj48aW5wdXQgdHlwZT0iY2hlY2tib3giIGRhdGEtbWVhc3VyZS1jZW50ZXI+IFNuYXAgdG8gc3F1YXJlIGNlbnRlcjwvbGFiZWw+PC9uYXY+PHNlY3Rpb24gY2xhc3M9InR2LWNvbWJhdCIgYXJpYS1sYWJlbD0iSW5pdGlhdGl2ZSB0dXJuIG9yZGVyIiBoaWRkZW4+PGhlYWRlcj48c3Ryb25nIGRhdGEtcm91bmQ+VHVybiBvcmRlcjwvc3Ryb25nPjxidXR0b24gdHlwZT0iYnV0dG9uIiBkYXRhLW1pbmltaXplIGFyaWEtbGFiZWw9Ik1pbmltaXplIHR1cm4gb3JkZXIiIHRpdGxlPSJNaW5pbWl6ZSI+4oiSPC9idXR0b24+PGJ1dHRvbiB0eXBlPSJidXR0b24iIGRhdGEtaGlkZS10dXJucyBhcmlhLWxhYmVsPSJDbG9zZSB0dXJuIG9yZGVyIiB0aXRsZT0iQ2xvc2UiPsOXPC9idXR0b24+PC9oZWFkZXI+PG9sPjwvb2w+PC9zZWN0aW9uPjxwIHJvbGU9InN0YXR1cyI+Q29ubmVjdGluZyB0byB0YWJsZXRvcOKApjwvcD48c2NyaXB0IHNyYz0iZ2VvbWV0cnkuanMiPjwvc2NyaXB0PjxzY3JpcHQgc3JjPSJwcmVzZW50ZXItd2luZG93LmpzIj48L3NjcmlwdD48L2JvZHk+PC9odG1sPgo=')
+
           def download(item):
               name, expected = item
               path = pathlib.Path(name)
               assert not path.is_absolute() and '..' not in path.parts
+              if name == 'vtt/presenter.html':
+                  assert hashlib.sha256(presenter).hexdigest() == expected
+                  path.parent.mkdir(parents=True, exist_ok=True)
+                  path.write_bytes(presenter)
+                  return
               url = 'https://lucas-character-forge.lucaazevedo.chatgpt.site/' + urllib.parse.quote(name)
               request = urllib.request.Request(url, headers={'User-Agent': 'CharacterForge release verification'})
               for attempt in range(4):
