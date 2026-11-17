@@ -1,0 +1,37 @@
+name: Prepare verified release
+on:
+  push:
+    branches: [release/v2.1.0-20261117]
+    paths: ['.release-transfer/manifest.json']
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify and assemble prepared source
+        shell: python
+        run: |
+          import json,hashlib,pathlib
+          root=pathlib.Path('.release-transfer')
+          manifest=json.loads((root/'manifest.json').read_text())
+          digest=hashlib.sha256()
+          with open('/tmp/forge-release.tar.gz','wb') as out:
+            for part in manifest['parts']:
+              data=(root/part['name']).read_bytes()
+              assert hashlib.sha256(data).hexdigest()==part['sha256'], part['name']
+              digest.update(data);out.write(data)
+          assert digest.hexdigest()=='0193250e9c7491a4970ffb2b620334121f501c7035b6ac2abe5afcaefc31f6f3'
+      - name: Create release commit from main
+        run: |
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "5c938aa18bb8a8b5d5654a77b99bd2416e19b1bc"
+          git switch --detach origin/main
+          git switch -c release/v2.1.0-ready
+          tar -xzf /tmp/forge-release.tar.gz
+          git config user.name "Character Forge release"
+          git config user.email "126037774+lucaazevedo2@users.noreply.github.com"
+          git add -A
+          git commit -m "Release 2.1.0: expanded compendium, party tools and TV tabletop"
+          git push origin HEAD:refs/heads/release/v2.1.0-ready
