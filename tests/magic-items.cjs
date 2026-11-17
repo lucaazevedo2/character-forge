@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const c=vm.createContext({itemData:()=>null,allItems:()=>[{name:'Dagger',cost:{quantity:2,unit:'gp'}},{name:'Potion of Healing',cost:{quantity:50,unit:'gp'}}],renderNav:()=>{},renderSheet:()=>{}});
-for(const f of ['magic-items-data.js','magic-items.js','item-shop.js'])vm.runInContext(fs.readFileSync(''+f,'utf8'),c);
+for(const f of ['magic-items-data.js','magic-items.js','item-shop.js'])vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c);
 const run=s=>vm.runInContext(s,c);
 assert(run('MAGIC_ITEMS.length')>900);
 for(const r of ['Common','Uncommon','Rare','Very Rare','Legendary','Artifact'])assert(run(`MAGIC_ITEMS.some(x=>x.rarity===${JSON.stringify(r)})`));

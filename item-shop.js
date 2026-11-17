@@ -15,23 +15,18 @@ function shopCategory(it){
 function shopIsHealingPotion(it){return it?.index==='magic-potion-of-healing-common'}
 function shopPurchasableItems(){return allItems().filter(it=>shopIsHealingPotion(it)||(!(typeof isMagicItem==='function'&&isMagicItem(it))&&shopPrice(it)!==null)).map(it=>shopIsHealingPotion(it)?{...it,cost:{quantity:50,unit:'gp'}}:it)}
 function shopPrice(it){if(shopIsHealingPotion(it))return 50;if(typeof isMagicItem==='function'&&isMagicItem(it))return null;const cost=it.cost,rate={cp:.01,sp:.1,ep:.5,gp:1,pp:10}[cost?.unit];return cost&&Number.isFinite(+cost.quantity)&&+cost.quantity>=0&&rate?Math.round(+cost.quantity*rate*100)/100:null}
-const SHOP_COIN_RATES={cp:1,sp:10,ep:50,gp:100,pp:1000};
+const SHOP_COIN_RATES=ForgeCoinMath.rates;
 function shopWallet(c){
  const coins={};for(const unit of Object.keys(SHOP_COIN_RATES))coins[unit]=Math.max(0,Math.trunc(Number(unit==='gp'?c.gold:c.coins?.[unit])||0));
  // Older saves stored fractional GP. Preserve every copper when displaying coin slots.
  const legacy=Math.max(0,Math.round((Number(c.gold)||0)*100)-coins.gp*100);coins.sp+=Math.floor(legacy/10);coins.cp+=legacy%10;return coins;
 }
-function shopWalletCopper(coins){return Object.entries(SHOP_COIN_RATES).reduce((total,[unit,rate])=>total+(coins[unit]||0)*rate,0)}
+function shopWalletCopper(coins){return ForgeCoinMath.total(coins)}
 function shopSetWallet(c,coins){c.gold=coins.gp;c.coins={cp:coins.cp,sp:coins.sp,ep:coins.ep,pp:coins.pp}}
-function shopSpendWallet(coins,copper){
- if(!Number.isSafeInteger(copper)||copper<0||shopWalletCopper(coins)<copper)return null;
- const next={...coins};let due=copper,change=0;
- for(const [unit,rate] of Object.entries(SHOP_COIN_RATES)){if(!due)break;const spent=Math.min(next[unit],Math.ceil(due/rate));next[unit]-=spent;const paid=spent*rate;if(paid>=due){change=paid-due;due=0}else due-=paid}
- for(const [unit,rate] of [['gp',100],['sp',10],['cp',1]]){next[unit]+=Math.floor(change/rate);change%=rate}return next;
-}
+function shopSpendWallet(coins,copper){try{return ForgeCoinMath.spendCopper(coins,copper)}catch{return null}}
 function shopCoinText(coins){return ['pp','gp','ep','sp','cp'].filter(unit=>coins[unit]).map(unit=>coins[unit]+' '+unit).join(' · ')||'0 coins'}
-function shopWalletFields(c){const coins=shopWallet(c);return `<fieldset class="coin-wallet"><legend>Currency</legend><div class="coin-wallet-fields">${Object.keys(SHOP_COIN_RATES).map(unit=>`<label>${unit.toUpperCase()}<input type="number" min="0" step="1" data-wallet-coin="${unit}" aria-label="${({cp:'Copper',sp:'Silver',ep:'Electrum',gp:'Gold',pp:'Platinum'})[unit]} pieces" value="${coins[unit]}"></label>`).join('')}</div><p class="hint" data-wallet-total>Total value: ${shopWalletCopper(coins)/100} gp</p><p class="hint">1 gp = 100 cp = 10 sp = 2 ep · 1 pp = 10 gp</p></fieldset>`}
-function shopWireWallet(host,c){host.querySelectorAll('[data-wallet-coin]').forEach(input=>input.onchange=()=>{const coins=shopWallet(c),value=Number(input.value);if(!Number.isSafeInteger(value)||value<0){input.value=coins[input.dataset.walletCoin];return}coins[input.dataset.walletCoin]=value;shopSetWallet(c,coins);host.querySelector('[data-wallet-total]').textContent='Total value: '+shopWalletCopper(coins)/100+' gp';scheduleSave()})}
+function shopWalletFields(c){const coins=shopWallet(c);return `<fieldset class="coin-wallet"><legend>Currency</legend><div class="coin-wallet-fields">${Object.keys(SHOP_COIN_RATES).map(unit=>`<label>${unit.toUpperCase()}<input type="number" min="0" step="1" data-wallet-coin="${unit}" aria-label="${({cp:'Copper',sp:'Silver',ep:'Electrum',gp:'Gold',pp:'Platinum'})[unit]} pieces" value="${coins[unit]}"></label>`).join('')}</div><p class="hint" data-wallet-total>Total value: ${shopWalletCopper(coins)/100} gp</p>${fundsAdjustHTML()}<p class="hint">1 gp = 100 cp = 10 sp = 2 ep · 1 pp = 10 gp</p></fieldset>`}
+function shopWireWallet(host,c){wireFundsAdjust(host,c);host.querySelectorAll('[data-wallet-coin]').forEach(input=>input.onchange=()=>{const coins=shopWallet(c),value=Number(input.value);if(!Number.isSafeInteger(value)||value<0){input.value=coins[input.dataset.walletCoin];return}coins[input.dataset.walletCoin]=value;shopSetWallet(c,coins);host.querySelector('[data-wallet-total]').textContent='Total value: '+shopWalletCopper(coins)/100+' gp';scheduleSave()})}
 function shopTransfer(c,it,quantity,buy){
  if(typeof isMagicItem==='function'&&isMagicItem(it)&&!shopIsHealingPotion(it))return {error:'Magic items must be added individually with confirmation.'};
  if(!Number.isInteger(quantity)||quantity<1||quantity>999)return {error:'Choose a quantity from 1 to 999.'};

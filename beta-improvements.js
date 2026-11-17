@@ -52,6 +52,7 @@ const betaNav=renderNav;renderNav=function(){betaNav();if(view==='sheet'&&draft?
 
 (()=>{
  const nav=document.querySelector('.site-navigation');if(nav&&!nav.querySelector('[data-site-view="feats"]')){const button=document.createElement('button');button.type='button';button.dataset.siteView='feats';button.textContent='Feats';button.onclick=()=>navigateSite('feats');nav.append(button)}
+ if(window.FORGE_VIEW_ONLY)return;
  const routes={home:'/',explorer:'/spells',items:'/items',feats:'/feats',custom:'/custom',dmtools:'/dmtools',legal:'/licensing',graveyard:'/graveyard',tabletop:'/tabletop'};
  let applying=false,pending=location.pathname,started=false;
  const path=()=>view==='tabletop'?(window.ForgeTabletop?.path()||'/tabletop'):view==='sheet'&&draft?'/character:'+encodeURIComponent(draft.id):view==='wizard'?'/create/'+(step+1):routes[view]||'/';

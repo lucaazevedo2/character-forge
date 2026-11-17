@@ -1,5 +1,16 @@
 # Character Forge — Changelog
 
+## 2.1.0 — Expanded compendium, party tools and TV tabletop (November 17, 2026)
+
+- Expanded the monster compendium with supplied stat blocks, named variants and token artwork.
+- Added party funds, quick currency adjustments, DM sheet viewing, XP awards and campaign covers.
+- Added TV presentation controls, free camera, grid tools and player-safe presentation updates.
+- Improved ruler arrows and persistent measurements, right-click waypoints while dragging, and alternating diagonal distances.
+- Added 414 starter artwork assets and token-library browsing, including rectangular map objects.
+- Updated mobile navigation, party portraits and tabletop layouts, plus racial spell handling.
+
+Validation: ruler and TV-presenter pointer-chord regressions, starter assets, presentation privacy, diagonals and monster catalog checks passed. Database tests could not run in this environment because @electric-sql/pglite is unavailable; live browser and production database checks were not repeated.
+
 ## 2.0.5 — Mobile tabletop and consistent speed settings (November 13, 2026)
 
 - Released the phone tabletop layout: compact header, floating tool dock, complete Tools sheet, layer picker, overlay warnings and chat, with right-side sheets and a vertical dock on landscape phones.

@@ -1261,6 +1261,7 @@
     }
   });
   window.ForgeVTTPlay = {
+    presenterCombat(){const c=data?.combat;return c?{round:c.round,activeTokenId:c.activeTokenId,entries:c.entries.map(e=>({tokenId:e.tokenId,name:e.name,initiative:e.initiative}))}:null;},
     roll:(tokenId,formula,body,mode)=>send({kind:'roll',scope:'public',tokenId,formula,body,advantage:mode||advantage}),
     share:card=>send({kind:'card',scope:'public',body:card.title,card}),
     macro:saveMacro,

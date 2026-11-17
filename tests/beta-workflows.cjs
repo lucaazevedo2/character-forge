@@ -1,12 +1,12 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),{parseHTML}=require('linkedom');
-const html=fs.readFileSync('index.html','utf8'),{window,document}=parseHTML(html);
+const html=fs.readFileSync('dist/index.html','utf8'),{window,document}=parseHTML(html);
 Object.defineProperty(window.HTMLSelectElement.prototype,'value',{get(){return this.querySelector('option[selected]')?.getAttribute('value')??this.querySelector('option')?.getAttribute('value')??''},set(v){this.querySelectorAll('option').forEach(o=>o.toggleAttribute('selected',o.getAttribute('value')===String(v)))},configurable:true});
 let focusedElement=null;Object.defineProperty(document,'activeElement',{get:()=>focusedElement||document.body,configurable:true});window.HTMLElement.prototype.focus=function(){focusedElement=this};window.HTMLElement.prototype.blur=function(){if(focusedElement===this)focusedElement=null};
 window.scrollTo=()=>{};window.HTMLElement.prototype.showModal=function(){this.open=true;this.setAttribute('open','')};window.HTMLElement.prototype.close=function(){this.open=false;this.removeAttribute('open')};
 const data=new Map(),location={pathname:'/',hash:''},history={pushState:(s,t,p)=>location.pathname=p,replaceState:(s,t,p)=>location.pathname=p};
 let timer;const ctx=vm.createContext({console,document,window,location,history,crypto:require('crypto').webcrypto,URL,Blob,setTimeout:fn=>{timer=fn;return 1},clearTimeout(){},setInterval(){},requestAnimationFrame:fn=>fn(),localStorage:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)},matchMedia:()=>({matches:false,addEventListener(){}}),navigator:{onLine:true}});
 vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1],ctx);
-vm.runInContext(fs.readFileSync('beta-improvements.js','utf8'),ctx);
+vm.runInContext(fs.readFileSync('dist/beta-improvements.js','utf8'),ctx);
 const run=s=>vm.runInContext(s,ctx);
 run(`chars=[{...newDraft(),id:'test-wizard',name:'Beta Test',klass:'wizard',subId:'srd',race:'human',background:'acolyte',level:1,base:{str:10,dex:12,con:14,int:16,wis:10,cha:10},spells:[],prepared:[],inventory:[],equipped:[]}];draft=chars[0];view='wizard'`);
 assert(run("spellSelectionProgress(draft).includes('6 remaining')"));assert(run("spellSelectionProgress(draft).includes('3 remaining')"));

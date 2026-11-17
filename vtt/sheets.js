@@ -651,7 +651,7 @@
       );
     if (r.rarity) lines.push("Rarity: " + (r.rarity.name || r.rarity));
     if (r.type && r.hit_points)
-      lines.push(r.type + " · HP " + r.hit_points + " · " + r.hit_dice);
+      lines.push(r.type + " · HP " + r.hit_points + (r.hit_dice ? " · " + r.hit_dice : ""));
     return lines.filter(Boolean).join("\n") || r.name;
   }
   function catalogs() {
@@ -679,7 +679,7 @@
           ],
         },
       ],
-      monsters: typeof WILD_SHAPE_FORMS === "undefined" ? [] : WILD_SHAPE_FORMS,
+      monsters: window.ForgeMonsters?.rows.length ? window.ForgeMonsters.rows : typeof WILD_SHAPE_FORMS === "undefined" ? [] : WILD_SHAPE_FORMS,
     };
   }
   function compendium() {
@@ -688,13 +688,9 @@
       term = "",
       rollHp = false;
     const paint = () => {
-      const rows = catalogs()
-          [type].filter((x) =>
-            x.name.toLowerCase().includes(term.toLowerCase()),
-          )
-          .slice(0, 80),
-        el = d.querySelector("main");
-      el.innerHTML = `<nav>${["items", "spells", "conditions", "rules", ...(q().dm ? ["monsters"] : [])].map((x) => `<button data-type="${x}" aria-pressed="${x === type}">${x}</button>`).join("")}</nav><label>Search imported catalog<input data-search value="${E(term)}" placeholder="Search ${type}"></label>${type === "monsters" ? '<label><input type="checkbox" data-roll-hp ' + (rollHp ? "checked" : "") + "> Roll monster hit dice for HP</label>" : ""}<div class="vtt-compendium-results">${rows.map((r, i) => `<article ${type === "monsters" ? 'draggable="true"' : ""} data-row="${i}"><h3>${E(r.name)}</h3><small>${E(r.index || r.id || "")} ${type === "monsters" ? "· CR " + r.challenge_rating : ""}</small><p>${E(catalogText(r).slice(0, 900))}</p><button data-share="${i}">Share card</button>${type === "monsters" ? `<button data-monster="${i}">Stat block</button><button data-add-monster="${i}">Add to map</button>` : ""}</article>`).join("")}</div><p>Showing up to 80 matches. Items use the existing imported catalog. Monsters use the existing SRD 5.1 creature library (CC BY 4.0).</p>`;
+      const catalog=catalogs()[type];
+      const rows=(type==='monsters'&&window.ForgeMonsters?.search?window.ForgeMonsters.search(catalog,term):catalog.filter(x=>x.name.toLowerCase().includes(term.toLowerCase()))).slice(0,80),el=d.querySelector('main');
+      el.innerHTML = `<nav>${["items", "spells", "conditions", "rules", ...(q().dm ? ["monsters"] : [])].map((x) => `<button data-type="${x}" aria-pressed="${x === type}">${x}</button>`).join("")}</nav><label>Search imported catalog<input data-search value="${E(term)}" placeholder="Search ${type}"></label>${type === "monsters" ? '<label><input type="checkbox" data-roll-hp ' + (rollHp ? "checked" : "") + "> Roll monster hit dice for HP</label>" : ""}<div class="vtt-compendium-results">${rows.map((r, i) => `<article ${type === "monsters" ? 'draggable="true"' : ""} data-row="${i}">${type === "monsters" ? `<div class="vtt-monster-result-heading">${window.ForgeMonsters?.portrait?.(r)||''}<div><h3>${E(r.name)}</h3><small>${E(r.size)} ${E(r.type)} · CR ${E(r.challenge_text??r.challenge_rating??'Unknown')} · ${E(r.xp??'—')} XP · HP ${E(r.hit_points??(r.hit_points_text?'variable':'—'))}</small><p>${E(r.source_name||'SRD 5.1')} · ${E(r.source||'SRD51')}</p></div></div>` : `<h3>${E(r.name)}</h3><small>${E(r.index || r.id || "")}</small><p>${E(catalogText(r).slice(0, 900))}</p>`}<button data-share="${i}">Share card</button>${type === "monsters" ? `<button data-monster="${i}">Stat block</button><button data-add-monster="${i}">Add to map</button>` : ""}</article>`).join("")}</div><p>Showing up to 80 matches. Items use the existing imported catalog. Monster printings and available tokens are identified by source.</p>`;
       el.querySelector("[data-roll-hp]")?.addEventListener(
         "change",
         (e) => (rollHp = e.target.checked),
@@ -759,9 +755,9 @@
     paint();
   }
   function monsterBlock(m, t) {
+    if(!t && window.ForgeMonsters)return window.ForgeMonsters.view(m);
     const d = dialog(m.name + " · SRD stat block");
-    d.querySelector("main").innerHTML =
-      `<p>${E(m.size)} ${E(m.type)} · AC ${m.armor_class?.[0]?.value || 10} · HP ${m.hit_points} (${E(m.hit_dice)})</p><p>${ab.map((a, i) => a.toUpperCase() + " " + m[["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"][i]]).join(" · ")}</p>${(m.special_abilities || []).map((a) => `<article><b>${E(a.name)}</b><p>${E(a.desc)}</p></article>`).join("")}${(m.actions || []).map((a, i) => `<article><h3>${E(a.name)}</h3><p>${E(a.desc)}</p>${t && a.attack_bonus !== undefined ? `<button data-monster-roll="${i}">Attack</button><button data-monster-macro="${i}">Save token macro</button>` : ""}</article>`).join("")}<small>SRD 5.1 · CC BY 4.0 · dnd5eapi.co</small>`;
+    d.querySelector("main").innerHTML = window.ForgeMonsters ? window.ForgeMonsters.block(m) + (m.actions||[]).map((a,i)=>`<article><b>${E(a.name)}</b>${t && a.attack_bonus !== undefined ? `<button data-monster-roll="${i}">Attack</button><button data-monster-macro="${i}">Save token macro</button>` : ''}</article>`).join('') : '';
     const formula = (a) =>
       "Hit:1d20" +
       sign(a.attack_bonus) +
@@ -796,9 +792,15 @@
         }),
     );
   }
-  function addMonster(m, point, rollHp = false) {
+  async function addMonster(m, point, rollHp = false) {
     if (!q().dm) return;
-    const s = q().scene;
+    const s = q().scene, gameId=q().game.id;
+    try {
+      if(window.ForgeMonsters?.prepare){m=window.ForgeMonsters.prepare(m);if(!m)return;}
+      let image='';
+      const file=await window.ForgeMonsters?.tokenFile?.(m);
+      if(file)image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('Token image could not load. Please retry.'));reader.readAsDataURL(file);});
+      if(!q().dm||q().game.id!==gameId||q().scene.id!==s.id)throw Error('The active scene changed. Try adding the monster again.');
     let t;
     api().change(() => {
       const dice =
@@ -824,7 +826,7 @@
         color: "#dfb886",
         hp,
         maxHp: hp,
-        image: "",
+        image,
         details: {
           ac: m.armor_class?.[0]?.value || 10,
           initiative: Math.floor((m.dexterity - 10) / 2),
@@ -874,6 +876,7 @@
         })
         .catch((e) => api().notify(e.message));
     return t;
+    }catch(e){api().notify(e.message);return null;}
   }
   function mount(root) {
     const bar = root.querySelector(".vtt-stage-tools");

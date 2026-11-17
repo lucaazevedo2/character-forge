@@ -1,4 +1,4 @@
-const A=require('node:assert/strict'),C=require('../vtt/play-core');
+const A=require('node:assert/strict'),C=require('../dist/vtt/play-core');
 const image='data:image/png;base64,aGVsbG8=',account='https://example.invalid/account.png';
 const tokens=[{id:'grog',image},{id:'artus',image:'https://example.invalid/artus.png'},{id:'blank',image:''}];
 A.equal(C.portraitSource({token_id:'grog',avatar:account},tokens),image);

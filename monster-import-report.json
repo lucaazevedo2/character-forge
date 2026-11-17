@@ -1,0 +1,43 @@
+{
+  "uploadedMonsters": 4683,
+  "expandedVariants": 368,
+  "existingIdsPreserved": 334,
+  "existingPrintsMatched": 315,
+  "legacyOnly": 19,
+  "totalCatalog": 5070,
+  "tokenMappings": 4550,
+  "inheritedRecordsResolved": 1145,
+  "incomplete": [
+    {
+      "name": "Elzerina Cassalanter",
+      "source": "WDH"
+    },
+    {
+      "name": "Jenks",
+      "source": "WDH"
+    },
+    {
+      "name": "Nat",
+      "source": "WDH"
+    },
+    {
+      "name": "Squiddly",
+      "source": "WDH"
+    },
+    {
+      "name": "Terenzio Cassalanter",
+      "source": "WDH"
+    }
+  ],
+  "variableHP": 125,
+  "missingLegendaryGroups": [
+    {
+      "name": "Umbraxakar",
+      "source": "WDMM",
+      "group": {
+        "name": "Shadow Dragon (Bronze Dragon)",
+        "source": "MM"
+      }
+    }
+  ]
+}

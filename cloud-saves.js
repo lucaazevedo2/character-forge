@@ -110,7 +110,7 @@ function currentList(){return Object.values(records).filter(r=>!r.deleted).map(r
 async function refresh(){
  if(!user||busy||blocked||editingCreation)return;busy=true;const generation=epoch;
  try{
-  const {data:rows,error}=await client.from('characters').select('id,local_id,name,data,revision,updated_at,deleted_at').order('updated_at',{ascending:false});if(error)throw error;
+  const {data:rows,error}=await client.from('characters').select('id,local_id,name,data,revision,updated_at,deleted_at').eq('owner_id',user.id).order('updated_at',{ascending:false});if(error)throw error;
   const remoteIds=new Set();
   for(const row of rows){
    if(generation!==epoch)return;remoteIds.add(row.local_id);const local=records[row.local_id];
@@ -288,7 +288,33 @@ const originalHome=renderHome;renderHome=function(){originalHome();paint()};
 window.addEventListener('online',()=>queue(100));
 window.addEventListener('focus',()=>{if(user){if(pending())queue(100);else if(Date.now()-lastRefresh>15000)refresh()}});
 window.addEventListener('beforeunload',e=>{if(user&&pending()){e.preventDefault();e.returnValue=''}});
-window.ForgeCloud={storageKey:key,initialize,mount,capture,sync,refresh,exportAll,
+/* Atomic party transfers settle on the server; adopt the returned revision before any later save. */
+async function partyFundAction(localId,partyId,action,args,ticket){
+ if(!user||blocked)throw Error('Sign in and reconnect to use the party fund.');
+ if(busy)throw Error('A cloud operation is finishing. Please retry.');
+ const uid=user.id,generation=epoch;
+ if(localId){capture(chars);await sync();}
+ if(generation!==epoch||user?.id!==uid)throw Error('Your account changed. Reopen the fund.');
+ const r=localId?records[localId]:null;
+ if(localId&&(!r||r.dirty||r.conflict||r.deleted))throw Error('Sync this character and resolve any save conflict first.');
+ if(!ticket.request)ticket.request={p_id:partyId,p_nonce:ticket.nonce,p_action:action,p_character:r?.id||null,p_revision:r?.revision??null,p_args:copy(args)};
+ const before=r?.revision;busy=true;clearTimeout(timer);
+ try{
+ const {data,error}=await client.rpc('forge_party_fund_action',ticket.request);if(error)throw Error(error.message);
+ if(data?.conflict)throw Error('The character changed on another device. Refresh the sheet before retrying.');
+ ticket.committed=true;
+ if(generation!==epoch||user?.id!==uid)throw Error('Transfer completed. Sign in again to refresh your character.');
+ if(data.character){const row=data.character,latest=records[localId];
+ if(!latest||latest.dirty||latest.revision!==before||row.id!==latest.id)throw Error('Transfer completed. Sync and resolve the character conflict before making another transfer.');
+ const incoming=copy(row.data);if(latest.data.character.avatar)incoming.character.avatar=latest.data.character.avatar;
+ incoming.character.id=localId;
+ records[localId]={...latest,data:incoming,revision:Number(row.revision),dirty:false};
+ setWorkspace(currentList());capture(chars);persist();
+ }
+ return data;
+ }finally{busy=false;paint();if(pending())queue();}
+}
+window.ForgeCloud={partyFundAction,storageKey:key,initialize,mount,capture,sync,refresh,exportAll,
  partyConnection:()=>({client,user}),startGuestSession,startGuestDM,
 
  characterRef:id=>records[id]?{id:records[id].id,revision:records[id].revision,pending:!!records[id].dirty}:null,

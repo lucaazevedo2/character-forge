@@ -1,10 +1,10 @@
 const vm=require('vm'),fs=require('fs'),assert=require('assert');
-let js=fs.readFileSync(require('path').join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].split('(async function(){\n  const saved=')[0];
+let js=fs.readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].split('(async function(){\n  const saved=')[0];
 const stub=new Proxy(function(){},{get:(t,k)=>k==='style'?{}:k==='querySelectorAll'?()=>[]:k==='querySelector'?()=>stub:k==='classList'?{add(){},remove(){},toggle(){}}:stub,apply:()=>stub,set:()=>true});
 const ctx=vm.createContext({console,document:stub,window:stub,localStorage:{getItem:()=>null},location:{hash:''},setTimeout:()=>0,clearTimeout(){},crypto:require('crypto').webcrypto});
 vm.runInContext(js,ctx);
 const before=vm.runInContext('JSON.stringify({feats:FEATS,features:FEATURES,subFeatures:SUBCLASS_FEATURE_INDEX})',ctx);
-for(const file of ['provided-feature-rules-data.js','provided-feature-rules.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'..',file),'utf8'),ctx);
+for(const file of ['provided-feature-rules-data.js','provided-feature-rules.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../dist',file),'utf8'),ctx);
 assert.strictEqual(vm.runInContext('JSON.stringify({feats:FEATS,features:FEATURES,subFeatures:SUBCLASS_FEATURE_INDEX})',ctx),before,'summaries and mechanics changed');
 vm.runInContext(`
 if(Object.keys(PROVIDED_FEATURE_RULES.feats).length!==87)throw Error('missing feat text');

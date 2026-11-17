@@ -115,7 +115,7 @@ function equipmentDetail(item){
  ${item.magicEffects?.length?`<fieldset><legend>Situational effects</legend>${item.magicEffects.map(e=>equipmentToggle(e.label,'conditions.'+e.id,item.conditions?.[e.id])).join('')}<p class="hint">Turn on only while the stated condition applies.</p></fieldset>`:''}
  ${item.permanentAbility?`<p class="hint">One-time use: increase ${esc(item.permanentAbility.toUpperCase())} and its maximum by 2 using the ability editor after completing the required reading. This is not an equipped bonus.</p>`:''}
  <fieldset><legend>Modifiers</legend><div class="eq-modifiers">${item.modifiers.map((m,n)=>`<div class="eq-modifier"><select aria-label="Modifier target" data-eq-mod="${n}" data-part="target">${equipmentOptions(EQ_TARGETS,m.target)}</select><select aria-label="Modifier operation" data-eq-mod="${n}" data-part="operation">${equipmentOptions([['add','Add bonus'],['minimum','Set minimum'],['exact','Set exact'],['multiply','Multiply']],m.operation)}</select><input type="number" step="any" aria-label="Modifier value" data-eq-mod="${n}" data-part="value" value="${eqNumber(m.value)}"><button class="btn ghost" data-eq-remove-mod="${n}" aria-label="Remove modifier">×</button></div>`).join('')}</div><button class="btn ghost" data-eq-add-mod>Add modifier</button><div class="eq-quick"><input aria-label="Quick modifier" placeholder="AC: +1 or STR: min 19" data-eq-quick><button class="btn ghost" data-eq-parse>Add</button></div><p class="hint" data-eq-error role="status"></p></fieldset>
- <label>Notes<textarea data-eq-field="notes" rows="3">${esc(item.notes)}</textarea></label><div class="toolbar"><button class="btn ghost" data-eq-delete>Delete item</button></div></div>`;
+ <label>Notes<textarea data-eq-field="notes" rows="3">${esc(item.notes)}</textarea></label><div class="toolbar"><button type="button" class="btn ghost" data-eq-fund>Send to party fund</button><button class="btn ghost" data-eq-delete>Delete item</button></div></div>`;
 }
 function equipmentSetPath(object,path,value){const keys=path.split('.');let o=object;for(const k of keys.slice(0,-1))o=o[k];o[keys.at(-1)]=value}
 function equipmentCommit(c,focus){equipmentProject(c);scheduleSave();renderSheet();if(focus){const el=byId('scr-sheet').querySelector(focus);el?.focus({preventScroll:true})}}
@@ -152,6 +152,7 @@ function equipmentBindRow(c,row,item){
    if(path==='resource.max'||path==='resource.current')item.resource.current=Math.min(item.resource.max,item.resource.current);
    equipmentCommit(c,`[data-eq-id="${item.id}"] [data-eq-field="${path}"]`);
   });
+  row.querySelector('[data-eq-fund]')?.addEventListener('click',()=>window.ForgePartyFund.sendItem(c,item.id));
   if(!row.querySelector('[data-eq-delete]'))return;
   row.querySelector('[data-eq-field=notes]').oninput=e=>{item.notes=e.target.value;scheduleSave()};
   row.querySelector('[data-eq-delete]').onclick=async()=>{if(!await window.forgeConfirm('Delete '+item.name+' and its linked attack/resource?','Delete item'))return;c.equipmentItems=c.equipmentItems.filter(i=>i.id!==item.id);equipmentCommit(c)};
@@ -171,16 +172,16 @@ function equipmentWireDrag(host,c){
    if(e.button!==0||drag)return;e.preventDefault();const rect=row.getBoundingClientRect(),detail=row.querySelector('.eq-detail');detail.hidden=true;
    const r=row.getBoundingClientRect(),gap=document.createElement('div');gap.className='eq-drop-gap';gap.style.height=r.height+'px';row.before(gap);
    drag={row,id,gap,x:e.clientX-r.left,y:Math.min(e.clientY-r.top,r.height-5),pointer:e.pointerId,original:c.equipmentItems.findIndex(i=>i.id===id),clientY:e.clientY};
-   row.classList.add('eq-grabbed');Object.assign(row.style,{width:r.width+'px',left:r.left+'px',top:r.top+'px'});document.body.append(row);handle.setPointerCapture(e.pointerId);handle.setAttribute('aria-grabbed','true');document.body.classList.add('eq-sorting');
-   const scroll=()=>{if(!drag)return;const y=drag.clientY,delta=y<85?-12:y>window.innerHeight-85?12:0;if(delta){window.scrollBy(0,delta);place(drag.clientY)}scrollFrame=requestAnimationFrame(scroll)};scrollFrame=requestAnimationFrame(scroll);
+   row.classList.add('eq-grabbed');Object.assign(row.style,{width:r.width+'px',left:r.left+'px',top:r.top+'px'});document.body.append(row);handle.setPointerCapture(e.pointerId);handle.setAttribute('aria-grabbed','true');document.body.classList.add('eq-sorting');window.ForgePartyFund?.dragStart();
+   const scroll=()=>{if(!drag)return;const y=drag.clientY,delta=y<85?-12:y>window.innerHeight-85?12:0;if(delta&&!drag.fundOver){window.scrollBy(0,delta);place(drag.clientY)}scrollFrame=requestAnimationFrame(scroll)};scrollFrame=requestAnimationFrame(scroll);
   };
   function place(y){
    if(!drag)return;const siblings=[...list.querySelectorAll('.eq-item')],before=new Map(siblings.map(el=>[el,el.getBoundingClientRect().top]));const next=siblings.find(el=>y<el.getBoundingClientRect().top+el.getBoundingClientRect().height/2);
    if(next)list.insertBefore(drag.gap,next);else list.append(drag.gap);
    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)for(const el of siblings){const dy=before.get(el)-el.getBoundingClientRect().top;if(dy)el.animate([{transform:`translateY(${dy}px)`},{transform:'translateY(0)'}],{duration:180,easing:'cubic-bezier(.2,.8,.2,1)'})}
   }
-  handle.onpointermove=e=>{if(!drag||drag.id!==id)return;drag.clientY=e.clientY;drag.row.style.left=e.clientX-drag.x+'px';drag.row.style.top=e.clientY-drag.y+'px';place(e.clientY)};
-  const end=cancel=>{if(!drag||drag.id!==id)return;cancelAnimationFrame(scrollFrame);const d=drag;drag=null;const index=[...list.children].indexOf(d.gap);d.gap.replaceWith(d.row);d.row.classList.remove('eq-grabbed');d.row.removeAttribute('style');document.body.classList.remove('eq-sorting');handle.removeAttribute('aria-grabbed');if(cancel){renderSheet();return;}reorder(d.id,index)};
+  handle.onpointermove=e=>{if(!drag||drag.id!==id)return;drag.clientY=e.clientY;drag.row.style.left=e.clientX-drag.x+'px';drag.row.style.top=e.clientY-drag.y+'px';drag.fundOver=window.ForgePartyFund?.dragMove(e.clientX,e.clientY,drag.row)||false;if(!drag.fundOver)place(e.clientY)};
+  const end=cancel=>{if(!drag||drag.id!==id)return;cancelAnimationFrame(scrollFrame);const d=drag,fundDrop=window.ForgePartyFund?.dragEnd()&&!cancel;drag=null;const index=[...list.children].indexOf(d.gap);d.gap.replaceWith(d.row);d.row.classList.remove('eq-grabbed');d.row.removeAttribute('style');document.body.classList.remove('eq-sorting');handle.removeAttribute('aria-grabbed');if(cancel||fundDrop){renderSheet();if(fundDrop)window.ForgePartyFund.sendItem(c,d.id);return;}reorder(d.id,index)};
   handle.onpointerup=()=>end(false);handle.onpointercancel=()=>end(true);handle.onlostpointercapture=()=>{if(drag)end(true)};
   handle.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag){e.preventDefault();end(true)}});
  }

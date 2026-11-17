@@ -1,9 +1,9 @@
 const vm=require('vm'),fs=require('fs'),assert=require('assert');
-let js=fs.readFileSync(require('path').join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].split('(async function(){\n  const saved=')[0];
+let js=fs.readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].split('(async function(){\n  const saved=')[0];
 const stub=new Proxy(function(){},{get:(t,k)=>k==='style'?{}:k==='querySelectorAll'?()=>[]:k==='querySelector'?()=>stub:k==='classList'?{add(){},remove(){},toggle(){}}:stub,apply:()=>stub,set:()=>true});
 const ctx=vm.createContext({console,document:stub,window:stub,localStorage:{getItem:()=>null},location:{hash:''},setTimeout:()=>0,clearTimeout(){},crypto:require('crypto').webcrypto});
 vm.runInContext(js,ctx);
-for(const file of ['class-choices.js','wild-shape-data.js','wild-shape.js','equipment-model.js','equipment-editor.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'..',file),'utf8'),ctx);
+for(const file of ['class-choices.js','wild-shape-data.js','wild-shape.js','equipment-model.js','equipment-editor.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../dist',file),'utf8'),ctx);
 
 const {parseHTML}=require('linkedom');const {document:doc}=parseHTML('<html><body><section id="scr-sheet"><div data-sheet-panel="equipment"></div></section></body></html>');ctx.document=doc;ctx.testRoot=doc.getElementById('scr-sheet');
 vm.runInContext(`

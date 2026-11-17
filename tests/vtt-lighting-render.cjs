@@ -1,11 +1,11 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),{createCanvas}=require('@napi-rs/canvas');
-const G=require('../vtt/vision-geometry.js');
+const G=require('../dist/vtt/vision-geometry.js');
 const scene={id:'room',width:960,height:800,grid:64,settings:{lighting:'dark'},tokens:[{id:'hero',x:168,y:168,size:1,ownerIds:['player'],details:{vision:{enabled:true,range:60,darkvision:60}}}],environment:{config:{mode:'dynamic',covered:true,memory:true,dmOpacity:.6},fogOps:[],walls:[{id:'wall',type:'wall',points:[{x:300,y:0},{x:300,y:600}]}],lights:[]}};
 const q={scene,game:{id:'game'},dm:true,selection:new Set(),zoom:1};
 let reducedMotion=true,invalidations=0,timerCalls=[];
 const win={ForgeVTTVisionGeometry:G,ForgeTabletop:{state:()=>q,redraw(){}},ForgeVTTStage:{invalidate(){invalidations++}},devicePixelRatio:1,matchMedia:()=>({matches:reducedMotion}),ForgeCloud:{partyConnection:()=>({user:{id:'player'}})}};
 const box=vm.createContext({window:win,document:{createElement:()=>createCanvas(1,1)},OffscreenCanvas:function(w,h){return createCanvas(w,h)},performance,console,setTimeout:(fn,delay)=>{timerCalls.push({fn,delay});return timerCalls.length},clearTimeout:()=>{}});
-vm.runInContext(fs.readFileSync('vtt/vision.js','utf8'),box);const V=win.ForgeVTTVision;V.togglePreview();
+vm.runInContext(fs.readFileSync('dist/vtt/vision.js','utf8'),box);const V=win.ForgeVTTVision;V.togglePreview();
 const canvas=createCanvas(960,800),ctx=canvas.getContext('2d'),b={x:0,y:0,w:960,h:800};
 function render(extra){ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#56789a';ctx.fillRect(0,0,960,800);V.captureMap(ctx);extra?.(ctx);V.paint(ctx,q,b)}
 const pixel=(x,y)=>Array.from(ctx.getImageData(x,y,1,1).data).slice(0,3),unknown=[7,9,16];

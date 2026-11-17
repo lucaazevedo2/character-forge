@@ -1,12 +1,12 @@
 const vm=require('vm'),fs=require('fs'),assert=require('assert');
-let js=fs.readFileSync(require('path').join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].split('(async function(){\n  const saved=')[0];
+let js=fs.readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].split('(async function(){\n  const saved=')[0];
 const stub=new Proxy(function(){},{get:(t,k)=>k==='style'?{}:k==='querySelectorAll'?()=>[]:k==='querySelector'?()=>stub:k==='classList'?{add(){},remove(){},toggle(){}}:stub,apply:()=>stub,set:()=>true});
 const ctx=vm.createContext({console,document:stub,window:stub,localStorage:{getItem:()=>null},location:{hash:''},setTimeout:()=>0,clearTimeout(){},crypto:require('crypto').webcrypto});
 vm.runInContext(js,ctx);
-for(const file of ['class-choices.js','wild-shape-data.js','wild-shape.js','equipment-model.js','equipment-editor.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'..',file),'utf8'),ctx);
+for(const file of ['class-choices.js','wild-shape-data.js','wild-shape.js','equipment-model.js','equipment-editor.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../dist',file),'utf8'),ctx);
 
 const {parseHTML}=require('linkedom');const {document:doc,window:win}=parseHTML('<html><body></body></html>');ctx.document=doc;ctx.window=win;
-vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../sheet-recovery.js'),'utf8'),ctx);
+vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../dist/sheet-recovery.js'),'utf8'),ctx);
 vm.runInContext(`
 const c={...newDraft(),id:'recovery',klass:'fighter',race:'human',background:'soldier',subId:'srd',level:3,inventory:['Rope'],equipped:[],base:{str:14,dex:12,con:14,int:10,wis:10,cha:10},notes:'Original note',xp:900,feats:[],hp:20};
 c.acBonus=4;c.manual={acMode:'manual',acValue:29,initiative:2};resetAutomaticAC(c);if(c.acBonus!==0||c.manual.acMode!=='auto'||'acValue' in c.manual||c.manual.initiative!==2)throw Error('AC reset scope');

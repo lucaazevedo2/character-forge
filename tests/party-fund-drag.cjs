@@ -1,0 +1,10 @@
+const A=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),{parseHTML}=require('linkedom');
+const {window,document}=parseHTML('<html><body><section><div class="eq-list">'+['a','b'].map(id=>`<article class="eq-item" data-eq-id="${id}"><button class="eq-handle">Drag</button><div class="eq-detail"></div></article>`).join('')+'</div></section></body></html>');
+const host=document.querySelector('section'),c={equipmentItems:[{id:'a'},{id:'b'}]};let sent=0,start=0,ended=0,reorders=0,over=false;
+window.ForgePartyFund={dragStart(){start++},dragMove(x,y,row){row.style.top='600px';return over=y>700},dragEnd(){ended++;return over},sendItem(character,id){A.equal(character,c);A.equal(id,'a');sent++}};window.matchMedia=()=>({matches:false});window.scrollBy=()=>{};window.innerHeight=800;
+for(const r of host.querySelectorAll('.eq-item')){r.getBoundingClientRect=()=>({left:0,top:0,width:300,height:44});r.animate=()=>{};r.querySelector('button').setPointerCapture=()=>{};}
+const ctx={window,document,host,c,requestAnimationFrame:()=>1,cancelAnimationFrame(){},equipmentCommit(){reorders++},renderSheet(){}};vm.createContext(ctx);const code=fs.readFileSync('dist/equipment-editor.js','utf8');vm.runInContext(code.slice(code.indexOf('function equipmentWireDrag'),code.indexOf('function equipmentRenderAttacks')),ctx);vm.runInContext('equipmentWireDrag(host,c)',ctx);
+const h=host.querySelector('.eq-handle'),down={button:0,preventDefault(){},clientX:30,clientY:10,pointerId:4};h.onpointerdown(down);h.onpointermove({clientX:30,clientY:750});h.onpointerup();A.equal(sent,1);A.equal(reorders,0);A.equal(start,1);A.equal(ended,1);A.deepEqual(c.equipmentItems.map(i=>i.id),['a','b']);A.equal(document.querySelector('.eq-grabbed'),null);
+h.onpointerdown(down);h.onpointermove({clientX:30,clientY:750});h.onpointercancel();A.equal(sent,1);A.equal(ended,2);
+h.onkeydown({key:'ArrowDown',preventDefault(){}});A.equal(reorders,1);A.equal(start,2);
+console.log('PASS pointer/touch fund drop preserves original model/order, cancels safely, cleans drag DOM, and keeps keyboard reorder independent');

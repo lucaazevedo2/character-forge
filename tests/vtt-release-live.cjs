@@ -1,6 +1,6 @@
 /* Additional hosted acceptance checks, called by vtt-live-transport with release:true. */
 module.exports=async ({dm,player,outsider,rpc,repository,campaignId,sceneId,visible,cfg,tokens})=>{
- const A=require('node:assert/strict'),C=require('../vtt/core');
+ const A=require('node:assert/strict'),C=require('../dist/vtt/core');
  const apply=(client,id,data,expected,operationId=crypto.randomUUID())=>rpc(client,'apply',{campaignId,operationId,changes:[{kind:'token',id,op:'upsert',expected,data}]});
  let s=await rpc(dm,'snapshot',{campaignId}),t=s.scenes[0].tokens.find(x=>x.id===visible);
  const results=await Promise.allSettled([apply(dm,visible,{x:192},t._revision),apply(player,visible,{hp:17},t._revision)]);

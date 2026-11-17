@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
-page = root / 'index.html' if (root / 'index.html').exists() else root / 'dist/index.html'
+page = root / 'dist/index.html'
 html = page.read_text()
 catalog_match = re.search(r'const SPELLS=(\[.*?\]);\n', html)
 catalog = json.loads(catalog_match[1])

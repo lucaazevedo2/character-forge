@@ -1,7 +1,7 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 let builds=0;
 const c=vm.createContext({CUSTOM:{items:[]},allItems:()=>{builds++;return [{name:'Dagger'},{name:'Shield'},{name:'Crossbow, light'},...c.CUSTOM.items]},itemData:()=>{},renderNav:()=>{},renderSheet:()=>{},esc:s=>String(s),document:{addEventListener:()=>{}}});
-for(const f of ['magic-items-data.js','magic-items.js','srd-item-descriptions.js','supplied-item-descriptions.js','wondrous-item-descriptions.js','item-descriptions.js'])vm.runInContext(fs.readFileSync(''+f,'utf8'),c);
+for(const f of ['magic-items-data.js','magic-items.js','srd-item-descriptions.js','supplied-item-descriptions.js','wondrous-item-descriptions.js','item-descriptions.js'])vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c);
 const run=s=>vm.runInContext(s,c);
 assert(run("itemData('BAG OF HOLDING').name==='Bag of Holding'"));
 assert(run("itemData('wooden shield').name==='Shield'"));

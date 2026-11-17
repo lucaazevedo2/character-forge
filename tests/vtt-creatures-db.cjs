@@ -1,4 +1,4 @@
-const A=require('node:assert/strict'),M=require('../vtt/monsters-core');
+const A=require('node:assert/strict'),M=require('../dist/vtt/monsters-core');
 module.exports=async db=>{
  const [dm,other,player,c,c2,id,asset]=Array.from({length:7},()=>crypto.randomUUID());
  const as=async u=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[u]);await db.exec('set role authenticated');};

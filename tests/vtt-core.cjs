@@ -1,4 +1,4 @@
-const assert=require('node:assert/strict'),C=require('../vtt/core.js');
+const assert=require('node:assert/strict'),C=require('../dist/vtt/core.js');
 const original={id:crypto.randomUUID(),name:'Old local game',scenes:[{id:crypto.randomUUID(),name:'First',width:1600,height:1280,grid:64,snap:true,showGrid:true,map:'',tokens:[{id:crypto.randomUUID(),name:'Hero',x:64,y:64,size:1,color:'#aabbcc',hp:8,maxHp:10,image:'',rotation:45}]}]};
 const backup=C.exportBackup(original),imported=C.importBackup(backup);assert.equal(imported.scenes[0].tokens[0].hp,8);assert.notEqual(imported.id,original.id);assert.notEqual(imported.scenes[0].tokens[0].id,original.scenes[0].tokens[0].id);assert(!imported._cloud);assert.equal(C.importBackup(original).name,original.name);assert.throws(()=>C.importBackup({...backup,schema_version:99}),/version/);
 const before=C.clone(original);before._cloud={revision:2};before.scenes[0]._revision=3;before.scenes[0].tokens[0]._revision=4;

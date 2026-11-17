@@ -758,7 +758,7 @@
   }
   function monsterContext() {
     return {records:records("creature"),editing,viewing:records("creature").find(r=>r.id===editing?.view),trash:r=>mutate("trash",{id:r.id,expected:r.revision}),state:q(),dm:dm(),E,markdown:C.markdown,pictureControl,bindPicture,
-      save:saveRecord,assetURL,notify:api()?.notify,change:fn=>api().change(fn),
+      save:saveRecord,assetURL,importToken:uploadOne,notify:api()?.notify,change:fn=>api().change(fn),
       edit:r=>{editing=r;render();},view:id=>{editing={view:id};render();},error:fail,status:setStatus};
   }
   function pictureControl(id = "") {

@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const ctx=vm.createContext({esc:s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'),isMagicItem:x=>!!x.magic});
-for(const f of ['magic-items-data.js','srd-item-descriptions.js','supplied-item-descriptions.js','wondrous-item-descriptions.js','item-descriptions.js'])vm.runInContext(fs.readFileSync(''+f,'utf8'),ctx);
+for(const f of ['magic-items-data.js','srd-item-descriptions.js','supplied-item-descriptions.js','wondrous-item-descriptions.js','item-descriptions.js'])vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),ctx);
 const run=s=>vm.runInContext(s,ctx);
 assert.equal(run('Object.keys(SRD_ITEM_DESCRIPTIONS).length'),268);
 assert(run('MAGIC_ITEMS.filter(x=>itemDescriptionEntry(x)).every(x=>itemDescriptionBodyHTML(x).includes("Read full rules on Wikidot"))'));

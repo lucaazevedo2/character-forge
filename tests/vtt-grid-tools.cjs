@@ -1,0 +1,9 @@
+const A=require('node:assert/strict'),fs=require('fs'),vm=require('vm');
+let opened=[],listener;const monster={id:'m',details:{notes:JSON.stringify({srdMonster:'zombie'})}},custom={id:'c',details:{notes:JSON.stringify({creatureResource:'private'})}},hero={id:'h',details:{characterId:'hero'}};const state={dm:true,scene:{tokens:[monster,custom,hero]}};
+const window={ForgeTabletop:{state:()=>state},ForgeVTTSheets:{open:t=>opened.push(t.id)},ForgeVTTStage:{selectable:()=>true}};vm.runInNewContext(fs.readFileSync('dist/vtt/grid-tools.js','utf8'),{window});const T=window.ForgeVTTGridTools;
+const root={querySelector:()=>null,addEventListener:(name,fn,options)=>{A.equal(name,'pointerdown');A(options.capture);listener=fn;}};T.mount(root);T.mount(root);
+function click(id,shift=true,button=0){let stopped=false;listener({button,shiftKey:shift,target:{closest:()=>({dataset:{token:id}})},preventDefault(){},stopImmediatePropagation(){stopped=true;}});return stopped;}
+A(click('m'));A(click('c'));A(!click('h'));A(!click('m',false));A(!click('m',true,2));state.dm=false;A(!click('c'));A.deepEqual(opened,['m','c']);
+const s={width:1000,height:800,grid:50,tokens:[{x:100,y:80}],drawings:[{x:10,y:20,w:30,h:40,points:[{x:10,y:20}]}],environment:{walls:[{points:[{x:10,y:20}]}],lights:[{x:20,y:30}],fogOps:[{x:10,y:20,w:20,h:30}]},settings:{distance:5,units:'ft'}};
+T.fitScene(s,{width:2000,height:1200,spacing:100,offsetX:10,offsetY:20});A.equal(s.width,2000);A.equal(s.height,1200);A.equal(s.grid,100);A.equal(s.settings.offsetX,10);A.equal(s.settings.offsetY,20);A.equal(s.settings.distance,5);A.equal(s.tokens[0].x,200);A.equal(s.tokens[0].y,120);A.equal(s.environment.walls[0].points[0].y,30);A.equal(s.drawings[0].w,60);A(s.snap&&s.showGrid);
+console.log('PASS Shift-left-click stat blocks without hijacking normal/right/character selection; private custom block guard; fitted map dimensions, offsets, tokens, drawings, walls and lights.');

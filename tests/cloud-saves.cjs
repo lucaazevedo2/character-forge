@@ -1,5 +1,5 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto').webcrypto;
-const source=fs.readFileSync(__dirname+'/../cloud-saves.js','utf8');
+const source=fs.readFileSync(__dirname+'/../dist/cloud-saves.js','utf8');
 function storage(){const obj={};Object.defineProperties(obj,{getItem:{value:k=>obj[k]??null},setItem:{value:(k,v)=>{obj[k]=String(v)}},removeItem:{value:k=>{delete obj[k]}}});return obj}
 function makeBackend(){return {rows:new Map(),fail:false,hold:null,calls:0}}
 function harness(db,uid,local=storage(),tabId){
@@ -10,7 +10,7 @@ function harness(db,uid,local=storage(),tabId){
  ctx.storeGet=async k=>JSON.parse(local.getItem(ctx.ForgeCloud?.storageKey(k)||k)||'null');
  ctx.storeSet=async(k,v)=>local.setItem(ctx.ForgeCloud?.storageKey(k)||k,JSON.stringify(v));
  const client={auth:{getSession:async()=>({data:{session:uid?{user:{id:uid,email:uid+'@test'}}:null}}),onAuthStateChange:fn=>{ctx.authEvent=fn},signOut:async()=>({}),signInAnonymously:async({options})=>{uid='guest-session';return {data:{user:{id:uid,is_anonymous:true,user_metadata:options.data}}}}},
- from:()=>({select:()=>({order:async()=>db.fail?{error:{}}:{data:[...db.rows.values()].filter(r=>r.owner_id===uid).map(r=>structuredClone(r))}})}),
+ from:()=>({select:()=>({eq:(column,value)=>{assert.equal(column,'owner_id');assert.equal(value,uid);return {order:async()=>db.fail?{error:{}}:{data:[...db.rows.values()].filter(r=>r.owner_id===uid).map(r=>structuredClone(r))}}}})}),
  rpc:async(name,p)=>{db.calls++;if(db.hold)await db.hold;if(db.fail)return {error:{code:'NETWORK'}};let row=[...db.rows.values()].find(r=>r.owner_id===uid&&r.local_id===p.p_local_id);
  if(row&&(row.id!==p.p_id||row.revision!==p.p_expected_revision))return {data:{status:'conflict',row:structuredClone(row)}};
  if(!row&&(p.p_expected_revision!==0||p.p_deleted))return {data:{status:'missing'}};

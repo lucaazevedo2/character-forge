@@ -300,3 +300,27 @@ body.vtt-page .vtt-refined.inspector-collapsed .vtt-layout{grid-template-columns
 .vtt-scenes .vtt-scene-dragging{opacity:.45;border-color:#d6c8ff;box-shadow:0 0 0 2px #b4a7ff55}
 @media(prefers-reduced-motion:reduce){.vtt-scenes .vtt-scene{transition:none}}
 .vtt-asset-warning{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;padding:10px 16px;background:#3a3020;color:#f1dbb3;border-bottom:1px solid #7e663f;font-size:13px;line-height:1.5}.vtt-asset-warning .btn{flex-shrink:0;min-height:44px;color:#f1dbb3;border-color:#9f875c}@media(max-width:600px){.vtt-asset-warning{align-items:flex-start;font-size:12px;gap:8px;padding:10px}.vtt-asset-warning .btn{padding:8px;font-size:12px}}
+
+/* Tabletop compendium monster portraits mirror the shared bestiary. */
+.vtt-monster-result-heading{display:flex;align-items:center;gap:16px;margin-bottom:12px}.vtt-monster-result-heading>div{min-width:0;flex:1}.vtt-monster-result-heading h3{overflow-wrap:anywhere}.vtt-monster-result-heading .monster-token{width:64px;height:64px;flex:0 0 64px;object-fit:contain;border:1px solid #66577e;border-radius:50%;background:#111624}.vtt-monster-result-heading p{margin:6px 0!important;font-size:11px!important}.vtt-monster-result-heading small{line-height:1.6;color:#bfc5db}
+@media(max-width:768px){.vtt-monster-result-heading{gap:12px}.vtt-monster-result-heading .monster-token{width:52px;height:52px;flex-basis:52px}}
+
+/* Grid-detection preview remains scrollable on phones and compact windows. */
+.vtt-grid-detect{width:min(820px,calc(100vw - 24px));max-height:88dvh}.vtt-grid-detect canvas{display:block;width:100%;height:auto;max-height:48dvh;object-fit:contain;background:#10131f;border-radius:10px}.vtt-grid-detect-actions{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap}.vtt-grid-detect button{min-height:44px;min-width:44px}.vtt-grid-detect button:disabled{opacity:.45;cursor:default}
+@media(max-width:768px){.vtt-grid-detect{width:calc(100vw - 16px);max-height:85dvh}.vtt-grid-detect-actions button{flex:1}}
+
+/* Measure-only snapping preference. */
+.vtt-draw-options label.vtt-measure-center{display:flex;align-items:center;gap:8px;min-height:44px;max-width:none;cursor:pointer}.vtt-measure-center input{accent-color:#b4a7ff;flex:none}
+
+/* Black outside-map canvas and readable ruler guidance. */
+.vtt-refined .vtt-viewport,.vtt-refined .vtt-world{background:#000}.vtt-ruler-hint{font-size:12px;color:#c5bddb;align-self:center}
+
+.vtt-draw-options label[hidden]{display:none!important}.vtt-ruler-hint{max-width:285px;line-height:1.5}.vtt-measure-center{white-space:nowrap}
+/* Starter pack artwork library. */
+.vtt-asset-filters{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.vtt-asset-filters label{display:grid;gap:6px;min-width:0}.vtt-asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}.vtt-asset-tile{min-width:0;display:flex;flex-direction:column;gap:8px;background:#202436;border:1px solid #b4a7ff30;border-radius:12px;padding:12px}.vtt-asset-tile img{height:110px;width:100%;object-fit:contain;background:repeating-conic-gradient(#282c3d 0% 25%,#222637 0% 50%) 50%/16px 16px;border-radius:8px}.vtt-asset-tile strong{font-size:12px;overflow-wrap:anywhere}.vtt-asset-tile small{font-size:11px;color:#b4bbcd}.vtt-asset-tile .btn{margin-top:auto;min-height:44px}.vtt-asset-library [data-more]{margin-top:16px;width:100%}
+/* Combat panel: empty state must span the row instead of using combatant columns. */
+.vtt-root .vtt-combat-entries>li.vtt-play-empty{display:block;grid-template-columns:none;max-width:none;width:100%;box-sizing:border-box;padding:18px;line-height:1.6;text-align:center;white-space:normal;overflow-wrap:normal;word-break:normal;color:#b8c0d5}.vtt-root .vtt-combat-add{display:grid;grid-template-columns:minmax(0,1fr) 78px 78px;gap:8px;align-items:center}.vtt-root .vtt-combat-add select{grid-column:1;min-width:0;width:100%}.vtt-root .vtt-combat-add input[type=number]{width:100%;min-width:0}.vtt-root .vtt-combat-add [data-add-selected]{grid-column:1}.vtt-root .vtt-combat-add label{display:flex;align-items:center;gap:7px;margin:0;min-height:36px;white-space:nowrap}.vtt-root .vtt-combat-add label:last-child{grid-column:1/-1}.vtt-root .vtt-combat-add .btn{min-width:0;width:100%;padding:8px;min-height:40px}.vtt-root .vtt-combat-add input[type=checkbox]{flex:none;width:16px;height:16px;min-height:16px;margin:0}
+@media(max-width:768px){.vtt-asset-filters{grid-template-columns:1fr}.vtt-asset-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vtt-root .vtt-combat-add{grid-template-columns:minmax(0,1fr) 68px 68px}}
+.vtt-root .vtt-combat-add [data-add-selected]{grid-column:1/3}.vtt-root .vtt-combat-add [data-add-all]{grid-column:3}.vtt-root .vtt-combat-add label{grid-row:3;grid-column:1/3}.vtt-root .vtt-combat-add label:last-child{grid-column:3;grid-row:3}
+
+.vtt-browse-token-library{width:100%;min-height:44px;margin:8px 0 14px;border-color:#b4a7ff60!important;color:#d2c7ff!important}

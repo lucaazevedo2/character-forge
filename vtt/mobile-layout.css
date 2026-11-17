@@ -13,7 +13,7 @@
  .vtt-phone .vtt-more {order:2;position:static;margin:0}
  body.vtt-page .vtt-phone .vtt-more>summary {width:44px;min-width:44px;height:44px;min-height:44px;padding:0;border-radius:12px;font-size:23px}
  body.vtt-page .vtt-phone .vtt-layout {display:block;position:relative;flex:1;min-height:0}
- body.vtt-page .vtt-phone .vtt-center {height:100%;width:100%;display:flex;flex-direction:column;min-width:0}
+ body.vtt-page .vtt-phone .vtt-center {isolation:auto;height:100%;width:100%;display:flex;flex-direction:column;min-width:0}
  body.vtt-page .vtt-phone .vtt-viewport {height:100%;min-height:0;flex:1;touch-action:none;scrollbar-width:none}
  .vtt-phone .vtt-viewport::-webkit-scrollbar {display:none}
  .vtt-phone .vtt-stage-canvas {touch-action:none}
@@ -27,6 +27,10 @@
  .vtt-phone .vtt-zoom button {min-width:44px;min-height:44px;padding:0;border:0!important;background:transparent!important}.vtt-phone .vtt-zoom output {font-size:10px;text-align:center;min-width:0;padding:5px 0}
  .vtt-phone .vtt-play-toggle {position:fixed;z-index:39;right:max(8px,env(safe-area-inset-right));bottom:calc(74px + env(safe-area-inset-bottom));min-height:44px;border-radius:24px;background:#282343ef;border:1px solid #8070ed;font-size:12px;padding:8px 14px}
  body.vtt-page .vtt-phone .vtt-phone-backdrop,body.vtt-page .vtt-phone .vtt-phone-backdrop:hover {position:fixed;inset:var(--phone-top) 0 0;z-index:49;width:100%;height:auto;border:0;border-radius:0;background:#060811a8;font-size:0;padding:0}
+ /* Sheets must escape the desktop map's isolated stacking context. */
+ body.vtt-page .vtt-phone .vtt-play-drawer:not([hidden]) {display:flex;flex-direction:column;height:min(76dvh,720px);overflow:hidden}
+ .vtt-phone .vtt-play-header {flex:none}
+ .vtt-phone .vtt-play-content {flex:1;min-height:0;overflow:auto}
  .vtt-phone [hidden] {display:none!important}
  body.vtt-page .vtt-phone :is(.vtt-more-menu,.vtt-phone-layer,.vtt-inspector,.vtt-scenes,.vtt-play-drawer) {position:fixed!important;z-index:50;inset:auto 0 0!important;transform:none!important;width:100%!important;max-width:100%!important;height:auto;max-height:85dvh!important;min-height:0;box-sizing:border-box;overflow:auto;overscroll-behavior:contain;border:1px solid #494365;border-bottom:0;border-radius:22px 22px 0 0;background:#191c2e;padding:18px 14px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -15px 55px #0005}
  body.vtt-page .vtt-phone :is(.vtt-more-menu,.vtt-phone-layer,.vtt-inspector,.vtt-scenes,.vtt-play-drawer):before {content:'';display:block;width:36px;height:4px;border-radius:4px;background:#575070;margin:0 auto 12px;grid-column:1/-1;flex-shrink:0}

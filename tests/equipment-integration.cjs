@@ -1,9 +1,9 @@
 const vm=require('vm'),fs=require('fs'),assert=require('assert');
-let js=fs.readFileSync(require('path').join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].split('(async function(){\n  const saved=')[0];
+let js=fs.readFileSync(require('path').join(__dirname,'../dist/index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].split('(async function(){\n  const saved=')[0];
 const stub=new Proxy(function(){},{get:(t,k)=>k==='style'?{}:k==='querySelectorAll'?()=>[]:k==='querySelector'?()=>stub:k==='classList'?{add(){},remove(){},toggle(){}}:stub,apply:()=>stub,set:()=>true});
 const ctx=vm.createContext({console,document:stub,window:stub,localStorage:{getItem:()=>null},location:{hash:''},setTimeout:()=>0,clearTimeout(){},crypto:require('crypto').webcrypto});
 vm.runInContext(js,ctx);
-for(const file of ['class-choices.js','wild-shape-data.js','wild-shape.js','equipment-model.js','equipment-editor.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'..',file),'utf8'),ctx);
+for(const file of ['class-choices.js','wild-shape-data.js','wild-shape.js','equipment-model.js','equipment-editor.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../dist',file),'utf8'),ctx);
 vm.runInContext(`
 if(finalScore(newDraft(),'str')!==10)throw Error('new character creation regression');
 const hero={id:'equipment-test',name:'Hero',klass:'fighter',subId:'srd',level:5,race:'human',background:'soldier',feats:[],inventory:[],equipped:[],base:{str:14,dex:14,con:14,int:10,wis:10,cha:10},stats:{str:14,dex:14,con:14,int:10,wis:10,cha:10},spells:[],prepared:[],customAttacks:[],classChoiceData:{}};
@@ -48,7 +48,7 @@ artificer.klass='fighter';artificer.level=8;artificer.multiclass=[{klass:'artifi
 artificer.multiclass[0].level=10;if(equipmentStats(artificer).activeIds.length!==4)throw Error('secondary Artificer slots missing');
 console.log('PASS Artificer 10/14/18 limits, effects, counter, warnings, multiclass and level reversal');
 `,ctx);
-for(const file of ['magic-items-data.js','magic-items.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'..',file),'utf8'),ctx);
+for(const file of ['magic-items-data.js','magic-items.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../dist',file),'utf8'),ctx);
 vm.runInContext(`
 for(const kind of ['weapon','armor','shield'])for(const bonus of [1,2,3]){
  const rarity=(kind==='armor'?['Rare','Very Rare','Legendary']:['Uncommon','Rare','Very Rare'])[bonus-1];
@@ -69,7 +69,7 @@ for(const kind of ['weapon','armor','shield'])for(const bonus of [1,2,3]){
 }
 console.log('PASS +1/+2/+3 weapon attack and damage, armor/shield AC, base choices and save persistence');
 `,ctx);
-for(const file of ['magic-item-properties-data.js','magic-item-properties.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'..',file),'utf8'),ctx);
+for(const file of ['magic-item-properties-data.js','magic-item-properties.js'])vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../dist',file),'utf8'),ctx);
 vm.runInContext(`
 for(const [name,dice,type,toggle] of [['Frost Brand','1d6','cold',false],['Sun Blade','1d8','radiant',false],['Flame Tongue','2d6','fire',true],['Holy Avenger','2d10','radiant',true]]){
  const catalog=MAGIC_ITEMS.find(i=>i.name===name),item=magicPopulateEquipment(catalog,itemData('Longsword'));

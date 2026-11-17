@@ -1,4 +1,4 @@
-const assert=require('assert'),{equipmentItem,migrateEquipment,computeStats,equipmentLinkedAttacks}=require('../equipment-model.js');
+const assert=require('assert'),{equipmentItem,migrateEquipment,computeStats,equipmentLinkedAttacks}=require('../dist/equipment-model.js');
 const base={abilities:{str:12,dex:16,con:14,int:10,wis:12,cha:10},unarmored:[{value:10,abilities:['dex'],source:'Unarmored'}],values:{skill_perception:3,maxHP:30,speed:30,spellDC:12,magicAttack:4},skillAbilities:{perception:'wis'},level:4};
 const shield=equipmentItem('+1 Shield',{},'shield');shield.type='shield';shield.modifiers=[{target:'ac',operation:'add',value:1}];shield.equipped=true;
 assert.equal(computeStats(base,[shield]).values.ac,16);shield.equipped=false;assert.equal(computeStats(base,[shield]).values.ac,13);

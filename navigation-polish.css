@@ -1,15 +1,31 @@
-/* Keep all navigation destinations on one intentional row. */
+/* Desktop navigation: compact Compendium grouping, original phone drawer preserved. */
+.forge-compendium{display:none}
 @media(min-width:701px){
- header.masthead:has(.forge-account){grid-template-columns:auto minmax(0,1fr) auto;column-gap:20px;row-gap:16px;padding:22px 0!important}
- header.masthead:has(.forge-account)>.site-navigation{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:3px;min-width:0;width:auto;grid-column:2;grid-row:1}
- header.masthead .site-navigation>button{flex:0 0 auto;min-height:40px;margin:0;padding:10px 10px;font-size:12px;font-weight:600;line-height:20px;border-radius:9px;transition:background .15s,color .15s,border-color .15s}
- header.masthead .site-navigation>button[aria-current=page]{background:#b4a7ff14;border-color:#b4a7ff35;color:#d4c5ff}
- header.masthead .site-navigation>button:hover{background:#b4a7ff0b;color:#ece5ff}
- header.masthead:has(.forge-account)>.forge-account{grid-column:3;grid-row:1;align-self:center}
+ header.masthead:has(.forge-account){display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:18px;row-gap:18px;padding:22px 0!important}
+ header.masthead:has(.forge-account)>h1{grid-column:1;grid-row:1;min-width:0;margin:0}
+ header.masthead .forge-home-link{gap:10px}
+ header.masthead .forge-brand-icon{width:48px;height:36px}
+ header.masthead .forge-wordmark{font-size:26px}
+ header.masthead:has(.forge-account)>.forge-account{grid-column:3;grid-row:1;align-self:center;margin:0}
+ header.masthead:has(.forge-account)>.site-navigation{display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:2px;min-width:0;width:auto;grid-column:2;grid-row:1}
+ header.masthead .site-navigation>button,.forge-compendium>summary{display:flex;align-items:center;justify-content:center;gap:7px;flex:0 0 auto;min-height:44px;box-sizing:border-box;margin:0;padding:10px 8px;font:inherit;font-size:12px;font-weight:600;line-height:22px;white-space:nowrap;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--faded);cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+ header.masthead .site-navigation>button[aria-current=page],.forge-compendium[data-current]>summary{background:#b4a7ff18;border-color:#b4a7ff40;color:#d4c5ff}
+ header.masthead .site-navigation>button:hover,.forge-compendium>summary:hover,.forge-compendium[open]>summary{background:#b4a7ff12;color:#ece5ff}
+ .forge-compendium{display:block;position:relative;flex:none}
+ .forge-compendium>summary{list-style:none}
+ .forge-compendium>summary::-webkit-details-marker{display:none}
+ .forge-compendium>summary:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+ .forge-compendium>summary svg{transition:transform .15s}
+ .forge-compendium[open]>summary svg{transform:rotate(180deg)}
+ .forge-compendium-menu{position:absolute;z-index:1000;top:calc(100% + 8px);left:0;width:230px;max-width:calc(100vw - 32px);box-sizing:border-box;padding:7px;border:1px solid #b4a7ff35;border-radius:14px;background:var(--panel,#171a29);box-shadow:0 16px 45px #0008}
+ header.masthead .forge-compendium-menu>button{display:flex;align-items:center;gap:12px;width:100%;min-height:46px;margin:0;padding:10px 12px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--faded);font:inherit;font-size:14px;text-align:left;white-space:normal;cursor:pointer}
+ header.masthead .forge-compendium-menu .drawer-nav-icon{display:block;flex:none;color:var(--gold)}
+ header.masthead .forge-compendium-menu>button:hover,header.masthead .forge-compendium-menu>button[aria-current=page]{background:#b4a7ff18;color:#e4daff}
 }
-@media(min-width:701px) and (max-width:1360px){
- header.masthead:has(.forge-account){grid-template-columns:minmax(0,1fr) auto;column-gap:16px;row-gap:18px}
- header.masthead:has(.forge-account)>h1{grid-column:1;grid-row:1;justify-self:start}
- header.masthead:has(.forge-account)>.forge-account{grid-column:2;grid-row:1}
- header.masthead:has(.forge-account)>.site-navigation{grid-column:1/-1;grid-row:2;justify-content:center;width:100%;gap:6px}
+@media(min-width:701px) and (max-width:1240px){
+ header.masthead:has(.forge-account){grid-template-columns:minmax(0,1fr) auto;column-gap:16px}
+ header.masthead:has(.forge-account)>.forge-account{grid-column:2}
+ header.masthead:has(.forge-account)>.site-navigation{grid-column:1/-1;grid-row:2;justify-content:center;width:100%;padding-top:12px;border-top:1px solid var(--stone)}
 }
+/* Shared order is defined by the DOM, including dynamically added entries. */
+#forgeMainNav>button{order:0!important}

@@ -1,9 +1,9 @@
 const fs=require('node:fs'),vm=require('node:vm'),A=require('node:assert/strict');
 (async()=>{
- const calls=[],uploads=[],window={ForgeVTTResourcesCore:require('../vtt/resources-core'),ForgeCloud:{partyConnection:()=>({user:{id:'qa'}})},FORGE_CLOUD_CONFIG:{supabaseUrl:'https://qa.invalid',publishableKey:'public'}};
+ const calls=[],uploads=[],window={ForgeVTTResourcesCore:require('../dist/vtt/resources-core'),ForgeCloud:{partyConnection:()=>({user:{id:'qa'}})},FORGE_CLOUD_CONFIG:{supabaseUrl:'https://qa.invalid',publishableKey:'public'}};
  window.ForgeVTTCloud={client:()=>({auth:{getSession:async()=>({data:{session:{access_token:'qa-session'}}})},rpc:async(name,args)=>{calls.push(args);return {}}})};
  const fakeDocument={body:{},addEventListener(){}};
- vm.runInNewContext(fs.readFileSync('vtt/resources.js','utf8'),{window,document:fakeDocument,Audio:class{},MutationObserver:class{observe(){}},URL,crypto,console,setTimeout,clearTimeout,fetch:async(url,options)=>{
+ vm.runInNewContext(fs.readFileSync('dist/vtt/resources.js','utf8'),{window,document:fakeDocument,Audio:class{},MutationObserver:class{observe(){}},URL,crypto,console,setTimeout,clearTimeout,fetch:async(url,options)=>{
    if(url.startsWith('data:'))return fetch(url);
    uploads.push(options);return new Response(JSON.stringify({assetId:'new-asset'}),{headers:{'content-type':'application/json'}});
  }});

@@ -1,4 +1,4 @@
-const assert=require('node:assert/strict'),G=require('../vtt/vision-geometry.js'),C=require('../vtt/core.js');
+const assert=require('node:assert/strict'),G=require('../dist/vtt/vision-geometry.js'),C=require('../dist/vtt/core.js');
 const wall={id:'a',type:'wall',points:[{x:100,y:0},{x:100,y:300}]},hero={id:'h',x:0,y:64,size:1,meta:{},details:{vision:{range:60}}},s={id:'s',name:'Room',width:640,height:640,grid:64,snap:true,showGrid:true,map:'',tokens:[hero],environment:{config:{...G.config({}),mode:'dynamic'},fogOps:[],walls:[wall],lights:[]}};
 assert(G.visible(s,{x:80,y:96},[hero]));assert(!G.visible(s,{x:150,y:96},[hero]));
 for(const [type,sight,move]of [['window',true,true],['invisible',true,true],['wall',false,true]]){s.environment.walls=[{...wall,type}];assert.equal(G.visible(s,{x:150,y:96},[hero]),sight,type);assert.equal(G.blocked({x:32,y:96},{x:150,y:96},G.segments(s,'movement')),move)}
