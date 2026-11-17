@@ -2,7 +2,7 @@
 
 ## 2.1.0 — Expanded compendium, party tools and TV tabletop (November 17, 2026)
 
-- Expanded the monster compendium with supplied stat blocks, named variants and token artwork.
+- Expanded the monster compendium to **5,070 monster and NPC entries** by importing **4,683 supplied stat blocks** and adding **368 named variants**. The expansion preserves all **334 existing catalog IDs** and includes token artwork for **4,550 entries**.
 - Added party funds, quick currency adjustments, DM sheet viewing, XP awards and campaign covers.
 - Added TV presentation controls, free camera, grid tools and player-safe presentation updates.
 - Improved ruler arrows and persistent measurements, right-click waypoints while dragging, and alternating diagonal distances.
