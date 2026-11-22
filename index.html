@@ -494,6 +494,9 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
     <button type="button" id="forgeMenuToggle" aria-label="Open navigation" aria-expanded="false" aria-controls="forgeMainNav">☰</button><nav id="forgeMainNav" class="site-navigation" aria-label="Main navigation">
       <button type="button" data-site-view="home" id="siteHome">Home</button>
       <button type="button" data-site-view="explorer" id="openSpellExplorer">Spell Explorer</button>
+      <button type="button" data-site-view="classes">Classes</button>
+      <button type="button" data-site-view="races">Races</button>
+      <button type="button" data-site-view="backgrounds">Backgrounds</button>
       <button type="button" data-site-view="tabletop">Tabletop</button>
       <button type="button" id="openMonsterExplorer" onclick="ForgeMonsters.open()">Monster Explorer</button>
       <button type="button" data-site-view="custom" id="btnCustom">Custom Content</button>
@@ -513,7 +516,7 @@ header.masthead{display:flex;align-items:center;justify-content:space-between;ga
 
   <footer id="foot">
     Core game content from the <b>System Reference Document 5.1</b> (2014 rules) by Wizards of the Coast, used under the Creative Commons Attribution 4.0 International License. Supplemental options are linked to Wikidot. No 2024 rules. Unofficial fan tool.
-    <div class="site-version"><a href="/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 2.1.0 · Changelog ↗</a><span>Updated November 17, 2026</span></div>
+    <div class="site-version"><a href="/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Version 2.2.0 · Changelog ↗</a><span>Updated November 22, 2026</span></div>
   </footer>
 </div>
 
@@ -962,6 +965,7 @@ function render(){
   else if(view==="graveyard"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderGraveyard(byId("scr-step")); }
   else if(view==="items"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderItemExplorerPage(byId("scr-step")); }
   else if(view==="explorer"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderSpellExplorer(byId("scr-step")); }
+  else if(view==="classes"||view==="races"||view==="backgrounds"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); window.ForgeRulesExplorer.render(byId("scr-step"),view); }
   else if(view==="legal"){ zig.style.display="none"; cap.style.display="none"; byId("scr-step").classList.add("active"); renderLegal(byId("scr-step")); }
   else { zig.style.display="flex"; cap.style.display="block"; byId("scr-sheet").classList.add("active"); renderZig(5); renderSheet(); }
   renderNav();
@@ -1044,7 +1048,7 @@ function stepValid(){
 }
 function renderNav(){
   const bar=byId("navbar"), inner=byId("navInner");
-  if(view==="home"||view==="tabletop"){ bar.classList.remove("show"); return; }
+  if(view==="home"||view==="tabletop"||view==="classes"||view==="races"||view==="backgrounds"){ bar.classList.remove("show"); return; }
   bar.classList.add("show");
   if(view==="custom"||view==="legal"||view==="explorer"||view==="items"||view==="dmtools"||view==="feats"||view==="graveyard"){
     inner.innerHTML=`<button class="btn ghost" id="nvHome">Back to Ledger</button>`;
@@ -3646,7 +3650,7 @@ function wireSpellSearch(el,c){const input=el.querySelector('#spellAddSearch');i
 <link rel="stylesheet" href="party-view-death-v2.css?v=2.0.0-alpha.4-invites">
 <link rel="stylesheet" href="party-fund.css">
 <script src="party-fund.js"></script>
-<script src="party-view-death-v2.js?v=dm-stats-1-dm-tools-1"></script>
+<script src="party-view-death-v2.js?v=dm-remove-member-1"></script>
 <script>
 (async function(){
   if(window.FORGE_VIEW_ONLY)return;
@@ -3760,7 +3764,7 @@ button.class-choices-unfinished:focus-visible{outline:3px solid #fff4b0!importan
 <link rel="stylesheet" href="home-polish.css">
 <link rel="stylesheet" href="navigation-polish.css?v=compendium-1">
 <script src="action-confirm.js"></script>
-<script src="mobile-nav.js?v=2.0.5-nav-order"></script>
+<script src="mobile-nav.js?v=backgrounds-1"></script>
 <link rel="stylesheet" href="inventory-notes.css">
 <script src="inventory-notes.js"></script>
 <link rel="stylesheet" href="character-feature-edit.css?v=centered">
@@ -3776,7 +3780,9 @@ button.class-choices-unfinished:focus-visible{outline:3px solid #fff4b0!importan
 <link rel="stylesheet" href="sheet-recovery.css?v=0.28.0-beta.4">
 <script src="sheet-recovery.js?v=0.28.0-beta.4"></script>
 <link rel="stylesheet" href="beta-improvements.css?v=1.0.0-feat-typography">
-<script src="beta-improvements.js?v=dm-tools-1"></script>
+<link rel="stylesheet" href="rules-explorer.css?v=backgrounds-1">
+<script src="rules-explorer.js?v=backgrounds-1"></script>
+<script src="beta-improvements.js?v=backgrounds-1"></script>
 <link rel="stylesheet" href="tabletop.css?v=grid-detect-5-2.0.3">
 <script src="vtt/loader.js?v=token-sidebar-1"></script>
 <!-- Phone-only tabletop presentation. -->
@@ -3787,7 +3793,7 @@ button.class-choices-unfinished:focus-visible{outline:3px solid #fff4b0!importan
 <link rel="stylesheet" href="racial-magic.css?v=1">
 <script src="racial-magic.js?v=1"></script>
 <script src="dm-character-view.js?v=1"></script>
-<script src="nav-compendium.js?v=1"></script>
+<script src="nav-compendium.js?v=3"></script>
 <link rel="stylesheet" href="dm-tools-polish.css?v=roster-alignment-2">
 </body>
 </html>

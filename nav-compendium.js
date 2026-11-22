@@ -1,7 +1,7 @@
 /* Desktop compendium groups the original controls; phone drawer keeps direct links. */
 (() => {
  const nav=document.getElementById('forgeMainNav');if(!nav)return;
- const desktop=matchMedia('(min-width:701px)'),ids=['explorer','items','monsters','feats'];
+ const desktop=matchMedia('(min-width:701px)'),ids=['explorer','items','monsters','feats','classes','races','backgrounds'];
  const group=document.createElement('details');group.className='forge-compendium';
  group.innerHTML='<summary>Compendium<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="forge-compendium-menu" aria-label="Compendium"></div>';
  const menu=group.querySelector('div'),summary=group.querySelector('summary');

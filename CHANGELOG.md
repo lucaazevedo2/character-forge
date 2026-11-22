@@ -1,5 +1,12 @@
 # Character Forge — Changelog
 
+## 2.2.0 — Classes, races, and backgrounds in the compendium (November 22, 2026)
+
+- Added searchable class pages for all 13 classes with illustrated cards, level 1–20 tables, class feature links, and subclass sections.
+- Added searchable race pages for 65 race families with sourcebook sections, a table of contents, and credited, enlargeable artwork.
+- Added 14 searchable backgrounds with proficiencies, language choices, and feature summaries. The Compendium menu gives Classes, Races, and Backgrounds distinct sword-and-wand, orc, and sprout icons.
+- Assigned DMs can remove a regular member from the party in DM Tools. Removal clears their initiative entry and keeps the saved character in their ledger. The organizer remains protected, and only the organizer can remove party admins.
+
 ## 2.1.0 — Expanded compendium, party tools and TV tabletop (November 17, 2026)
 
 - Expanded the monster compendium to **5,070 monster and NPC entries** by importing **4,683 supplied stat blocks** and adding **368 named variants**. The expansion preserves all **334 existing catalog IDs** and includes token artwork for **4,550 entries**.
